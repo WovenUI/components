@@ -1,0 +1,45 @@
+// Close button shared by modal, drawer and toast: a cross drawn from two bars.
+// Outputs nothing on its own; each component includes it in its close part.
+@use "@wovenui/core/mixins" as woven;
+
+@mixin button {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: woven.token(control-height-sm);
+    block-size: woven.token(control-height-sm);
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-sm);
+    background: transparent;
+    color: woven.token(text-muted);
+    cursor: pointer;
+    transition-property: background-color, color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &::before,
+    &::after {
+        content: "";
+        grid-area: 1 / 1;
+        inline-size: 1rem;
+        block-size: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: currentcolor;
+        rotate: 45deg;
+    }
+
+    &::after {
+        rotate: -45deg;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}

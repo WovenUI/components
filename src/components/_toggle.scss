@@ -1,0 +1,171 @@
+////
+//// @component wu-toggle
+//// On and off switch built on a native checkbox with `role="switch"`.
+////
+//// The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size and the `sm` and `lg` steps.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <label class="wu-toggle">
+////     <input class="wu-toggle-input" type="checkbox" role="switch" checked>
+////     <span class="wu-toggle-label">Email notifications</span>
+////   </label>
+//// @example html
+////   <label class="wu-toggle lg animated">
+////     <input class="wu-toggle-input" type="checkbox" role="switch" aria-invalid="true">
+////     <span class="wu-toggle-label">Accept the terms</span>
+////   </label>
+//// @modifier sm | lg - Smaller or larger switch and label @since 1.0.0
+//// @modifier animated - Spring thumb when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-toggle-input - The checkbox: track and thumb @since 1.0.0
+//// @part wu-toggle-label - Label text beside the switch @since 1.0.0
+//// @state :checked - Brand track and the thumb moved to the end @since 1.0.0
+//// @state disabled - Half opacity and a not-allowed cursor @since 1.0.0
+//// @state aria-invalid="true" | :user-invalid - Danger outline @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-toggle {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: woven.token(space-2);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-normal);
+    cursor: pointer;
+
+    &:has(.wu-toggle-input:disabled) {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+}
+
+.wu-toggle-input {
+    display: inline-grid;
+    flex: none;
+    place-items: center start;
+    width: 2.25em;
+    height: 1.25em;
+    margin: 0;
+    margin-block-start: calc((1lh - 1.25em) / 2);
+    padding-inline: 0.125em;
+    border: 0;
+    border-radius: woven.token(radius-full);
+    background: woven.token(border-control);
+    font-size: inherit;
+    line-height: inherit;
+    vertical-align: middle;
+    appearance: none;
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    // Thumb
+    &::before {
+        content: "";
+        width: 1em;
+        height: 1em;
+        border-radius: woven.token(radius-full);
+        background: woven.token(bg-surface);
+        box-shadow: woven.token(shadow-sm);
+    }
+
+    &:hover:not(:disabled, :checked) {
+        background: woven.token(border-control-hover);
+    }
+
+    &:is([aria-invalid="true"], :user-invalid) {
+        outline: woven.token(border-width-1) solid woven.token(danger);
+        outline-offset: woven.token(border-width-1);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    &:checked {
+        background: woven.token(brand);
+
+        &::before {
+            background: woven.token(text-on-brand);
+            translate: 1em 0;
+        }
+
+        &:hover:not(:disabled) {
+            background: woven.token(brand-hover);
+        }
+    }
+
+    &:checked:dir(rtl)::before {
+        translate: -1em 0;
+    }
+
+    &:disabled {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+
+    .wu-toggle > &:disabled {
+        opacity: 1;
+    }
+}
+
+.wu-toggle-label {
+    min-width: 0;
+}
+
+.wu-toggle.sm {
+    font-size: woven.token(font-size-sm);
+}
+
+.wu-toggle.lg {
+    font-size: woven.token(font-size-lg);
+}
+
+// Calm default: the thumb slides without overshoot
+@media (prefers-reduced-motion: no-preference) {
+    .wu-toggle-input::before {
+        transition: translate woven.token(duration-150) woven.token(ease-out);
+    }
+
+    // Opt-in motion: spring thumb
+    .wu-toggle.animated .wu-toggle-input::before,
+    .wu-animated .wu-toggle-input::before {
+        transition: translate woven.token(duration-500) var(--wu-kit-ease-spring);
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-toggle-input {
+        padding-inline: calc(0.125em - #{woven.token(border-width-1)});
+        border: woven.token(border-width-1) solid CanvasText;
+        background: Canvas;
+        forced-color-adjust: none;
+
+        &::before {
+            background: CanvasText;
+        }
+
+        &:checked {
+            border-color: Highlight;
+            background: Highlight;
+
+            &::before {
+                background: HighlightText;
+            }
+        }
+
+        &:disabled {
+            border-color: GrayText;
+
+            &::before {
+                background: GrayText;
+            }
+        }
+    }
+}

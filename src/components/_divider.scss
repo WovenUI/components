@@ -1,0 +1,66 @@
+////
+//// @component wu-divider
+//// Horizontal or vertical separator line, optionally with a text label between two lines.
+////
+//// Use an `hr` element. `aria-orientation="vertical"` turns it into a vertical line between inline items. With content, the text is read and the lines are decoration.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <hr class="wu-divider">
+////   <hr class="wu-divider dashed">
+//// @example html
+////   <div class="wu-divider">or</div>
+//// @example html
+////   <span>Edit</span><hr class="wu-divider" aria-orientation="vertical"><span>Share</span>
+//// @modifier dashed - Dashed line, also on the lines beside a label @since 1.0.0
+//// @state aria-orientation="vertical" - Vertical line that stretches to the row height @since 1.0.0
+//// @state :not(:empty) - With content: the text sits between two lines @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-divider {
+    height: 0;
+    margin-block: woven.token(space-4);
+    margin-inline: 0;
+    border: 0;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-divider[aria-orientation="vertical"] {
+    display: inline-block;
+    align-self: stretch;
+    width: 0;
+    height: auto;
+    min-height: 1em;
+    margin-block: 0;
+    margin-inline: woven.token(space-2);
+    border-block-start: 0;
+    border-inline-start: woven.token(border-width-1) solid woven.token(border-regular);
+    vertical-align: middle;
+}
+
+.wu-divider:not(:empty) {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-3);
+    height: auto;
+    border-block-start: 0;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-xs);
+
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+    }
+}
+
+.wu-divider.dashed,
+.wu-divider.dashed::before,
+.wu-divider.dashed::after {
+    border-style: dashed;
+}

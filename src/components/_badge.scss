@@ -1,0 +1,91 @@
+////
+//// @component wu-badge
+//// Small pill for counts and short labels, tinted by default and solid for emphasis.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <span class="wu-badge">Draft</span>
+////   <span class="wu-badge success">Paid</span>
+////   <span class="wu-badge danger solid">3</span>
+//// @example html
+////   <span class="wu-badge-host">
+////     <button class="wu-btn" type="button" aria-label="Inbox, 3 unread">Inbox</button>
+////     <span class="wu-badge corner danger solid">3</span>
+////   </span>
+//// @modifier brand | success | danger | warning | info - Role color: tinted fill, border and text; solid fill with `solid` @since 1.0.0
+//// @modifier solid - Solid fill for stronger emphasis, gray without a role @since 1.0.0
+//// @modifier corner - Pins the badge to the top inline-end corner of a `wu-badge-host` @since 1.0.0
+//// @part wu-badge-host - Wrapper that a corner badge pins to @since 1.0.0
+//// @variable --wu-badge--Offset [50%] - How far a corner badge sits outside the host corner @since 1.0.0
+//// @variable --wu-avatar--RingColor [var(--wu-bg-surface)] - Color of the ring around a corner badge, shared with avatar @since 1.0.0
+//// @state :empty - A corner badge with no content is hidden @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$roles: "brand", "success", "danger", "warning", "info";
+
+.wu-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-1);
+    min-height: woven.token(space-5);
+    padding-inline: woven.token(space-2);
+    border: woven.token(border-width-1) solid woven.token(gray-border);
+    border-radius: woven.token(radius-full);
+    background: woven.token(gray-subtle);
+    color: woven.token(text-gray);
+    font-size: woven.token(font-size-xs);
+    font-variant-numeric: tabular-nums;
+    font-weight: woven.token(font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+@each $role in $roles {
+    .wu-badge.#{$role} {
+        border-color: woven.token(#{$role}-border);
+        background: woven.token(#{$role}-subtle);
+        color: woven.token(text-#{$role});
+    }
+}
+
+// Solid fill for stronger emphasis
+.wu-badge.solid {
+    border-color: woven.token(gray-700);
+    background: woven.token(gray-700);
+    color: woven.token(white);
+}
+
+@each $role in $roles {
+    .wu-badge.solid.#{$role} {
+        border-color: woven.token($role);
+        background: woven.token($role);
+        color: woven.token(text-on-#{$role});
+    }
+}
+
+.wu-badge-host {
+    display: inline-flex;
+    position: relative;
+    vertical-align: middle;
+}
+
+.wu-badge.corner {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    translate: var(--wu-badge--Offset, 50%) -50%;
+    box-shadow: 0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
+
+    &:dir(rtl) {
+        translate: calc(-1 * var(--wu-badge--Offset, 50%)) -50%;
+    }
+
+    &:empty {
+        display: none;
+    }
+}

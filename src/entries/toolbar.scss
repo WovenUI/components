@@ -1,0 +1,4 @@
+// @wovenui/components/toolbar: the toolbar and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("toolbar"));

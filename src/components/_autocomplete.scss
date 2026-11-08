@@ -1,0 +1,129 @@
+////
+//// @component wu-autocomplete
+//// Combobox that filters a list of options as the user types.
+////
+//// The kit script filters the options, handles the keyboard and sets `aria-expanded`, `aria-activedescendant`, `aria-selected` and `hidden`.
+////
+//// @since 1.0.0
+//// @needs input
+//// @js required initAutocomplete
+//// @example html
+////   <div class="wu-autocomplete">
+////     <label for="city">City</label>
+////     <input class="wu-input" id="city" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="city-list" autocomplete="off">
+////     <ul class="wu-autocomplete-list" id="city-list" role="listbox" aria-label="Cities" hidden>
+////       <li class="wu-autocomplete-option" id="city-1" role="option">Amsterdam</li>
+////       <li class="wu-autocomplete-option" id="city-2" role="option">Berlin</li>
+////       <li class="wu-autocomplete-option" id="city-3" role="option" aria-disabled="true">Closed city</li>
+////     </ul>
+////     <p class="wu-autocomplete-empty" hidden>No matches</p>
+////   </div>
+//// @modifier animated - The popup fades and slides in when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-autocomplete-list - Popup `ul` that holds the options @since 1.0.0
+//// @part wu-autocomplete-option - One selectable `li` option @since 1.0.0
+//// @part wu-autocomplete-empty - Message shown when no option matches @since 1.0.0
+//// @variable --wu-autocomplete--MaxHeight [16rem] - Maximum height of the option list before it scrolls @since 1.0.0
+//// @state aria-selected="true" - The active option: selected fill and a start bar @since 1.0.0
+//// @state aria-disabled="true" - Half opacity and a not-allowed cursor @since 1.0.0
+//// @state hidden - An option filtered out is not displayed @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-autocomplete {
+    position: relative;
+
+    > .wu-input {
+        inline-size: 100%;
+    }
+}
+
+.wu-autocomplete-list,
+.wu-autocomplete-empty {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: calc(100% + #{woven.token(space-1)});
+    z-index: woven.token(z-dropdown);
+    margin: 0;
+    padding: woven.token(space-1);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-raised);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    box-shadow: woven.token(shadow-lg);
+}
+
+.wu-autocomplete-list {
+    max-block-size: var(--wu-autocomplete--MaxHeight, 16rem);
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.wu-autocomplete-empty {
+    padding-block: woven.token(space-2);
+    padding-inline: woven.token(space-3);
+    color: woven.token(text-muted);
+}
+
+.wu-autocomplete-option {
+    display: flex;
+    align-items: center;
+    min-block-size: woven.token(control-height-sm);
+    padding-inline: woven.token(space-3);
+    border-radius: woven.token(radius-sm);
+    cursor: pointer;
+
+    &[hidden] {
+        display: none;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+    }
+
+    // Active option (aria-activedescendant): selected background and a start bar, so color is not the only signal
+    &[aria-selected="true"] {
+        background: woven.token(bg-selected);
+        box-shadow: inset woven.token(border-width-2) 0 0 woven.token(brand);
+    }
+
+    &[aria-disabled="true"] {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+}
+
+.wu-autocomplete-option[aria-selected="true"]:dir(rtl) {
+    box-shadow: inset calc(-1 * #{woven.token(border-width-2)}) 0 0 woven.token(brand);
+}
+
+// Opt-in motion: the popup fades and slides in
+@media (prefers-reduced-motion: no-preference) {
+    .wu-autocomplete.animated > :is(.wu-autocomplete-list, .wu-autocomplete-empty),
+    .wu-animated .wu-autocomplete > :is(.wu-autocomplete-list, .wu-autocomplete-empty) {
+        transition:
+            opacity woven.token(duration-150) woven.token(ease-out),
+            translate woven.token(duration-150) woven.token(ease-out);
+
+        @starting-style {
+            opacity: 0;
+            translate: 0 calc(-1 * #{woven.token(space-1)});
+        }
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-autocomplete-option[aria-selected="true"] {
+        background: Highlight;
+        color: HighlightText;
+        forced-color-adjust: none;
+    }
+}
+
+.wu-autocomplete-option > svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}

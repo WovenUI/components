@@ -1,0 +1,168 @@
+////
+//// @component wu-modal
+//// Dialog built on the native `dialog` element, with header, body and footer.
+////
+//// Esc closes it, and `closedby="any"` adds click outside where supported. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
+////
+//// The body scrolls on its own when the content is taller than the dialog.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <button class="wu-btn" type="button" commandfor="m1" command="show-modal">Open</button>
+////   <dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="any">
+////     <header class="wu-modal-header">
+////       <h2 class="wu-modal-title" id="m1-title">Title</h2>
+////       <button class="wu-modal-close" type="button" commandfor="m1" command="close" aria-label="Close"></button>
+////     </header>
+////     <div class="wu-modal-body">Content</div>
+////     <form class="wu-modal-footer" method="dialog">
+////       <button class="wu-btn">Cancel</button>
+////       <button class="wu-btn brand" value="confirm">Save</button>
+////     </form>
+////   </dialog>
+//// @modifier sm | lg - Narrow (24rem) or wide (48rem) dialog; the default is 32rem @since 1.0.0
+//// @modifier animated - Fades and scales the dialog in and out and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-modal-header - Top row for the title and close button @since 1.0.0
+//// @part wu-modal-title - Dialog heading @since 1.0.0
+//// @part wu-modal-close - Close button drawn with the shared close icon; give it an `aria-label` @since 1.0.0
+//// @part wu-modal-body - Scrolling content area @since 1.0.0
+//// @part wu-modal-footer - Bottom row for actions, aligned to the inline end @since 1.0.0
+//// @variable --wu-modal--Width [32rem] - Dialog width @since 1.0.0
+//// @variable --wu-modal--MaxHeight [calc(100dvh - 4rem)] - Largest dialog height before the body scrolls @since 1.0.0
+//// @variable --wu-modal--Backdrop [50% black, 70% in dark themes] - Backdrop color @since 1.0.0
+//// @state open - Displays the dialog as a flex column @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+@use "../close";
+
+.wu-modal {
+    inset: 0;
+    inline-size: var(--wu-modal--Width, 32rem);
+    max-inline-size: calc(100% - #{woven.token(space-8)});
+    block-size: fit-content;
+    max-block-size: var(--wu-modal--MaxHeight, calc(100dvh - #{woven.token(space-16)}));
+    margin: auto;
+    padding: 0;
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-lg);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    box-shadow: woven.token(shadow-xl);
+    z-index: woven.token(z-modal);
+
+    &[open] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &::backdrop {
+        background: var(--wu-modal--Backdrop, color-mix(in srgb, #{woven.token(black)} 50%, transparent));
+
+        // Stronger in dark themes, so the dialog stands apart
+        @include woven.dark-mode {
+            background: var(--wu-modal--Backdrop, color-mix(in srgb, #{woven.token(black)} 70%, transparent));
+        }
+    }
+}
+
+// Page scroll lock while one is open with showModal(); show() opens it non-modal and leaves the page alone.
+// The gutter keeps the page from shifting when its scrollbar goes away.
+:root:has(.wu-modal:modal) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+}
+
+.wu-modal.sm {
+    inline-size: var(--wu-modal--Width, 24rem);
+}
+
+.wu-modal.lg {
+    inline-size: var(--wu-modal--Width, 48rem);
+}
+
+.wu-modal-header,
+.wu-modal-footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: woven.token(space-2);
+    margin: 0;
+    padding-block: woven.token(space-4);
+    padding-inline: woven.token(space-5);
+}
+
+.wu-modal-header {
+    justify-content: space-between;
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-modal-title {
+    margin: 0;
+    font-size: woven.token(font-size-lg);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Scrolls on its own when the content is taller than the dialog
+.wu-modal-body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    padding: woven.token(space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.wu-modal-footer {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-modal-close {
+    @include close.button;
+
+    margin-inline-end: calc(-1 * #{woven.token(space-2)});
+}
+
+// Opt-in motion: the dialog fades and scales in and out, the backdrop fades
+@media (prefers-reduced-motion: no-preference) {
+    .wu-modal.animated,
+    .wu-animated .wu-modal {
+        opacity: 0;
+        scale: 0.96;
+        transition:
+            opacity woven.token(duration-200) woven.token(ease-out),
+            scale woven.token(duration-200) woven.token(ease-out),
+            display woven.token(duration-200) allow-discrete,
+            overlay woven.token(duration-200) allow-discrete;
+
+        &::backdrop {
+            opacity: 0;
+            transition:
+                opacity woven.token(duration-200) woven.token(ease-out),
+                display woven.token(duration-200) allow-discrete,
+                overlay woven.token(duration-200) allow-discrete;
+        }
+
+        &[open] {
+            opacity: 1;
+            scale: 1;
+
+            @starting-style {
+                opacity: 0;
+                scale: 0.96;
+            }
+        }
+
+        &[open]::backdrop {
+            opacity: 1;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
+    }
+}

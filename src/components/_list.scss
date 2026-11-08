@@ -1,0 +1,76 @@
+////
+//// @component wu-list
+//// Vertical list of rows with a title, text and room for leading or trailing content.
+////
+//// Use a `ul` or `ol`; add `role="list"` to keep list semantics without markers. `wu-list-body` grows between leading and trailing content such as an avatar, badge or button.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <ul class="wu-list divided" role="list">
+////     <li class="wu-list-item">
+////       <div class="wu-list-body">
+////         <p class="wu-list-title">Ada Lovelace</p>
+////         <p class="wu-list-text">Engineer</p>
+////       </div>
+////       <span class="wu-badge success">Active</span>
+////     </li>
+////     <li class="wu-list-item">
+////       <div class="wu-list-body">
+////         <p class="wu-list-title">Grace Hopper</p>
+////       </div>
+////     </li>
+////   </ul>
+//// @modifier divided - Line between rows @since 1.0.0
+//// @modifier sm - Tighter row padding @since 1.0.0
+//// @part wu-list-item - Row, a flex container @since 1.0.0
+//// @part wu-list-body - Column that grows between leading and trailing content @since 1.0.0
+//// @part wu-list-title - Row title, medium weight @since 1.0.0
+//// @part wu-list-text - Muted supporting text @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-list {
+    margin: 0;
+    padding: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+    list-style: none;
+}
+
+.wu-list-item {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-3);
+    padding-block: woven.token(space-3);
+}
+
+// Grows between leading and trailing content (avatar, badge, button)
+.wu-list-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.wu-list-title {
+    margin: 0;
+    font-weight: woven.token(font-weight-medium);
+}
+
+.wu-list-text {
+    margin: 0;
+    color: woven.token(text-muted);
+    text-wrap: pretty;
+}
+
+.wu-list.divided > .wu-list-item + .wu-list-item {
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-list.sm > .wu-list-item {
+    padding-block: woven.token(space-2);
+}

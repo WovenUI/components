@@ -1,0 +1,124 @@
+// Component registry and loader shared by the bundle and the per-component entries
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+// One line per component: name and the components it needs
+$registry: (
+    "button": (),
+    "btn-group": ("button"),
+    "badge": (),
+    "tag": (),
+    "dot": (),
+    "divider": (),
+    "spinner": (),
+    "avatar": (),
+    "avatar-group": ("avatar"),
+    "card": (),
+    "panel": (),
+    "alert": (),
+    "empty-state": (),
+    "stat": (),
+    "desc-list": (),
+    "info-row": (),
+    "list": (),
+    "timeline": (),
+    "title": (),
+    "text": (),
+    "code-block": (),
+    "breadcrumb": (),
+    "pagination": ("button"),
+    "page-header": (),
+    "toolbar": (),
+    "topbar": (),
+    "sidebar": (),
+    "table": (),
+    "progress": (),
+    "progress-circle": (),
+    "skeleton": (),
+    "field": (),
+    "field-group": (),
+    "field-message": (),
+    "form-actions": (),
+    "input": (),
+    "input-group": (),
+    "textarea": (),
+    "select": (),
+    "checkbox": (),
+    "radio": (),
+    "toggle": (),
+    "segmented": (),
+    "accordion": (),
+    "modal": (),
+    "confirm-modal": (
+        "modal",
+        "button",
+    ),
+    "drawer": (),
+    "dropdown": (),
+    "popover": (),
+    "tabs": (),
+    "toast": (),
+    "autocomplete": ("input"),
+    "data-table": ("table"),
+);
+
+// Names enabled after merging $overrides (name: false) over the registry, all on by default
+@function enabled($overrides, $registry: $registry) {
+    @each $name, $on in $overrides {
+        @if not map.has-key($registry, $name) {
+            @error "$components: unknown component \"#{$name}\". Known: #{map.keys($registry)}";
+        }
+        @if meta.type-of($on) != "bool" {
+            @error "$components: \"#{$name}\" takes true or false, got #{meta.inspect($on)}";
+        }
+    }
+
+    $names: ();
+    @each $name, $needs in $registry {
+        @if map.get($overrides, $name) != false {
+            $names: list.append($names, $name, comma);
+        }
+    }
+
+    @each $name in $names {
+        @each $need in map.get($registry, $name) {
+            @if not list.index($names, $need) {
+                @error "$components: \"#{$name}\" needs \"#{$need}\", but \"#{$need}\" is switched off";
+            }
+        }
+    }
+    @return $names;
+}
+
+// A component plus everything it needs, needs first
+@function with-needs($name, $registry: $registry, $names: ()) {
+    @if not map.has-key($registry, $name) {
+        @error "Unknown component \"#{$name}\". Known: #{map.keys($registry)}";
+    }
+    @each $need in map.get($registry, $name) {
+        @if not list.index($names, $need) {
+            $names: with-needs($need, $registry, $names);
+        }
+    }
+    @if not list.index($names, $name) {
+        $names: list.append($names, $name, comma);
+    }
+    @return $names;
+}
+
+// Layer order, shared values and helpers, then the components in registry order
+@mixin emit($names) {
+    @layer reset, base, components, recipes;
+
+    @layer components {
+        @include meta.load-css("shared");
+        @include meta.load-css("helpers");
+
+        @each $name in map.keys($registry) {
+            @if list.index($names, $name) {
+                @include meta.load-css("components/#{$name}");
+            }
+        }
+    }
+}

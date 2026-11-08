@@ -1,0 +1,143 @@
+////
+//// @component wu-tag
+//// Label for a category or a filter, in seven hues, as plain text, a link or a button.
+////
+//// A link or button tag gets a pointer, a hover color and the focus ring. `aria-pressed` on a button tag makes a checkable filter chip; toggling the attribute is up to your script.
+////
+//// A direct child `svg` is sized to `1em`. The remove button needs an `aria-label` that names the tag.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <span class="wu-tag">Design</span>
+////   <span class="wu-tag blue">Frontend</span>
+//// @example html
+////   <div role="group" aria-label="Filter by topic">
+////     <button class="wu-tag" type="button" aria-pressed="true">Design</button>
+////     <button class="wu-tag" type="button" aria-pressed="false">Research</button>
+////   </div>
+//// @example html
+////   <span class="wu-tag purple">Research <button class="wu-tag-remove" type="button" aria-label="Remove Research"></button></span>
+//// @modifier gray | red | blue | green | yellow | purple | pink - Hue color: subtle background, hue border and hue text @since 1.0.0
+//// @part wu-tag-remove - Remove button inside the tag, its cross drawn in CSS @since 1.0.0
+//// @state aria-pressed="true" - On a button tag: brand tint, ring and a check mark @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$hues: "gray", "red", "blue", "green", "yellow", "purple", "pink";
+
+.wu-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-1);
+    min-height: woven.token(space-6);
+    padding-inline: woven.token(space-2);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-sm);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    font: inherit;
+    font-size: woven.token(font-size-xs);
+    font-weight: woven.token(font-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+// App svg beside the label
+.wu-tag > svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}
+
+// Link and button tags are interactive
+.wu-tag:is(a[href], button) {
+    cursor: pointer;
+    transition-property: background-color, border-color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &:hover {
+        border-color: woven.token(border-strong);
+        background: woven.token(bg-hover);
+    }
+}
+
+// Checkable chip: aria-pressed on a button tag. A check mark and a ring carry the state, not color alone
+.wu-tag:is(button)[aria-pressed="true"] {
+    border-color: woven.token(brand-border);
+    background: woven.token(brand-subtle);
+    color: woven.token(text-brand);
+    box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(brand-border);
+
+    &::before {
+        content: "";
+        flex-shrink: 0;
+        width: 0.5em;
+        height: 0.9em;
+        margin-block-start: -0.2em;
+        border-bottom: 0.15em solid currentcolor;
+        border-right: 0.15em solid currentcolor;
+        rotate: 45deg;
+    }
+
+    &:hover {
+        border-color: woven.token(brand);
+        background: woven.token(brand-subtle);
+    }
+}
+
+@each $hue in $hues {
+    .wu-tag.#{$hue} {
+        border-color: woven.token(#{$hue}-border);
+        background: woven.token(#{$hue}-subtle);
+        color: woven.token(text-#{$hue});
+    }
+}
+
+// Remove button, the cross drawn with two rotated bars
+.wu-tag-remove {
+    display: inline-grid;
+    place-items: center;
+    width: woven.token(space-5);
+    height: woven.token(space-5);
+    min-height: 0;
+    margin-inline-end: calc(-1 * #{woven.token(space-1)});
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-xs);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+        content: "";
+        grid-area: 1 / 1;
+        width: woven.token(space-2);
+        height: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: currentcolor;
+        rotate: 45deg;
+    }
+
+    &::after {
+        rotate: -45deg;
+    }
+
+    &:hover {
+        background: color-mix(in srgb, currentcolor 15%, transparent);
+    }
+}
+
+.wu-tag:is(a[href], button):focus-visible,
+.wu-tag-remove:focus-visible {
+    outline: woven.token(border-focus-width) solid woven.token(border-focus);
+    outline-offset: woven.token(border-focus-offset);
+}

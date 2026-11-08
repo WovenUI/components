@@ -1,0 +1,4 @@
+// @wovenui/components/sidebar: the sidebar and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("sidebar"));

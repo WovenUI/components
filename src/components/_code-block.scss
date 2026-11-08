@@ -1,0 +1,78 @@
+////
+//// @component wu-code-block
+//// Scrollable block for code, with edge shadows when the content overflows.
+////
+//// Use `pre` with `code` inside, and add `tabindex="0"` and an `aria-label` so keyboard users can scroll it.
+////
+//// For line numbers, wrap each line in a `wu-code-block-line` span. The numbers are not copied or read aloud.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <pre class="wu-code-block" tabindex="0" aria-label="Install command"><code>pnpm add @wovenui/components</code></pre>
+//// @example html
+////   <pre class="wu-code-block" tabindex="0" aria-label="Example"><code><span class="wu-code-block-line">const a = 1;</span>
+////   <span class="wu-code-block-line">const b = 2;</span></code></pre>
+//// @part wu-code-block-line - Inline span for one line, with an optional line number @since 1.0.0
+//// @variable --wu-code-block--Background [var(--wu-bg-alternate)] - Background of the block and of its scroll shadow covers @since 1.0.0
+//// @variable --wu-code-block--FontFamily [ui-monospace] - Font family; the default is a system monospace stack @since 1.0.0
+//// @state :focus-visible - Focus ring, for the scrollable block @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$bg: var(--wu-code-block--Background, #{woven.token(bg-alternate)});
+$shadow: color-mix(in srgb, #{woven.token(text-regular)} 15%, transparent);
+
+.wu-code-block {
+    margin: 0;
+    padding: woven.token(space-4);
+    overflow: auto;
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background:
+        linear-gradient(to right, #{$bg} 50%, transparent) left / #{woven.token(space-8)} 100% no-repeat local,
+        linear-gradient(to left, #{$bg} 50%, transparent) right / #{woven.token(space-8)} 100% no-repeat local,
+        linear-gradient(to right, #{$shadow}, transparent) left / #{woven.token(space-3)} 100% no-repeat scroll,
+        linear-gradient(to left, #{$shadow}, transparent) right / #{woven.token(space-3)} 100% no-repeat scroll,
+        #{$bg};
+    color: woven.token(text-regular);
+    font-family: var(--wu-code-block--FontFamily, ui-monospace, "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", monospace);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-relaxed);
+    white-space: pre;
+    tab-size: 4;
+    counter-reset: wu-code-line;
+
+    // Undo core's inline code look
+    > code {
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        white-space: inherit;
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+// Optional line numbers: wrap each line in an inline span. Numbers are not copied or read aloud.
+.wu-code-block-line {
+    counter-increment: wu-code-line;
+}
+
+.wu-code-block-line::before {
+    content: counter(wu-code-line);
+    content: counter(wu-code-line) / "";
+    display: inline-block;
+    min-width: 3ch;
+    margin-inline-end: woven.token(space-4);
+    color: woven.token(text-muted);
+    text-align: end;
+    user-select: none;
+}

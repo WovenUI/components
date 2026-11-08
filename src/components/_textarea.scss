@@ -1,0 +1,57 @@
+////
+//// @component wu-textarea
+//// Multi-line field with a bounded height that grows with the content, where the browser supports it.
+////
+//// Core base already styles a `textarea` like an input (border, focus ring, invalid border, disabled). The kit adds the radius, the type size and a height between three and twelve lines.
+////
+//// Growth uses `field-sizing: content`, and `rows` is ignored there.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-field">
+////     <label class="wu-field-label" for="textarea-notes">Notes</label>
+////     <textarea class="wu-textarea" id="textarea-notes">Type more lines to see the field grow.</textarea>
+////   </div>
+//// @example html
+////   <textarea class="wu-textarea" aria-label="Short note" style="--wu-textarea--MinHeight: 2.5rem; --wu-textarea--MaxHeight: 6rem">One line to start.</textarea>
+//// @variable --wu-textarea--MinHeight [3 lines plus padding and border] - Minimum height @since 1.0.0
+//// @variable --wu-textarea--MaxHeight [12 lines plus padding and border] - Maximum height @since 1.0.0
+//// @state :disabled - Not-allowed cursor and no resize @since 1.0.0
+//// @state readonly - Alternate background @since 1.0.0
+//// @state aria-invalid="true" | :user-invalid - Danger border doubled to 2px, so the change is not color alone @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-textarea {
+    display: block;
+    min-height: var(--wu-textarea--MinHeight, calc(3lh + 2 * #{woven.token(space-2)} + 2 * #{woven.token(border-width-1)}));
+    max-height: var(--wu-textarea--MaxHeight, calc(12lh + 2 * #{woven.token(space-2)} + 2 * #{woven.token(border-width-1)}));
+    border-radius: woven.token(radius-md);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-normal);
+    resize: vertical;
+
+    &:disabled {
+        cursor: not-allowed;
+        resize: none;
+    }
+
+    &[readonly] {
+        background-color: woven.token(bg-alternate);
+    }
+
+    // Invalid: core's danger border doubled to 2px, so the change is not color alone
+    &:is([aria-invalid="true"], :user-invalid) {
+        box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+}
+
+// Grows with typing between the min and max height; rows is ignored here
+@supports (field-sizing: content) {
+    .wu-textarea {
+        field-sizing: content;
+    }
+}

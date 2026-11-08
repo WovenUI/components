@@ -1,0 +1,221 @@
+////
+//// @component wu-toast
+//// Short notification in a corner of the viewport, shown in a polite live region.
+////
+//// The region sits at the bottom end corner by default and scrolls when the toasts are taller than the viewport. The title text carries the meaning, not the color.
+////
+//// `toast("Saved")` from the kit script adds a toast, and the region when the page has none. It closes the toast after a delay, pauses on hover and focus, keeps at most three open and skips a repeat of an open message.
+////
+//// Create the region at page load; a region added together with its first toast may not be announced.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js required toast, dismiss
+//// @example html
+////   <section class="wu-toast-region animated" aria-live="polite" aria-label="Notifications">
+////     <div class="wu-toast success">
+////       <p class="wu-toast-title">Saved</p>
+////       <p>Your changes are live.</p>
+////       <button class="wu-toast-close" type="button" aria-label="Close"></button>
+////     </div>
+////   </section>
+//// @example html
+////   <section class="wu-toast-region top-end" aria-live="polite" aria-label="Notifications"></section>
+//// @modifier brand | success | danger | warning | info - On a toast: role color on the start edge and the title @since 1.0.0
+//// @modifier top-start | top-end | bottom-start - On the region: moves it to another corner; the default is the bottom end corner @since 1.0.0
+//// @modifier animated - On the region: toasts slide in, fade out and stack behind the newest, fanning out on hover or focus; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-toast-region - Fixed live region that holds the toasts; hidden when empty @since 1.0.0
+//// @part wu-toast-title - Toast title in semibold weight @since 1.0.0
+//// @part wu-toast-close - Close button with `aria-label`, its cross drawn in CSS @since 1.0.0
+//// @variable --wu-toast--Width [22rem] - Width of the toasts in the region @since 1.0.0
+//// @state hidden - On a toast: removed from layout, after a fade out with `animated` @since 1.0.0
+//// @state :empty - A region with no toasts is hidden @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+@use "../close";
+
+$-gap: woven.token(space-2);
+$-edge: woven.token(space-4);
+$-depth: "(sibling-count() - sibling-index())";
+
+// The padding keeps the toast shadows inside the scrolling region; the toasts sit $-edge from the viewport edge
+.wu-toast-region {
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: woven.token(z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: $-gap;
+    inline-size: min(calc(var(--wu-toast--Width, 22rem) + 2 * #{$-edge}), 100%);
+    max-block-size: 100dvh;
+    padding: $-edge;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    pointer-events: none;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.wu-toast-region.top-start,
+.wu-toast-region.top-end {
+    inset-block: 0 auto;
+    flex-direction: column-reverse;
+}
+
+.wu-toast-region.top-start,
+.wu-toast-region.bottom-start {
+    inset-inline: 0 auto;
+}
+
+.wu-toast {
+    flex: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: woven.token(space-2);
+    align-items: start;
+    padding-block: woven.token(space-3);
+    padding-inline: woven.token(space-4) woven.token(space-2);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-raised);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+    box-shadow: woven.token(shadow-lg);
+    pointer-events: auto;
+
+    &[hidden] {
+        display: none;
+    }
+
+    > :not(.wu-toast-close) {
+        grid-column: 1;
+        margin: 0;
+        min-inline-size: 0;
+        overflow-wrap: anywhere;
+    }
+
+    > :not(.wu-toast-close) + :not(.wu-toast-close) {
+        margin-block-start: woven.token(space-1);
+    }
+}
+
+.wu-toast-title {
+    font-weight: woven.token(font-weight-semibold);
+}
+
+@each $role in "brand", "success", "danger", "warning", "info" {
+    .wu-toast.#{$role} {
+        border-inline-start: woven.token(border-width-4) solid woven.token($role);
+
+        > .wu-toast-title {
+            color: woven.token(text-#{$role});
+        }
+    }
+}
+
+.wu-toast-close {
+    @include close.button;
+
+    grid-area: 1 / 2 / span 9;
+    margin-block: calc(-1 * #{woven.token(space-1)});
+}
+
+// Stack: older toasts stack behind the newest and fan out while the region
+// is hovered or focused. Layout only; the motion below is separate, so reduced motion keeps the same stack.
+@supports (z-index: sibling-index()) {
+    .wu-toast-region.animated,
+    .wu-animated .wu-toast-region {
+        display: grid;
+        max-block-size: none;
+        overflow: visible;
+    }
+
+    .wu-toast-region.animated > .wu-toast,
+    .wu-animated .wu-toast-region > .wu-toast {
+        grid-area: 1 / 1;
+        align-self: end;
+        transform-origin: 50% 100%;
+        opacity: clamp(0, 3 - #{$-depth}, 1);
+        translate: 0 calc(#{$-depth} * -1 * #{woven.token(space-3)});
+        scale: calc(1 - #{$-depth} * 0.05);
+    }
+
+    // Fully hidden behind the stack: not focusable until the stack fans out
+    .wu-toast-region.animated:not(:hover, :focus-within) > .wu-toast:nth-last-child(n + 4),
+    .wu-animated .wu-toast-region:not(:hover, :focus-within) > .wu-toast:nth-last-child(n + 4) {
+        visibility: hidden;
+    }
+
+    .wu-toast-region.top-start.animated > .wu-toast,
+    .wu-toast-region.top-end.animated > .wu-toast,
+    .wu-animated .wu-toast-region.top-start > .wu-toast,
+    .wu-animated .wu-toast-region.top-end > .wu-toast {
+        align-self: start;
+        transform-origin: 50% 0;
+        translate: 0 calc(#{$-depth} * #{woven.token(space-3)});
+    }
+
+    .wu-toast-region.animated:is(:hover, :focus-within) > .wu-toast,
+    .wu-animated .wu-toast-region:is(:hover, :focus-within) > .wu-toast {
+        opacity: 1;
+        translate: 0 calc(#{$-depth} * (-100% - #{$-gap}));
+        scale: 1;
+    }
+
+    .wu-toast-region.top-start.animated:is(:hover, :focus-within) > .wu-toast,
+    .wu-toast-region.top-end.animated:is(:hover, :focus-within) > .wu-toast,
+    .wu-animated .wu-toast-region.top-start:is(:hover, :focus-within) > .wu-toast,
+    .wu-animated .wu-toast-region.top-end:is(:hover, :focus-within) > .wu-toast {
+        translate: 0 calc(#{$-depth} * (100% + #{$-gap}));
+    }
+}
+
+// Opt-in motion: toasts slide in, fade out, and glide between stack positions
+@media (prefers-reduced-motion: no-preference) {
+    .wu-toast-region.animated > .wu-toast,
+    .wu-animated .wu-toast-region > .wu-toast {
+        transition:
+            opacity woven.token(duration-300) woven.token(ease-out),
+            translate woven.token(duration-500) var(--wu-kit-ease-spring),
+            scale woven.token(duration-500) var(--wu-kit-ease-spring),
+            visibility woven.token(duration-300) allow-discrete,
+            display woven.token(duration-300) allow-discrete;
+    }
+
+    // Entry: after the stack rules, so the slide wins on the first frame
+    .wu-toast-region.animated > .wu-toast,
+    .wu-animated .wu-toast-region > .wu-toast {
+        @starting-style {
+            opacity: 0;
+            translate: 0 100%;
+        }
+    }
+
+    .wu-toast-region.top-start.animated > .wu-toast,
+    .wu-toast-region.top-end.animated > .wu-toast,
+    .wu-animated .wu-toast-region.top-start > .wu-toast,
+    .wu-animated .wu-toast-region.top-end > .wu-toast {
+        @starting-style {
+            opacity: 0;
+            translate: 0 -100%;
+        }
+    }
+
+    // Closing: fade out before removal
+    .wu-toast-region.animated > .wu-toast[hidden],
+    .wu-animated .wu-toast-region > .wu-toast[hidden] {
+        opacity: 0;
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-toast {
+        border-inline-start-width: woven.token(border-width-4);
+    }
+}

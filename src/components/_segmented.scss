@@ -1,0 +1,183 @@
+////
+//// @component wu-segmented
+//// Radio group shown as connected segments, one selected at a time.
+////
+//// Arrow keys move the choice natively, and segments share the width equally. A `div` with `role="radiogroup"` and an `aria-label` works instead of a `fieldset`.
+////
+//// Type follows the button: `xs`, `sm` and `md` for `sm`, default and `lg`. The animated thumb supports up to six label segments.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <fieldset class="wu-segmented">
+////     <legend class="sr-only">View</legend>
+////     <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="day" checked> Day</label>
+////     <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="week"> Week</label>
+////     <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="month"> Month</label>
+////   </fieldset>
+//// @modifier sm | lg - Smaller or larger control height and font size @since 1.0.0
+//// @modifier animated - One thumb slides to the checked segment with a spring when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-segmented-item - One segment: the label that wraps a radio input @since 1.0.0
+//// @part wu-segmented-input - The radio input, visually hidden but focusable and announced @since 1.0.0
+//// @state :checked - The selected segment has a raised surface, an edge and a shadow @since 1.0.0
+//// @state disabled - Half opacity on that segment @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$-inset: woven.token(space-1);
+$-max-animated: 6;
+
+.wu-segmented {
+    position: relative;
+    display: inline-grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+    block-size: woven.token(control-height-md);
+    margin: 0;
+    padding: $-inset;
+    border: 0;
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-alternate);
+    font-size: woven.token(font-size-sm);
+    vertical-align: middle;
+}
+
+.wu-segmented-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: woven.token(control-padding-inline-sm);
+    border-radius: woven.token(radius-sm);
+    color: woven.token(text-muted);
+    font-weight: woven.token(font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition-property: background-color, box-shadow, color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &:hover:not(:has(:checked, :disabled)) {
+        color: woven.token(text-regular);
+    }
+
+    &:has(:focus-visible) {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    // Selected: raised surface with an edge and a shadow, so color is not the only signal
+    &:has(:checked) {
+        background: woven.token(bg-surface);
+        box-shadow:
+            inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
+            woven.token(shadow-sm);
+        color: woven.token(text-regular);
+    }
+
+    &:has(:disabled) {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+}
+
+// Visually hidden, still focusable and announced
+.wu-segmented-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    clip-path: inset(50%);
+    pointer-events: none;
+}
+
+.wu-segmented.sm {
+    block-size: woven.token(control-height-sm);
+    font-size: woven.token(font-size-xs);
+
+    > .wu-segmented-item {
+        padding-inline: woven.token(space-2);
+    }
+}
+
+.wu-segmented.lg {
+    block-size: woven.token(control-height-lg);
+    font-size: woven.token(font-size-md);
+
+    > .wu-segmented-item {
+        padding-inline: woven.token(control-padding-inline-md);
+    }
+}
+
+// Opt-in motion: one thumb slides to the checked segment with a spring (up to six label segments)
+@media (prefers-reduced-motion: no-preference) {
+    .wu-segmented.animated:not(:has(> .wu-segmented-item:nth-of-type(#{$-max-animated + 1}))),
+    .wu-animated .wu-segmented:not(:has(> .wu-segmented-item:nth-of-type(#{$-max-animated + 1}))) {
+        &:has(:checked)::before {
+            content: "";
+            position: absolute;
+            inset-block: $-inset;
+            inset-inline-start: $-inset;
+            border-radius: woven.token(radius-sm);
+            background: woven.token(bg-surface);
+            box-shadow:
+                inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
+                woven.token(shadow-sm);
+            transition: translate woven.token(duration-500) var(--wu-kit-ease-spring);
+        }
+
+        @for $n from 1 through $-max-animated {
+            &:has(> .wu-segmented-item:nth-of-type(#{$n}):last-of-type)::before {
+                width: calc((100% - 2 * #{$-inset}) / #{$n});
+            }
+        }
+
+        @for $i from 2 through $-max-animated {
+            &:has(> .wu-segmented-item:nth-of-type(#{$i}) :checked)::before {
+                translate: ($i - 1) * 100% 0;
+            }
+
+            &:dir(rtl):has(> .wu-segmented-item:nth-of-type(#{$i}) :checked)::before {
+                translate: ($i - 1) * -100% 0;
+            }
+        }
+
+        > .wu-segmented-item:has(:checked) {
+            background: transparent;
+            box-shadow: none;
+        }
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-segmented {
+        border: woven.token(border-width-1) solid ButtonBorder;
+    }
+
+    .wu-segmented-item:has(:checked),
+    .wu-segmented::before {
+        background: Highlight;
+        color: HighlightText;
+        forced-color-adjust: none;
+    }
+}
+
+// Size from a wu-field-group sm or lg
+@each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
+    :where(.wu-field-group.#{$size}) .wu-segmented:not(.sm, .lg) {
+        block-size: woven.token(control-height-#{$size});
+        font-size: woven.token(#{$font});
+    }
+}
+
+.wu-segmented-item > svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}

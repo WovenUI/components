@@ -1,0 +1,146 @@
+////
+//// @component wu-empty-state
+//// Centered message for a view with no content or a finished result, with an icon, title, text and actions.
+////
+//// The icon slot holds the app's own icon; left empty, it draws a calm empty-box shape. Result roles tint the slot, and an empty slot draws the alert's marker shape.
+////
+//// The title text carries the meaning ("Payment received"); the shape repeats it.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-empty-state">
+////     <span class="wu-empty-state-icon" aria-hidden="true"></span>
+////     <h3 class="wu-empty-state-title">No projects yet</h3>
+////     <p class="wu-empty-state-text">Create a project to get started.</p>
+////     <div class="wu-empty-state-actions">
+////       <button class="wu-btn brand" type="button">New project</button>
+////     </div>
+////   </div>
+//// @example html
+////   <div class="wu-empty-state success sm dashed">
+////     <span class="wu-empty-state-icon" aria-hidden="true"></span>
+////     <h3 class="wu-empty-state-title">Payment received</h3>
+////   </div>
+//// @modifier dashed - Dashed border and radius around the whole state @since 1.0.0
+//// @modifier sm - Compact size for use inside a card, panel or table @since 1.0.0
+//// @modifier success | warning | danger | info - Result: tints the icon slot; an empty slot draws the marker shape @since 1.0.0
+//// @part wu-empty-state-icon - Round icon slot; empty, it draws a shape @since 1.0.0
+//// @part wu-empty-state-title - Heading @since 1.0.0
+//// @part wu-empty-state-text - Supporting text, limited to a readable width @since 1.0.0
+//// @part wu-empty-state-actions - Centered row for buttons @since 1.0.0
+//// @state :empty - An empty icon slot draws the empty-box or marker shape @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: woven.token(space-2);
+    padding-block: woven.token(space-12);
+    padding-inline: woven.token(space-6);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    text-align: center;
+}
+
+.wu-empty-state-icon {
+    display: inline-grid;
+    place-items: center;
+    width: woven.token(space-12);
+    height: woven.token(space-12);
+    margin-block-end: woven.token(space-2);
+    border-radius: woven.token(radius-full);
+    background: woven.token(bg-alternate);
+    color: woven.token(text-subtle);
+
+    > * {
+        max-width: woven.token(space-6);
+        max-height: woven.token(space-6);
+    }
+
+    &:empty::before {
+        content: "";
+        width: woven.token(space-5);
+        height: woven.token(space-4);
+        border: woven.token(border-width-2) dashed currentcolor;
+        border-radius: woven.token(radius-xs);
+    }
+}
+
+.wu-empty-state-title {
+    margin: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-lg);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+.wu-empty-state-text {
+    max-inline-size: 40ch;
+    margin: 0;
+}
+
+.wu-empty-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: woven.token(space-2);
+    margin-block-start: woven.token(space-3);
+}
+
+.wu-empty-state.dashed {
+    border: woven.token(border-width-1) dashed woven.token(border-strong);
+    border-radius: woven.token(radius-lg);
+}
+
+// Compact, for use inside a card, panel or table
+.wu-empty-state.sm {
+    padding-block: woven.token(space-6);
+    padding-inline: woven.token(space-4);
+
+    .wu-empty-state-title {
+        font-size: woven.token(font-size-md);
+    }
+
+    .wu-empty-state-icon {
+        width: woven.token(space-10);
+        height: woven.token(space-10);
+        margin-block-end: 0;
+    }
+}
+
+// Result variants with the shared marker shapes from _shared.scss
+@each $role in "success", "warning", "danger", "info" {
+    .wu-empty-state.#{$role} .wu-empty-state-icon {
+        background: woven.token(#{$role}-subtle);
+        color: woven.token(text-#{$role});
+
+        &:empty::before {
+            width: woven.token(space-6);
+            height: woven.token(space-6);
+            border: 0;
+            border-radius: woven.token(radius-full);
+            background: currentcolor;
+        }
+    }
+}
+
+.wu-empty-state:is(.success, .warning, .danger) .wu-empty-state-icon:empty::before {
+    border-radius: 0;
+}
+
+.wu-empty-state.success .wu-empty-state-icon:empty::before {
+    clip-path: var(--wu-kit-marker-check);
+}
+
+.wu-empty-state.warning .wu-empty-state-icon:empty::before {
+    clip-path: var(--wu-kit-marker-triangle);
+}
+
+.wu-empty-state.danger .wu-empty-state-icon:empty::before {
+    clip-path: var(--wu-kit-marker-octagon);
+}

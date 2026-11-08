@@ -1,0 +1,58 @@
+////
+//// @component wu-form-actions
+//// Footer row for form buttons, start-aligned by default.
+////
+//// `wu-form-actions-end` inside the row pushes a set of buttons to the inline end.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-form-actions divided">
+////     <button class="wu-btn brand" type="submit">Save</button>
+////     <button class="wu-btn" type="reset">Reset</button>
+////   </div>
+//// @example html
+////   <div class="wu-form-actions">
+////     <button class="wu-btn danger subtle" type="button">Delete</button>
+////     <div class="wu-form-actions-end">
+////       <button class="wu-btn" type="button">Cancel</button>
+////       <button class="wu-btn brand" type="submit">Save</button>
+////     </div>
+////   </div>
+//// @modifier trailing - Aligns the buttons to the inline end @since 1.0.0
+//// @modifier centered - Centers the buttons @since 1.0.0
+//// @modifier divided - Line and padding above the row @since 1.0.0
+//// @part wu-form-actions-end - Set of buttons pushed to the inline end of the row @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-2);
+}
+
+.wu-form-actions-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: inherit;
+    margin-inline-start: auto;
+}
+
+.wu-form-actions.trailing {
+    justify-content: flex-end;
+}
+
+.wu-form-actions.centered {
+    justify-content: center;
+}
+
+// Line above the row
+.wu-form-actions.divided {
+    padding-block-start: woven.token(space-4);
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}

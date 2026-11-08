@@ -1,0 +1,4 @@
+// @wovenui/components/confirm-modal: the confirm-modal and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("confirm-modal"));

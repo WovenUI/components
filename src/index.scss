@@ -1,0 +1,7 @@
+// @wovenui/components: one bundled entry. Core mixins load once; components output only kit rules.
+@use "kit";
+
+// Switch components off: @use "@wovenui/components" with ($components: ("button": false))
+$components: () !default;
+
+@include kit.emit(kit.enabled($components));

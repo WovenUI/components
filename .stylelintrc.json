@@ -1,0 +1,47 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "rules": {
+    "at-rule-empty-line-before": [
+      "always",
+      {
+        "except": [
+          "first-nested"
+        ],
+        "ignore": [
+          "after-comment",
+          "inside-block"
+        ],
+        "ignoreAtRules": [
+          "mixin",
+          "include",
+          "use",
+          "forward",
+          "else"
+        ]
+      }
+    ],
+    "scss/dollar-variable-empty-line-before": null,
+    "no-empty-source": null,
+    "selector-class-pattern": [
+      "^[a-zA-Z0-9\\-_:@]+$",
+      {
+        "message": "Expected class selector to be kebab-case, optionally with : or @"
+      }
+    ],
+    "selector-id-pattern": [
+      "^[a-zA-Z0-9\\-_:@]+$",
+      {
+        "message": "Expected id selector to be kebab-case, optionally with : or @"
+      }
+    ],
+    "custom-property-pattern": [
+      "^(([a-z][a-z0-9]*)(-[a-z0-9]+)*|wu-[a-z0-9]+(-[a-z0-9]+)*--[A-Z][a-zA-Z0-9]*)$",
+      {
+        "message": "Expected custom property name to be kebab-case, or --wu-{block}--{Name} for component variables"
+      }
+    ],
+    "container-name-pattern": null,
+    "scss/dollar-variable-no-missing-interpolation": null,
+    "no-invalid-position-declaration": null
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "name": "@wovenui/components",
+  "version": "1.0.0",
+  "description": "WovenUI Components (UI kit): components built on @wovenui/core tokens. CSS, plus a small optional script.",
+  "author": {
+    "name": "AALA IT Solutions",
+    "url": "https://aalasolutions.com"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://wovenui.com/components/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WovenUI/components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WovenUI/components/issues"
+  },
+  "main": "dist/wovenui-kit.min.css",
+  "style": "dist/wovenui-kit.min.css",
+  "sass": "src/index.scss",
+  "keywords": [
+    "wovenui",
+    "css",
+    "html",
+    "components",
+    "ui-components",
+    "ui-kit",
+    "design-system",
+    "css-components",
+    "sass",
+    "accessible",
+    "native-html",
+    "dialog",
+    "popover",
+    "rtl",
+    "dark-mode",
+    "themes",
+    "css-only-components",
+    "css-framework",
+    "ui-library",
+    "component-library",
+    "html-css",
+    "bootstrap-alternative",
+    "modal",
+    "dropdown",
+    "tabs",
+    "toast",
+    "accordion",
+    "data-table",
+    "anchor-positioning",
+    "invoker-commands",
+    "logical-properties",
+    "wovenui-core"
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "sass": "./src/index.scss",
+      "style": "./dist/wovenui-kit.min.css",
+      "default": "./dist/wovenui-kit.min.css"
+    },
+    "./scss": "./src/index.scss",
+    "./css": "./dist/wovenui-kit.css",
+    "./min.css": "./dist/wovenui-kit.min.css",
+    "./button": {
+      "sass": "./src/entries/button.scss"
+    },
+    "./btn-group": {
+      "sass": "./src/entries/btn-group.scss"
+    },
+    "./badge": {
+      "sass": "./src/entries/badge.scss"
+    },
+    "./tag": {
+      "sass": "./src/entries/tag.scss"
+    },
+    "./dot": {
+      "sass": "./src/entries/dot.scss"
+    },
+    "./divider": {
+      "sass": "./src/entries/divider.scss"
+    },
+    "./spinner": {
+      "sass": "./src/entries/spinner.scss"
+    },
+    "./avatar": {
+      "sass": "./src/entries/avatar.scss"
+    },
+    "./avatar-group": {
+      "sass": "./src/entries/avatar-group.scss"
+    },
+    "./card": {
+      "sass": "./src/entries/card.scss"
+    },
+    "./panel": {
+      "sass": "./src/entries/panel.scss"
+    },
+    "./alert": {
+      "sass": "./src/entries/alert.scss"
+    },
+    "./empty-state": {
+      "sass": "./src/entries/empty-state.scss"
+    },
+    "./stat": {
+      "sass": "./src/entries/stat.scss"
+    },
+    "./desc-list": {
+      "sass": "./src/entries/desc-list.scss"
+    },
+    "./info-row": {
+      "sass": "./src/entries/info-row.scss"
+    },
+    "./list": {
+      "sass": "./src/entries/list.scss"
+    },
+    "./timeline": {
+      "sass": "./src/entries/timeline.scss"
+    },
+    "./title": {
+      "sass": "./src/entries/title.scss"
+    },
+    "./text": {
+      "sass": "./src/entries/text.scss"
+    },
+    "./code-block": {
+      "sass": "./src/entries/code-block.scss"
+    },
+    "./breadcrumb": {
+      "sass": "./src/entries/breadcrumb.scss"
+    },
+    "./pagination": {
+      "sass": "./src/entries/pagination.scss"
+    },
+    "./page-header": {
+      "sass": "./src/entries/page-header.scss"
+    },
+    "./toolbar": {
+      "sass": "./src/entries/toolbar.scss"
+    },
+    "./topbar": {
+      "sass": "./src/entries/topbar.scss"
+    },
+    "./sidebar": {
+      "sass": "./src/entries/sidebar.scss"
+    },
+    "./table": {
+      "sass": "./src/entries/table.scss"
+    },
+    "./progress": {
+      "sass": "./src/entries/progress.scss"
+    },
+    "./progress-circle": {
+      "sass": "./src/entries/progress-circle.scss"
+    },
+    "./skeleton": {
+      "sass": "./src/entries/skeleton.scss"
+    },
+    "./field": {
+      "sass": "./src/entries/field.scss"
+    },
+    "./field-group": {
+      "sass": "./src/entries/field-group.scss"
+    },
+    "./field-message": {
+      "sass": "./src/entries/field-message.scss"
+    },
+    "./form-actions": {
+      "sass": "./src/entries/form-actions.scss"
+    },
+    "./input": {
+      "sass": "./src/entries/input.scss"
+    },
+    "./input-group": {
+      "sass": "./src/entries/input-group.scss"
+    },
+    "./textarea": {
+      "sass": "./src/entries/textarea.scss"
+    },
+    "./select": {
+      "sass": "./src/entries/select.scss"
+    },
+    "./checkbox": {
+      "sass": "./src/entries/checkbox.scss"
+    },
+    "./radio": {
+      "sass": "./src/entries/radio.scss"
+    },
+    "./toggle": {
+      "sass": "./src/entries/toggle.scss"
+    },
+    "./segmented": {
+      "sass": "./src/entries/segmented.scss"
+    },
+    "./accordion": {
+      "sass": "./src/entries/accordion.scss"
+    },
+    "./modal": {
+      "sass": "./src/entries/modal.scss"
+    },
+    "./confirm-modal": {
+      "sass": "./src/entries/confirm-modal.scss"
+    },
+    "./drawer": {
+      "sass": "./src/entries/drawer.scss"
+    },
+    "./dropdown": {
+      "sass": "./src/entries/dropdown.scss"
+    },
+    "./popover": {
+      "sass": "./src/entries/popover.scss"
+    },
+    "./tabs": {
+      "sass": "./src/entries/tabs.scss"
+    },
+    "./toast": {
+      "sass": "./src/entries/toast.scss"
+    },
+    "./autocomplete": {
+      "sass": "./src/entries/autocomplete.scss"
+    },
+    "./data-table": {
+      "sass": "./src/entries/data-table.scss"
+    },
+    "./js": "./dist/wovenui-kit.js",
+    "./components.json": "./dist/components.json",
+    "./llms-full.txt": "./dist/llms-full.txt",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "lint": "stylelint \"src/**/*.scss\"",
+    "format": "prettier --write \"src/**/*.scss\" \"src/js/**/*.js\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.scss\" \"src/js/**/*.js\" \"scripts/**/*.mjs\"",
+    "build:scss": "node --conditions=sass scripts/build-scss.mjs src/index.scss dist/wovenui-kit.css",
+    "build:minify": "postcss dist/wovenui-kit.css -o dist/wovenui-kit.min.css --use cssnano --map",
+    "build": "pnpm run build:scss && pnpm run build:minify && pnpm run build:js && pnpm run build:docs",
+    "dev": "node --conditions=sass --watch-path=src scripts/build-scss.mjs src/index.scss dist/wovenui-kit.css",
+    "check": "node scripts/check-modifiers.mjs",
+    "test": "pnpm run build && node --conditions=sass test/compile.mjs && node --conditions=sass test/switches.mjs && node --conditions=sass test/entries.mjs && node --conditions=sass test/caret.mjs && node test/modifiers.mjs && node test/size.mjs && node test/js.mjs && node --conditions=sass test/docs.mjs",
+    "build:js": "node scripts/build-js.mjs",
+    "build:docs": "node scripts/build-docs.mjs"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "devDependencies": {
+    "@wovenui/core": "^2.2.2",
+    "cssnano": "^8.0.10",
+    "postcss": "^8.5.28",
+    "postcss-cli": "^11.0.1",
+    "prettier": "^3.9.6",
+    "sass": "^1.103.1",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard-scss": "^17.0.0"
+  },
+  "peerDependencies": {
+    "@wovenui/core": "^2.2.2",
+    "sass": ">=1.79.0 <2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

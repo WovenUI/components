@@ -1,0 +1,75 @@
+////
+//// @component wu-confirm-modal
+//// Dialog that asks the user to confirm or cancel an action, with a title, a message and two buttons.
+////
+//// Builds on `wu-modal` for open, close, backdrop and motion, and on `wu-btn` for the actions. Use `role="alertdialog"`.
+////
+//// The subject is optional and names the object. `danger` gives the message full weight; the confirming button takes `wu-btn danger`. `dialog.returnValue` holds the value of the button that closed it.
+////
+//// @since 1.0.0
+//// @needs modal, button
+//// @js none
+//// @example html
+////   <button class="wu-btn" type="button" commandfor="c1" command="show-modal">Delete</button>
+////   <dialog class="wu-modal wu-confirm-modal danger" id="c1" role="alertdialog" aria-labelledby="c1-title" aria-describedby="c1-subject c1-message">
+////     <h2 class="wu-confirm-modal-title" id="c1-title">Delete project?</h2>
+////     <p class="wu-confirm-modal-subject" id="c1-subject">Website redesign</p>
+////     <p class="wu-confirm-modal-message" id="c1-message">This cannot be undone.</p>
+////     <form class="wu-confirm-modal-actions" method="dialog">
+////       <button class="wu-btn" value="cancel" autofocus>Cancel</button>
+////       <button class="wu-btn danger" value="confirm">Delete</button>
+////     </form>
+////   </dialog>
+//// @modifier danger - Message at full contrast and body size, for destructive actions @since 1.0.0
+//// @part wu-confirm-modal-title - Heading that names the question @since 1.0.0
+//// @part wu-confirm-modal-subject - Optional line that names the object the action applies to @since 1.0.0
+//// @part wu-confirm-modal-message - Supporting text about the consequence @since 1.0.0
+//// @part wu-confirm-modal-actions - Form that holds the buttons, aligned to the end @since 1.0.0
+//// @variable --wu-confirm-modal--Width [26rem] - Width of the dialog @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-confirm-modal {
+    gap: woven.token(space-2);
+    inline-size: var(--wu-confirm-modal--Width, 26rem);
+    padding: woven.token(space-6);
+}
+
+.wu-confirm-modal-title {
+    margin: 0;
+    font-size: woven.token(font-size-lg);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Names the object the action applies to
+.wu-confirm-modal-subject {
+    margin: 0;
+    color: woven.token(text-regular);
+    font-weight: woven.token(font-weight-semibold);
+    overflow-wrap: anywhere;
+}
+
+.wu-confirm-modal-message {
+    margin: 0;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+    text-wrap: pretty;
+}
+
+.wu-confirm-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: woven.token(space-2);
+    margin: 0;
+    margin-block-start: woven.token(space-4);
+}
+
+// Destructive confirm: the stakes read at full contrast and body size
+.wu-confirm-modal.danger .wu-confirm-modal-message {
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+}

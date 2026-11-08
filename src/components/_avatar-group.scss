@@ -1,0 +1,80 @@
+////
+//// @component wu-avatar-group
+//// Overlapping stack of avatars with a ring between them.
+////
+//// Put the overflow count, such as "+3", in a last `wu-avatar` as real text.
+////
+//// @since 1.0.0
+//// @needs avatar
+//// @js none
+//// @example html
+////   <div class="wu-avatar-group" role="group" aria-label="Members">
+////     <span class="wu-avatar blue" role="img" aria-label="Ana Lopez">AL</span>
+////     <span class="wu-avatar green" role="img" aria-label="Ben Kim">BK</span>
+////     <span class="wu-avatar" role="img" aria-label="3 more members">+3</span>
+////   </div>
+//// @example html
+////   <div class="wu-avatar-group animated" role="group" aria-label="Team">
+////     <span class="wu-avatar purple" role="img" aria-label="Cy Ray">CR</span>
+////     <span class="wu-avatar pink" role="img" aria-label="Di Eze">DE</span>
+////   </div>
+//// @modifier animated - On hover or focus within, the stack fans out into a row when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$overlap: woven.token(space-3);
+$fan-step: calc(#{$overlap} + #{woven.token(space-1)});
+
+.wu-avatar-group {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+
+    > .wu-avatar {
+        box-shadow: 0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
+    }
+
+    > .wu-avatar + .wu-avatar {
+        margin-inline-start: calc(-1 * #{$overlap});
+    }
+}
+
+// Fan-out offsets: relative inset moves only the avatar, never the layout around it
+@mixin fan-out {
+    @supports (inset-inline-start: calc(sibling-index() * 1px)) {
+        > .wu-avatar {
+            inset-inline-start: calc((sibling-index() - 1) * #{$fan-step});
+        }
+    }
+
+    @supports not (inset-inline-start: calc(sibling-index() * 1px)) {
+        @for $i from 2 through 12 {
+            > .wu-avatar:nth-child(#{$i}) {
+                inset-inline-start: calc(#{$i - 1} * #{$fan-step});
+            }
+        }
+    }
+}
+
+// Opt-in motion: the stack fans out into a row as a visual effect, staggered where sibling-index() is supported
+@media (prefers-reduced-motion: no-preference) {
+    .wu-avatar-group.animated,
+    .wu-animated .wu-avatar-group {
+        > .wu-avatar {
+            inset-inline-start: 0;
+            transition: inset-inline-start woven.token(duration-500) var(--wu-kit-ease-spring);
+            transition-delay: calc((sibling-index() - 1) * 30ms);
+        }
+
+        &:focus-within {
+            @include fan-out;
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                @include fan-out;
+            }
+        }
+    }
+}

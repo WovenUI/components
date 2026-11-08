@@ -1,0 +1,41 @@
+////
+//// @component wu-title
+//// Visual heading size on any element, in four steps.
+////
+//// Pick the heading level for the document outline and the size for the look.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <h2 class="wu-title xl">Extra large title</h2>
+////   <h2 class="wu-title">Default title</h2>
+//// @example html
+////   <h3 class="wu-title lg">An h3 with the large size</h3>
+//// @modifier sm - Large size, one step below the default @since 1.0.0
+//// @modifier lg - 2xl size @since 1.0.0
+//// @modifier xl - 3xl size @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-title {
+    margin: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-xl);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+    text-wrap: balance;
+}
+
+.wu-title.sm {
+    font-size: woven.token(font-size-lg);
+}
+
+.wu-title.lg {
+    font-size: woven.token(font-size-2xl);
+}
+
+.wu-title.xl {
+    font-size: woven.token(font-size-3xl);
+}

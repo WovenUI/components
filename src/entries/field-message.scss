@@ -1,0 +1,4 @@
+// @wovenui/components/field-message: the field-message and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("field-message"));

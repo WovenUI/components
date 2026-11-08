@@ -1,0 +1,4 @@
+// @wovenui/components/list: the list and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("list"));

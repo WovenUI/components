@@ -1,0 +1,84 @@
+////
+//// @component wu-spinner
+//// Loading ring in the current text color, with an overlay for busy regions.
+////
+//// Pair it with `role="status"` and hidden text, or use `aria-hidden="true"` next to visible text. Reduced motion is handled by core reset.
+////
+//// The overlay covers its parent, dims the content and centers a spinner with optional text. The parent becomes the positioning box unless it already has a position.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <span class="wu-spinner" role="status"><span class="sr-only">Loading</span></span>
+////   <button class="wu-btn" type="button" aria-busy="true"><span class="wu-spinner sm" aria-hidden="true"></span> Saving</button>
+//// @example html
+////   <div aria-busy="true">
+////     <div inert>Orders table</div>
+////     <div class="wu-spinner-overlay"><span class="wu-spinner" aria-hidden="true"></span><span>Loading orders</span></div>
+////   </div>
+//// @modifier sm | lg - Smaller (1rem) or larger (2rem, thicker band) ring @since 1.0.0
+//// @part wu-spinner-overlay - Layer that covers a busy region and centers a spinner with text @since 1.0.0
+//// @variable --wu-spinner--Size [1.25rem] - Width and height of the ring @since 1.0.0
+//// @variable --wu-spinner-overlay--Background [85% surface] - Overlay background @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    width: var(--wu-spinner--Size, #{woven.token(space-5)});
+    height: var(--wu-spinner--Size, #{woven.token(space-5)});
+    border: woven.token(border-width-2) solid color-mix(in srgb, currentcolor 25%, transparent);
+    border-block-start-color: currentcolor;
+    border-radius: woven.token(radius-full);
+    vertical-align: middle;
+    animation: wu-spinner-rotate 0.75s linear infinite;
+}
+
+.wu-spinner.sm {
+    width: var(--wu-spinner--Size, #{woven.token(space-4)});
+    height: var(--wu-spinner--Size, #{woven.token(space-4)});
+}
+
+.wu-spinner.lg {
+    width: var(--wu-spinner--Size, #{woven.token(space-8)});
+    height: var(--wu-spinner--Size, #{woven.token(space-8)});
+    border-width: woven.token(border-width-4);
+}
+
+:where(:has(> .wu-spinner-overlay)) {
+    position: relative;
+}
+
+.wu-spinner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: woven.token(z-hover);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: woven.token(space-2);
+    padding: woven.token(space-4);
+    border-radius: inherit;
+    background: var(--wu-spinner-overlay--Background, color-mix(in srgb, #{woven.token(bg-surface)} 85%, transparent));
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    text-align: center;
+}
+
+.wu-spinner-overlay > :not(.wu-spinner) {
+    padding: woven.token(space-1) woven.token(space-3);
+    border-radius: woven.token(radius-full);
+    background: woven.token(bg-surface);
+}
+
+// No reduced-motion rule: core's reset already stops animation under reduced motion
+
+@keyframes wu-spinner-rotate {
+    to {
+        rotate: 360deg;
+    }
+}

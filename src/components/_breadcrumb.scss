@@ -1,0 +1,115 @@
+////
+//// @component wu-breadcrumb
+//// Trail of links that shows where the page sits in the site.
+////
+//// Wrap an ordered list in a `nav` with an `aria-label`, and mark the last item with `aria-current="page"`.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <nav class="wu-breadcrumb" aria-label="Breadcrumb">
+////     <ol class="wu-breadcrumb-list">
+////       <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/">Home</a></li>
+////       <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/projects/">Projects</a></li>
+////       <li class="wu-breadcrumb-item"><span aria-current="page">Website</span></li>
+////     </ol>
+////   </nav>
+//// @example html
+////   <nav class="wu-breadcrumb slash sm" aria-label="Breadcrumb">
+////     <ol class="wu-breadcrumb-list">
+////       <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/">Home</a></li>
+////       <li class="wu-breadcrumb-item"><span aria-current="page">Docs</span></li>
+////     </ol>
+////   </nav>
+//// @modifier slash - A slash separator instead of the chevron @since 1.0.0
+//// @modifier sm - Smaller font size @since 1.0.0
+//// @part wu-breadcrumb-list - The `ol` that lays the items out and wraps them @since 1.0.0
+//// @part wu-breadcrumb-item - One `li` in the trail, with a separator before it @since 1.0.0
+//// @part wu-breadcrumb-link - Underlined link to a parent page @since 1.0.0
+//// @state aria-current="page" - The current page: regular text weight and color, no underline @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-breadcrumb {
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+}
+
+.wu-breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-1) woven.token(space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wu-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    min-width: 0;
+}
+
+// Separator: a chevron drawn with two borders, mirrored in RTL
+.wu-breadcrumb-item + .wu-breadcrumb-item::before {
+    content: "";
+    flex: none;
+    width: 0.4em;
+    height: 0.4em;
+    border-block-start: woven.token(border-width-1) solid currentcolor;
+    border-inline-end: woven.token(border-width-1) solid currentcolor;
+    color: woven.token(text-subtle);
+    rotate: 45deg;
+}
+
+.wu-breadcrumb-item + .wu-breadcrumb-item:dir(rtl)::before {
+    rotate: -45deg;
+}
+
+.wu-breadcrumb.slash .wu-breadcrumb-item + .wu-breadcrumb-item::before {
+    content: "/";
+    content: "/" / "";
+    width: auto;
+    height: auto;
+    border: 0;
+    rotate: none;
+}
+
+.wu-breadcrumb.slash .wu-breadcrumb-item + .wu-breadcrumb-item:dir(rtl)::before {
+    rotate: none;
+}
+
+// Underlined at rest so links read as links; the current page is plain text
+.wu-breadcrumb-link {
+    border-radius: woven.token(radius-xs);
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: woven.token(border-strong);
+    text-decoration-thickness: woven.token(border-width-1);
+    text-underline-offset: 0.2em;
+
+    &:hover {
+        color: woven.token(text-regular);
+        text-decoration-color: currentcolor;
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+.wu-breadcrumb-item [aria-current="page"] {
+    color: woven.token(text-regular);
+    font-weight: woven.token(font-weight-medium);
+    text-decoration: none;
+}
+
+.wu-breadcrumb.sm {
+    font-size: woven.token(font-size-xs);
+}

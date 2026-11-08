@@ -1,0 +1,180 @@
+////
+//// @component wu-desc-list
+//// Description list of terms and values, plain, divided, bordered or in columns.
+////
+//// Use a `dl`; wrap each pair in a `div` for divided, bordered and column layouts.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <dl class="wu-desc-list horizontal divided">
+////     <div><dt>Name</dt><dd>Ada Lovelace</dd></div>
+////     <div><dt>Role</dt><dd>Engineer</dd></div>
+////   </dl>
+//// @example html
+////   <dl class="wu-desc-list bordered">
+////     <div><dt>Plan</dt><dd>Team</dd></div>
+////     <div><dt>Seats</dt><dd>12</dd></div>
+////   </dl>
+//// @example html
+////   <dl class="wu-desc-list columns">
+////     <div><dt>City</dt><dd>Berlin</dd></div>
+////     <div><dt>Country</dt><dd>Germany</dd></div>
+////     <div><dt>Timezone</dt><dd>CET</dd></div>
+////   </dl>
+//// @modifier horizontal - Terms in a column beside their descriptions @since 1.0.0
+//// @modifier divided - Lines between the `div` pairs @since 1.0.0
+//// @modifier bordered - Table look: lines around every cell, terms on the alternate background @since 1.0.0
+//// @modifier columns - Several pairs per row; with `bordered`, each pair is a term cell beside its description @since 1.0.0
+//// @variable --wu-desc-list--TermWidth [fit-content(40%)] - Width of the term column in `horizontal` and `bordered` @since 1.0.0
+//// @variable --wu-desc-list--Columns [3] - Most pairs per row in `columns` @since 1.0.0
+//// @variable --wu-desc-list--ColumnWidth [10rem] - Narrowest a pair gets in `columns` before a row holds fewer @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-desc-list {
+    margin: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+
+    > dt,
+    > div > dt {
+        color: woven.token(text-muted);
+        font-weight: woven.token(font-weight-medium);
+    }
+
+    > dd,
+    > div > dd {
+        margin: 0;
+        text-wrap: pretty;
+    }
+
+    > dt + dd,
+    > dd + dd,
+    > div > dt + dd,
+    > div > dd + dd {
+        margin-block-start: woven.token(space-1);
+    }
+
+    > dd + dt,
+    > div + div {
+        margin-block-start: woven.token(space-4);
+    }
+}
+
+// Terms in a column beside their descriptions; --wu-desc-list--TermWidth sets the column
+.wu-desc-list.horizontal {
+    display: grid;
+    grid-template-columns: var(--wu-desc-list--TermWidth, fit-content(40%)) minmax(0, 1fr);
+    gap: woven.token(space-3) woven.token(space-6);
+
+    > div {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        row-gap: woven.token(space-1);
+    }
+
+    > dt,
+    > div > dt {
+        grid-column: 1;
+    }
+
+    > dd,
+    > div > dd {
+        grid-column: 2;
+    }
+
+    // The grid gaps space the rows
+    > *,
+    > div > * {
+        margin-block-start: 0;
+    }
+}
+
+// Lines between <div> groups
+.wu-desc-list.divided > div + div {
+    padding-block-start: woven.token(space-3);
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+// Bordered: term and description cells with lines between them, terms on the alternate background.
+// Each cell draws its top and start line 1px outside itself; the root clips the outer ones behind its own border.
+.wu-desc-list.bordered {
+    display: grid;
+    grid-template-columns: var(--wu-desc-list--TermWidth, fit-content(40%)) minmax(0, 1fr);
+    overflow: hidden;
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
+
+    > div {
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+    }
+
+    > dt,
+    > dd,
+    > div > dt,
+    > div > dd {
+        margin-block-start: calc(-1 * #{woven.token(border-width-1)});
+        margin-inline-start: calc(-1 * #{woven.token(border-width-1)});
+        padding-block: woven.token(space-2);
+        padding-inline: woven.token(space-3);
+        border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+        border-inline-start: woven.token(border-width-1) solid woven.token(border-regular);
+    }
+
+    > dt,
+    > div > dt {
+        grid-column: 1;
+        background: woven.token(bg-alternate);
+    }
+
+    > dd,
+    > div > dd {
+        grid-column: 2;
+    }
+
+    > div + div {
+        margin-block-start: 0;
+    }
+}
+
+// Columns: pairs side by side, at most --wu-desc-list--Columns per row (3), fewer when a pair would be narrower
+// than --wu-desc-list--ColumnWidth (10rem)
+@mixin -columns($gap: null) {
+    $count: var(--wu-desc-list--Columns, 3);
+    $share: "100% / #{$count}";
+
+    @if $gap {
+        $share: "(100% - (#{$count} - 1) * #{$gap}) / #{$count}";
+    }
+
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--wu-desc-list--ColumnWidth, 10rem), #{$share})), 1fr));
+}
+
+.wu-desc-list.columns {
+    display: grid;
+    gap: woven.token(space-4) woven.token(space-6);
+    @include -columns(woven.token(space-6));
+
+    > div + div {
+        margin-block-start: 0;
+    }
+}
+
+// Bordered columns: each pair is a term cell beside its description cell
+.wu-desc-list.bordered.columns {
+    gap: 0;
+    @include -columns;
+
+    > div {
+        grid-column: auto;
+        grid-template-columns: var(--wu-desc-list--TermWidth, 40%) minmax(0, 1fr);
+    }
+}

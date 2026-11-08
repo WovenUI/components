@@ -1,0 +1,123 @@
+////
+//// @component wu-progress-circle
+//// Circular progress ring that shows a percentage.
+////
+//// It is not a native element, so name the role and value: `role="progressbar"` with `aria-label`, `aria-valuenow`, `aria-valuemin` and `aria-valuemax`.
+////
+//// The value is a percentage from 0 to 100, set with `--wu-progress-circle--Value`. The ring color is `currentcolor`, so roles and `color` set it.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-progress-circle" role="progressbar" aria-label="Upload" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="--wu-progress-circle--Value: 72">
+////     <span class="wu-progress-circle-label">72%</span>
+////   </div>
+//// @example html
+////   <div class="wu-progress-circle success lg animated" role="progressbar" aria-label="Storage" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="--wu-progress-circle--Value: 40">
+////     <span class="wu-progress-circle-label">40%</span>
+////   </div>
+//// @modifier success | danger | warning | info - Role color for the ring @since 1.0.0
+//// @modifier sm | lg - Smaller (2.5rem) or larger (6rem) ring with a thinner or thicker band @since 1.0.0
+//// @modifier animated - The ring eases to each new value when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-progress-circle-label - Text centered in the ring @since 1.0.0
+//// @variable --wu-progress-circle--Value [0] - Percentage from 0 to 100; a registered property, so it can transition @since 1.0.0
+//// @variable --wu-progress-circle--Size [4rem] - Width and height of the ring @since 1.0.0
+//// @variable --wu-progress-circle--Thickness [0.5rem] - Width of the ring band @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$roles: "success", "danger", "warning", "info";
+
+// Ring mask: transparent center, opaque band of the given thickness
+@function ring($space) {
+    $t: var(--wu-progress-circle--Thickness, #{woven.token($space)});
+    @return radial-gradient(farthest-side, transparent calc(100% - #{$t} - 0.5px), #000 calc(100% - #{$t}));
+}
+
+@property --wu-progress-circle--Value {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+}
+
+// Ring color is currentcolor; roles and `color` set it
+.wu-progress-circle {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--wu-progress-circle--Size, #{woven.token(space-16)});
+    height: var(--wu-progress-circle--Size, #{woven.token(space-16)});
+    color: woven.token(brand);
+    font-size: woven.token(font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: woven.token(font-weight-semibold);
+    line-height: 1;
+    vertical-align: middle;
+
+    // Conic fill over the track, masked to a ring
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: woven.token(radius-full);
+        background: conic-gradient(currentcolor calc(var(--wu-progress-circle--Value, 0) * 1%), transparent 0) woven.token(border-regular);
+        mask: ring(space-2);
+    }
+}
+
+.wu-progress-circle-label {
+    position: relative;
+    color: woven.token(text-regular);
+}
+
+@each $role in $roles {
+    .wu-progress-circle.#{$role} {
+        color: woven.token($role);
+    }
+}
+
+.wu-progress-circle.sm {
+    width: var(--wu-progress-circle--Size, #{woven.token(space-10)});
+    height: var(--wu-progress-circle--Size, #{woven.token(space-10)});
+    font-size: woven.token(font-size-xs);
+
+    &::before {
+        mask: ring(space-1);
+    }
+}
+
+.wu-progress-circle.lg {
+    width: var(--wu-progress-circle--Size, #{woven.token(space-24)});
+    height: var(--wu-progress-circle--Size, #{woven.token(space-24)});
+    font-size: woven.token(font-size-lg);
+
+    &::before {
+        mask: ring(space-3);
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-progress-circle {
+        color: Highlight;
+        forced-color-adjust: none;
+
+        &::before {
+            background-color: GrayText;
+        }
+    }
+
+    .wu-progress-circle-label {
+        color: CanvasText;
+    }
+}
+
+// Opt-in motion: the ring eases to each new value
+@media (prefers-reduced-motion: no-preference) {
+    .wu-progress-circle.animated,
+    .wu-animated .wu-progress-circle {
+        transition: --wu-progress-circle--Value woven.token(duration-500) woven.token(ease-out);
+    }
+}

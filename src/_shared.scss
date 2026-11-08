@@ -1,0 +1,10 @@
+// Shared kit values, declared once as custom properties
+:root {
+    --wu-kit-ease-spring: linear(0, 0.25 7%, 0.69 17%, 0.95 26%, 1.07 35%, 1.09 42%, 1.05 52%, 1 63%, 0.99 75%, 1);
+
+    // Role marker shapes for clip-path, so meaning is not carried by color alone:
+    // check for success, triangle for warning, octagon for danger
+    --wu-kit-marker-check: polygon(12% 48%, 0 62%, 38% 96%, 100% 24%, 86% 10%, 38% 70%);
+    --wu-kit-marker-triangle: polygon(50% 4%, 100% 96%, 0 96%);
+    --wu-kit-marker-octagon: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}

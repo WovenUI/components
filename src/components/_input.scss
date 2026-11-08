@@ -1,0 +1,278 @@
+////
+//// @component wu-input
+//// Text input in three sizes, with disabled, read-only and invalid looks, plus prefix, suffix and a clear button inside the field border.
+////
+//// Core base already sets the border, background, hover, focus ring, invalid border, disabled look, placeholder color, padding and the md height; the kit adds the radius, type size and sizes.
+////
+//// `wu-input-affix` draws the box and the input inside goes bare. Prefix and suffix sit on the inline start and end, so they swap in right-to-left pages. A `wu-select` can replace the input. `sm` and `lg` go on the wrapper. `wu-input-clear` is started by the kit script: it shows while the field has text, clears it and refocuses.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js optional initInputClear
+//// @example html
+////   <input class="wu-input" type="text" aria-label="Name" placeholder="Name">
+////   <input class="wu-input sm" type="text" aria-label="Code" value="A-12" readonly>
+////   <input class="wu-input lg" type="email" aria-label="Email" aria-invalid="true">
+//// @example html
+////   <div class="wu-input-affix">
+////     <span class="wu-input-prefix"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /></svg></span>
+////     <input class="wu-input" type="search" aria-label="Search">
+////     <button class="wu-input-clear" type="button" aria-label="Clear" hidden></button>
+////     <span class="wu-input-suffix">USD</span>
+////   </div>
+//// @modifier sm | lg - Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group sm` or `lg` when the control has no size @since 1.0.0
+//// @part wu-input-affix - Wrapper that draws the field box around a bare input or select, with a prefix, suffix and clear button @since 1.0.0
+//// @part wu-input-prefix - Content before the input, such as an icon or currency symbol @since 1.0.0
+//// @part wu-input-suffix - Content after the input, such as a unit @since 1.0.0
+//// @part wu-input-clear - Clear button inside the affix; an empty button shows a multiplication sign; give it an `aria-label` @since 1.0.0
+//// @state disabled - Not-allowed cursor; an affix with a disabled control dims @since 1.0.0
+//// @state readonly - Alternate background @since 1.0.0
+//// @state aria-invalid="true" | :user-invalid - Danger border doubled to 2px, so the change is not color alone @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+@mixin centered-pad($height) {
+    $rest: "#{$height} - 2 * #{woven.token(border-width-1)} - 1em * #{woven.token(line-height-normal)}";
+
+    --wu-kit-pad-start: #{round(down, calc((#{$rest}) / 2), 1px)};
+
+    padding-block: var(--wu-kit-pad-start) calc(#{$rest} - var(--wu-kit-pad-start));
+}
+
+// Text-like <input>. Core base already sets the border, background, hover, focus ring, invalid border,
+// disabled look, placeholder color, padding and the md height; the kit adds radius, type size and sizes.
+.wu-input {
+    border-radius: woven.token(radius-md);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-normal);
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+
+    &[readonly] {
+        background-color: woven.token(bg-alternate);
+    }
+
+    // Invalid: core's danger border doubled to 2px, so the change is not color alone
+    &:is([aria-invalid="true"], :user-invalid) {
+        box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+}
+
+.wu-input.sm {
+    height: woven.token(control-height-sm);
+    padding-inline: woven.token(control-padding-inline-sm);
+    font-size: woven.token(font-size-sm);
+
+    @include centered-pad(woven.token(control-height-sm));
+}
+
+.wu-input.lg {
+    height: woven.token(control-height-lg);
+    padding-inline: woven.token(control-padding-inline-lg);
+}
+
+// Prefix and suffix inside the field border; the wrapper draws the box and the input inside goes bare.
+// <div class="wu-input-affix">
+//   <span class="wu-input-prefix"><svg aria-hidden="true">...</svg></span>
+//   <input class="wu-input" type="search" aria-label="Search">
+//   <button class="wu-input-clear" type="button" aria-label="Clear" hidden></button>
+//   <span class="wu-input-suffix">USD</span>
+// </div>
+// Prefix and suffix sit on the inline start and end, so they swap in RTL. A wu-select can replace the input.
+// wu-input-clear is started by the kit script: it shows with content, clears and refocuses. Sizes: sm, lg on the wrapper.
+.wu-input-affix {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    width: 100%;
+
+    --wu-kit-affix-height: #{woven.token(control-height-md)};
+
+    height: var(--wu-kit-affix-height);
+    padding-inline: woven.token(control-padding-inline-md);
+    border: woven.token(border-width-1) solid woven.token(border-control);
+    border-radius: woven.token(radius-md);
+    background-color: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-normal);
+    transition: border-color woven.token(duration-150) woven.token(ease-out);
+
+    &:hover:not(:has(:disabled, [aria-invalid="true"], :user-invalid)) {
+        border-color: woven.token(border-control-hover);
+    }
+
+    &:has(:focus-visible) {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-offset)});
+    }
+
+    &:has(:is([aria-invalid="true"], :user-invalid)) {
+        border-color: woven.token(danger);
+        box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+
+    &:has(.wu-input:disabled, .wu-select:disabled) {
+        background-color: woven.token(bg-disabled);
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+
+    > :is(.wu-input, .wu-select) {
+        flex: 1 1 auto;
+        width: 1%;
+        min-width: 0;
+        height: 100%;
+        padding-block: 0;
+        padding-inline: 0;
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+        box-shadow: none;
+        font-size: inherit;
+        outline: 0;
+
+        &:is(:hover, :focus-visible, :disabled, [aria-invalid="true"], :user-invalid) {
+            border: 0;
+            background-color: transparent;
+            box-shadow: none;
+            opacity: 1;
+            outline: 0;
+        }
+    }
+
+    > .wu-input {
+        @include centered-pad(var(--wu-kit-affix-height));
+    }
+
+    // A single-line select rounds half-pixel padding down, as .wu-select.sm does, so the text sits centered.
+    // The doubled class outranks the align-items: center that select.scss sets here.
+    > .wu-select.wu-select:not([multiple], [size]:not([size="1"])) {
+        align-items: normal;
+        padding-block: round(down, calc((var(--wu-kit-affix-height) - 2 * #{woven.token(border-width-1)} - 1em * #{woven.token(line-height-normal)}) / 2), 1px);
+    }
+
+    // A native search field draws its own clear mark; the kit button replaces it
+    > input[type="search"]::-webkit-search-cancel-button {
+        appearance: none;
+    }
+
+    > input[type="search"]::-webkit-search-decoration {
+        appearance: none;
+    }
+
+    // Select arrow keeps its inline-end room inside the wrapper
+    > .wu-select:not([multiple], [size]:not([size="1"])) {
+        padding-inline-end: calc(2 * 0.3125rem + #{woven.token(space-2)});
+    }
+}
+
+.wu-input-prefix,
+.wu-input-suffix {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    color: woven.token(text-muted);
+    white-space: nowrap;
+
+    > svg {
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+.wu-input-clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.5em;
+    block-size: 1.5em;
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-full);
+    background: transparent;
+    color: woven.token(text-muted);
+    font-size: inherit;
+    line-height: 1;
+    cursor: pointer;
+
+    &:empty::before {
+        content: "\00d7";
+        font-size: 1.25em;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    &[hidden] {
+        display: none;
+    }
+
+    > svg {
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+.wu-input-affix.sm {
+    --wu-kit-affix-height: #{woven.token(control-height-sm)};
+
+    height: var(--wu-kit-affix-height);
+    padding-inline: woven.token(control-padding-inline-sm);
+    font-size: woven.token(font-size-sm);
+}
+
+.wu-input-affix.lg {
+    --wu-kit-affix-height: #{woven.token(control-height-lg)};
+
+    height: var(--wu-kit-affix-height);
+    padding-inline: woven.token(control-padding-inline-lg);
+}
+
+@media (forced-colors: active) {
+    .wu-input-affix:has(:focus-visible) {
+        outline-color: Highlight;
+    }
+}
+
+// Size from a wu-field-group sm or lg; a control with its own sm or lg keeps it
+@each $size, $font in ("sm": "font-size-sm", "lg": "font-size-md") {
+    $h: woven.token(control-height-#{$size});
+    $pad: woven.token(control-padding-inline-#{$size});
+    $fs: woven.token(#{$font});
+
+    :where(.wu-field-group.#{$size}) {
+        .wu-input:not(.sm, .lg, .wu-input-affix > *) {
+            height: $h;
+            padding-inline: $pad;
+            font-size: $fs;
+
+            @if $size == "sm" {
+                @include centered-pad($h);
+            } @else {
+                padding-block: 0;
+            }
+        }
+
+        .wu-input-affix:not(.sm, .lg) {
+            --wu-kit-affix-height: #{$h};
+
+            height: $h;
+            padding-inline: $pad;
+            font-size: $fs;
+        }
+    }
+}

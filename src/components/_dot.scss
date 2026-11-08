@@ -1,0 +1,115 @@
+////
+//// @component wu-dot
+//// Small status dot for use next to status text, tinted by role.
+////
+//// Add `aria-hidden="true"` and put the meaning in the text beside it. `success`, `warning` and `danger` also change the shape (check, triangle, octagon), so color is never the only signal.
+////
+//// A corner dot pins to a `wu-badge-host`, the same wrapper a corner badge uses, and reads `--wu-badge--Offset` and `--wu-avatar--RingColor` from the badge and avatar.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <span class="wu-dot success" aria-hidden="true"></span> Online
+//// @example html
+////   <span class="wu-dot danger animated" aria-hidden="true"></span> Live
+//// @example html
+////   <span class="wu-badge-host">
+////     <button class="wu-btn" type="button" aria-label="Inbox, new messages">Inbox</button>
+////     <span class="wu-dot corner brand" aria-hidden="true"></span>
+////   </span>
+//// @modifier brand | success | danger | warning | info - Role color; success, warning and danger also change the shape @since 1.0.0
+//// @modifier corner - Pins the dot to the top inline-end corner of a `wu-badge-host` @since 1.0.0
+//// @modifier animated - Fading ring for live status when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @variable --wu-dot--Size [var(--wu-space-2)] - Width and height of the dot @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-dot {
+    display: inline-block;
+    position: relative;
+    flex-shrink: 0;
+    width: var(--wu-dot--Size, #{woven.token(space-2)});
+    height: var(--wu-dot--Size, #{woven.token(space-2)});
+    border-radius: woven.token(radius-full);
+    background: currentcolor;
+    color: woven.token(border-strong);
+    vertical-align: middle;
+}
+
+@each $role in "brand", "success", "danger", "warning", "info" {
+    .wu-dot.#{$role} {
+        color: woven.token($role);
+    }
+}
+
+// Corner: pinned to the top inline-end corner of a .wu-badge-host (same rule as in the badge)
+.wu-badge-host {
+    display: inline-flex;
+    position: relative;
+    vertical-align: middle;
+}
+
+.wu-dot.corner {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    translate: var(--wu-badge--Offset, 50%) -50%;
+
+    &:dir(rtl) {
+        translate: calc(-1 * var(--wu-badge--Offset, 50%)) -50%;
+    }
+
+    &:not(.success, .warning, .danger) {
+        box-shadow: 0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
+    }
+}
+
+// Shape markers from _shared.scss, drawn on ::before so the live ring is not clipped
+.wu-dot:is(.success, .warning, .danger) {
+    border-radius: 0;
+    background: none;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: currentcolor;
+    }
+}
+
+.wu-dot.success::before,
+.wu-dot.success::after {
+    clip-path: var(--wu-kit-marker-check);
+}
+
+.wu-dot.warning::before,
+.wu-dot.warning::after {
+    clip-path: var(--wu-kit-marker-triangle);
+}
+
+.wu-dot.danger::before,
+.wu-dot.danger::after {
+    clip-path: var(--wu-kit-marker-octagon);
+}
+
+// Opt-in motion: a fading ring for live status
+@media (prefers-reduced-motion: no-preference) {
+    .wu-dot.animated::after,
+    .wu-animated .wu-dot::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: currentcolor;
+        animation: wu-dot-ping 1.5s woven.token(ease-out) infinite;
+    }
+}
+
+@keyframes wu-dot-ping {
+    to {
+        opacity: 0;
+        scale: 2.5;
+    }
+}

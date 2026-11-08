@@ -1,0 +1,460 @@
+////
+//// @component wu-table
+//// Data table with sticky header and columns, selection, expandable rows, truncated cells, a summary row and striped styles.
+////
+//// Put a wide table in a `wu-table-scroll` region with `tabindex="0"`, `role="region"` and an `aria-label`; it shows scroll shadows on the sides with more content. Sticky columns need that region.
+////
+//// The select-all checkbox and expandable rows need the kit script; everything else is CSS. Sorting the rows and updating `aria-sort` is up to your script.
+////
+//// A truncated cell takes the full text in core's `data-tooltip` and `tabindex="0"`. `aria-selected` on a row is valid only in a `role="grid"` table.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js optional initTable
+//// @example html
+////   <div class="wu-table-scroll" tabindex="0" role="region" aria-label="Invoices">
+////     <table class="wu-table striped hover">
+////       <caption>Open invoices</caption>
+////       <thead>
+////         <tr>
+////           <th scope="col">Invoice</th>
+////           <th scope="col" class="wu-table-num">Amount</th>
+////         </tr>
+////       </thead>
+////       <tbody>
+////         <tr><th scope="row">INV-1042</th><td class="wu-table-num">$1,200.00</td></tr>
+////         <tr><th scope="row">INV-1043</th><td class="wu-table-num">$340.00</td></tr>
+////       </tbody>
+////       <tfoot><tr><th scope="row">Total</th><td class="wu-table-num">$1,540.00</td></tr></tfoot>
+////     </table>
+////   </div>
+//// @example html
+////   <table class="wu-table">
+////     <thead>
+////       <tr>
+////         <th scope="col" class="wu-table-select"><input type="checkbox" class="wu-checkbox-input" aria-label="Select all rows"></th>
+////         <th scope="col" aria-sort="ascending"><button class="wu-table-sort" type="button">Name</button></th>
+////       </tr>
+////     </thead>
+////     <tbody>
+////       <tr>
+////         <td class="wu-table-select"><input type="checkbox" class="wu-checkbox-input" aria-label="Select Ana Lopez"></td>
+////         <th scope="row"><button class="wu-table-expand" type="button" aria-expanded="false" aria-label="Details for Ana Lopez"></button> Ana Lopez</th>
+////       </tr>
+////       <tr class="wu-table-detail" hidden><td colspan="2">Owner since 2021</td></tr>
+////     </tbody>
+////   </table>
+//// @example html
+////   <table class="wu-table">
+////     <tbody>
+////       <tr><td class="wu-table-truncate" tabindex="0" data-tooltip="Typo on the billing page"><span>Typo on the billing page</span></td></tr>
+////     </tbody>
+////   </table>
+//// @modifier sm - Tighter cell padding @since 1.0.0
+//// @modifier striped - Tint on every second body row @since 1.0.0
+//// @modifier hover - Tint on the row under the pointer @since 1.0.0
+//// @modifier bordered - Outer border with rounded corners and borders between cells @since 1.0.0
+//// @modifier sticky-header - Header cells stick to the top of the page, or of the scroll region when `--wu-table--MaxHeight` is set @since 1.0.0
+//// @modifier sticky-start | sticky-end - First or last column sticks inside a `wu-table-scroll` region, with an edge shadow on the scrolling side @since 1.0.0
+//// @modifier animated - Spring turn of the expand chevron when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-table-scroll - Scroll region for a wide table, with scroll shadows @since 1.0.0
+//// @part wu-table-num - Cell with end-aligned numbers in tabular figures @since 1.0.0
+//// @part wu-table-select - Cell of a checkbox column, as narrow as its checkbox @since 1.0.0
+//// @part wu-table-truncate - Cell whose text child stays on one line with an ellipsis @since 1.0.0
+//// @part wu-table-sort - Button in a header cell that shows sort arrows @since 1.0.0
+//// @part wu-table-expand - Button with `aria-expanded` that shows or hides the detail row @since 1.0.0
+//// @part wu-table-detail - Row after an expandable row, with the alternate background @since 1.0.0
+//// @variable --wu-table--Background [var(--wu-bg-surface)] - Background that scroll shadows and sticky cells blend into @since 1.0.0
+//// @variable --wu-table--MaxHeight [none] - Maximum height of the scroll region, so the header can stick inside it @since 1.0.0
+//// @variable --wu-table--TruncateWidth [16rem] - Maximum width of a truncated cell text @since 1.0.0
+//// @state aria-sort="ascending" | aria-sort="descending" - On a header cell: one arrow on the sort button and regular text color @since 1.0.0
+//// @state aria-expanded="true" - On an expand button: the chevron points down @since 1.0.0
+//// @state aria-selected="true" - On a row: selected tint and a bar at the start of the first cell; a checked `wu-table-select` box does the same @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$bg: var(--wu-table--Background, #{woven.token(bg-surface)});
+$shadow: color-mix(in srgb, #{woven.token(text-regular)} 15%, transparent);
+$tint: color-mix(in srgb, #{woven.token(text-regular)} 4%, transparent);
+$tint-hover: color-mix(in srgb, #{woven.token(text-regular)} 7%, transparent);
+
+// Row tint of a cell, read again by sticky cells so they stay opaque
+$row-tint: var(--wu-kit-table-tint, transparent);
+
+// Wide tables: <div class="wu-table-scroll" tabindex="0" role="region" aria-label>.
+// Scroll shadows show on the sides with more content; translucent row tints keep them visible.
+.wu-table-scroll {
+    max-block-size: var(--wu-table--MaxHeight, none);
+    overflow: auto;
+    background:
+        linear-gradient(to right, #{$bg} 50%, transparent) left / #{woven.token(space-8)} 100% no-repeat local,
+        linear-gradient(to left, #{$bg} 50%, transparent) right / #{woven.token(space-8)} 100% no-repeat local,
+        linear-gradient(to right, #{$shadow}, transparent) left / #{woven.token(space-3)} 100% no-repeat scroll,
+        linear-gradient(to left, #{$shadow}, transparent) right / #{woven.token(space-3)} 100% no-repeat scroll,
+        #{$bg};
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+// Separate borders, so a sticky header keeps its edge and bordered can round its corners
+.wu-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+
+    > caption {
+        padding-block-end: woven.token(space-2);
+        color: woven.token(text-muted);
+        text-align: start;
+    }
+
+    :is(th, td) {
+        padding-block: woven.token(space-3);
+        padding-inline: woven.token(space-4);
+        border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+        text-align: start;
+        vertical-align: middle;
+    }
+
+    > thead th {
+        border-block-end-color: woven.token(border-strong);
+        color: woven.token(text-muted);
+        font-weight: woven.token(font-weight-semibold);
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+
+    > tbody th {
+        font-weight: woven.token(font-weight-medium);
+    }
+
+    // Summary row: semibold, with a strong line above it
+    > tfoot :is(th, td) {
+        color: woven.token(text-regular);
+        font-weight: woven.token(font-weight-semibold);
+    }
+
+    > tbody:has(+ tfoot) > tr:nth-last-child(1 of :not([hidden])) > * {
+        border-block-end-color: woven.token(border-strong);
+    }
+
+    > :is(tbody, tfoot):last-child > tr:last-child > * {
+        border-block-end: 0;
+    }
+}
+
+// Numbers: end-aligned, same digit widths
+.wu-table .wu-table-num {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+// Selection column: as narrow as its checkbox
+.wu-table .wu-table-select {
+    inline-size: 1px;
+
+    > input {
+        margin: 0;
+        vertical-align: middle;
+    }
+}
+
+// Truncated text with an ellipsis at the inline end; core's data-tooltip on the cell shows the full text
+.wu-table .wu-table-truncate {
+    > * {
+        display: block;
+        max-inline-size: var(--wu-table--TruncateWidth, 16rem);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+}
+
+// Sort control: <th aria-sort="ascending"><button class="wu-table-sort">Name</button></th>.
+// Arrows drawn with clip-path: both dim when unsorted, one when sorted.
+.wu-table-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-1);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-xs);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+
+    &::after {
+        content: "";
+        flex: none;
+        width: 8px;
+        height: 12px;
+        background: woven.token(text-subtle);
+        clip-path: path("M4 0L8 5H0Z M0 7H8L4 12Z");
+    }
+
+    &:hover {
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+.wu-table th:is([aria-sort="ascending"], [aria-sort="descending"]) {
+    color: woven.token(text-regular);
+
+    > .wu-table-sort::after {
+        background: currentcolor;
+    }
+}
+
+.wu-table th[aria-sort="ascending"] > .wu-table-sort::after {
+    clip-path: path("M4 3.5L8 8.5H0Z");
+}
+
+.wu-table th[aria-sort="descending"] > .wu-table-sort::after {
+    clip-path: path("M0 3.5H8L4 8.5Z");
+}
+
+// Expand toggle: <button class="wu-table-expand" aria-expanded="false" aria-label>; the kit script shows the
+// wu-table-detail row after it. The closed chevron points to the inline end, the open one down.
+.wu-table-expand {
+    display: inline-grid;
+    place-content: center;
+    width: woven.token(space-6);
+    height: woven.token(space-6);
+    min-height: 0;
+    margin: 0;
+    margin-inline-end: woven.token(space-1);
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-xs);
+    background: none;
+    color: woven.token(text-muted);
+    vertical-align: middle;
+    cursor: pointer;
+
+    &::before {
+        content: "";
+        width: 6px;
+        height: 10px;
+        background: currentcolor;
+        clip-path: path("M0 0L6 5L0 10Z");
+    }
+
+    &:dir(rtl)::before {
+        rotate: 180deg;
+    }
+
+    &[aria-expanded="true"]::before {
+        rotate: 90deg;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .wu-table.animated .wu-table-expand::before,
+    .wu-animated .wu-table .wu-table-expand::before {
+        transition: rotate woven.token(duration-150) woven.token(ease-out);
+    }
+}
+
+.wu-table.sm :is(th, td) {
+    padding-block: woven.token(space-2);
+    padding-inline: woven.token(space-3);
+}
+
+// Row tints set --wu-kit-table-tint too, so sticky cells can lay the same tint over an opaque background
+.wu-table.striped > tbody > tr:where(:nth-child(even of :not(.wu-table-detail))) > * {
+    --wu-kit-table-tint: #{$tint};
+
+    background: $row-tint;
+}
+
+.wu-table.hover > tbody > tr:where(:hover) > * {
+    --wu-kit-table-tint: #{$tint-hover};
+
+    background: $row-tint;
+}
+
+// Selected row: a checked wu-table-select checkbox, or aria-selected="true" in a role="grid" table.
+// Same weight as striped and hover (their pseudo-classes sit in :where), and later, so it wins.
+// A start bar on the first cell is the cue that is not color.
+.wu-table > tbody > tr:is([aria-selected="true"], :has(> :where(.wu-table-select) :checked)) {
+    > * {
+        --wu-kit-table-tint: #{woven.token(bg-selected)};
+
+        background: $row-tint;
+    }
+
+    > :first-child {
+        box-shadow: inset woven.token(border-width-2) 0 0 woven.token(brand);
+    }
+
+    > :first-child:dir(rtl) {
+        box-shadow: inset calc(-1 * #{woven.token(border-width-2)}) 0 0 woven.token(brand);
+    }
+}
+
+// Detail row of an expandable row, after the row it belongs to
+.wu-table > tbody > tr.wu-table-detail > * {
+    background: woven.token(bg-alternate);
+}
+
+.wu-table.bordered {
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+
+    :is(th, td) + :is(th, td) {
+        border-inline-start: woven.token(border-width-1) solid woven.token(border-regular);
+    }
+}
+
+// Sticks to the top of the page, or of .wu-table-scroll when --wu-table--MaxHeight is set
+.wu-table.sticky-header > thead th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: woven.token(z-hover);
+    background: $bg;
+}
+
+// Shadow under the header only once it is stuck; the header border is the fallback
+@supports (container-type: scroll-state) {
+    .wu-table.sticky-header > thead th {
+        container-type: scroll-state;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset-inline: 0;
+            inset-block-start: 100%;
+            height: woven.token(space-2);
+            background: linear-gradient(#{$shadow}, transparent);
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    @container scroll-state(stuck: top) {
+        .wu-table.sticky-header > thead th::after {
+            opacity: 1;
+        }
+    }
+}
+
+// Sticky first and last columns, inside a wu-table-scroll region. The edge shadow falls on the scrolling side.
+$sticky-start: ".wu-table.sticky-start > * > tr:where(:not(.wu-table-detail)) > :first-child";
+$sticky-end: ".wu-table.sticky-end > * > tr:where(:not(.wu-table-detail)) > :last-child";
+
+#{$sticky-start},
+#{$sticky-end} {
+    position: sticky;
+    z-index: woven.token(z-base);
+    background:
+        linear-gradient(#{$row-tint}, #{$row-tint}),
+        #{$bg};
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset-block: 0;
+        width: woven.token(space-2);
+        pointer-events: none;
+    }
+}
+
+#{$sticky-start} {
+    inset-inline-start: 0;
+
+    &::before {
+        inset-inline-start: 100%;
+        background: linear-gradient(to right, #{$shadow}, transparent);
+    }
+
+    &:dir(rtl)::before {
+        background: linear-gradient(to left, #{$shadow}, transparent);
+    }
+}
+
+#{$sticky-end} {
+    inset-inline-end: 0;
+
+    &::before {
+        inset-inline-end: 100%;
+        background: linear-gradient(to left, #{$shadow}, transparent);
+    }
+
+    &:dir(rtl)::before {
+        background: linear-gradient(to right, #{$shadow}, transparent);
+    }
+}
+
+// Header cells of sticky columns stay above the sticky header and the body
+.wu-table.sticky-start > thead > tr > :first-child,
+.wu-table.sticky-end > thead > tr > :last-child {
+    z-index: calc(#{woven.token(z-hover)} + 1);
+}
+
+// Longhands on purpose: minifiers fold them with animation-timeline into a shorthand some browsers drop.
+// Shadow fades in over the first space-8 of scroll and out over the last, linked to the region's inline scroll.
+// No scroll, or no region: no shadow. Without scroll timelines the shadow stays static.
+@supports (animation-timeline: scroll()) {
+    .wu-table-scroll {
+        scroll-timeline: --wu-table-scroll inline;
+    }
+
+    #{$sticky-start}::before,
+    #{$sticky-end}::before {
+        opacity: 0;
+        animation-name: wu-table-edge;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: --wu-table-scroll;
+    }
+
+    #{$sticky-start}::before {
+        animation-range: 0 #{woven.token(space-8)};
+    }
+
+    #{$sticky-end}::before {
+        animation-direction: reverse;
+        animation-range: calc(100% - #{woven.token(space-8)}) 100%;
+    }
+}
+
+@keyframes wu-table-edge {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

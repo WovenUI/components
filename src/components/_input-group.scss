@@ -1,0 +1,87 @@
+////
+//// @component wu-input-group
+//// Joined row of text addons, an input and buttons that share one border and radius.
+////
+//// Size the children (`wu-input sm`, `wu-btn sm`); addons stretch to the row height. Default buttons take the field border; `brand`, `danger`, `quiet` and `link` buttons keep their own look. The hovered, focused or invalid control rises above its neighbors.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-input-group">
+////     <span class="wu-input-group-text">https://</span>
+////     <input class="wu-input" type="text" aria-label="Website" placeholder="example.com">
+////   </div>
+//// @example html
+////   <div class="wu-input-group">
+////     <input class="wu-input sm" type="search" aria-label="Search" placeholder="Search">
+////     <button class="wu-btn brand sm" type="button">Search</button>
+////   </div>
+//// @part wu-input-group-text - Text addon with the alternate background; an `svg` child is sized as an icon @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+
+    > * {
+        position: relative;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    > .wu-input {
+        flex: 1 1 auto;
+        width: 1%;
+        min-width: 0;
+    }
+
+    > * + * {
+        margin-inline-start: calc(-1 * #{woven.token(border-width-1)});
+    }
+
+    > :first-child {
+        border-start-start-radius: woven.token(radius-md);
+        border-end-start-radius: woven.token(radius-md);
+    }
+
+    > :last-child {
+        border-start-end-radius: woven.token(radius-md);
+        border-end-end-radius: woven.token(radius-md);
+    }
+
+    // Default buttons take the field border so the joined row reads as one control
+    > .wu-btn:not(.brand, .danger, .quiet, .link) {
+        border-color: woven.token(border-control);
+
+        &:hover {
+            border-color: woven.token(border-control-hover);
+        }
+    }
+
+    // Lift the active control so its border and focus ring sit over the neighbors
+    > :is(:hover, :focus-visible, [aria-invalid="true"], :user-invalid) {
+        z-index: woven.token(z-hover);
+    }
+}
+
+.wu-input-group-text {
+    display: flex;
+    flex: none;
+    align-items: center;
+    padding-inline: woven.token(control-padding-inline-sm);
+    border: woven.token(border-width-1) solid woven.token(border-control);
+    background: woven.token(bg-alternate);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    white-space: nowrap;
+}
+
+.wu-input-group-text > svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}

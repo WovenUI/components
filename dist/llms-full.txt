@@ -1,0 +1,2839 @@
+# WovenUI Components LLM Guide
+
+**Package**: `@wovenui/components`. HTML and CSS components built on `@wovenui/core` tokens, plus a small optional script.
+
+**Purpose**: Drop this file into a project so an AI assistant writes correct WovenUI Components markup.
+
+Generated from each component's source. Core reference: https://wovenui.com/llms-full.txt.
+
+## Loading
+
+- All components, prebuilt: `@wovenui/components/min.css`.
+- All components from Sass: `@use "@wovenui/components";`, with `$components: ("name": false)` to switch components off.
+- One component from Sass: `@use "@wovenui/components/{name}";`. Its needs load with it.
+- Script, only for components whose JavaScript is not none: `import { init } from "@wovenui/components/js";` or `dist/wovenui-kit.iife.js` (global `WovenUIKit`). It starts components on `DOMContentLoaded`; `init(element)` starts content added later.
+- State lives in attributes (`aria-*`, `hidden`, `open`), not classes.
+
+## Naming grammar
+
+- Prefixed root: `wu-btn`.
+- Bare compound modifiers, valid only together with the root: `wu-btn brand sm` emits `.wu-btn.brand`, never a lone `.brand`.
+- Color and emphasis words use core role names (`brand`, `success`, `danger`, `warning`, `info`). Never `primary`.
+- Parts are `wu-<name>-<part>`: `wu-card-header`.
+- A modifier word never reuses a core class name.
+- Component variables use `--wu-<name>--Prop` (`--wu-btn--BackgroundColor`) as read values with fallbacks.
+
+## Motion
+
+Calm by default. Motion is opt-in with the compound word `animated` (`wu-btn-group animated`) or `wu-animated` on an ancestor, always inside `@media (prefers-reduced-motion: no-preference)`. The skeleton shimmer is opt-in the same way.
+
+## Icons
+
+- The kit ships no icons and no icon library or component.
+- Built-in indicators (select and dropdown arrows, accordion chevron, close marks) are drawn in CSS: masks, borders and pseudo-elements. Any other icon comes from the app's own `svg`. The kit never ships icon files.
+- A direct child `svg` in a component is only sized (`1em`, `flex-shrink: 0`). Never set `fill` or `stroke`, so the app's icon set, stroke or filled, works.
+- `wu-mirror` flips directional icons in right to left.
+
+## Components
+
+- `accordion`: Stacked disclosure panels built on native `details`, in one bordered group.
+- `alert`: Inline message with a shape marker, a title, optional actions and a dismiss button.
+- `autocomplete`: Combobox that filters a list of options as the user types.
+- `avatar-group`: Overlapping stack of avatars with a ring between them.
+- `avatar`: Round or square badge for a person or product, with initials, an image or an svg, and an optional status dot.
+- `badge`: Small pill for counts and short labels, tinted by default and solid for emphasis.
+- `breadcrumb`: Trail of links that shows where the page sits in the site.
+- `btn-group`: Joins buttons into one segmented control, as a split button, a toggle set or a radio set.
+- `button`: Buttons for actions, in roles and sizes, with a caret for menus and split buttons.
+- `card`: Bordered surface that groups a header, a body and a footer.
+- `checkbox`: Custom checkbox with a label, a check mark and an indeterminate dash.
+- `code-block`: Scrollable block for code, with edge shadows when the content overflows.
+- `confirm-modal`: Dialog that asks the user to confirm or cancel an action, with a title, a message and two buttons.
+- `data-table`: Sortable table: click a header to sort rows by text or number.
+- `desc-list`: Description list of terms and values, plain, divided, bordered or in columns.
+- `divider`: Horizontal or vertical separator line, optionally with a text label between two lines.
+- `dot`: Small status dot for use next to status text, tinted by role.
+- `drawer`: Side panel on the native `dialog` element, docked to the inline end, the inline start or the bottom.
+- `dropdown`: Menu of links and buttons in a native popover, anchored under its trigger.
+- `empty-state`: Centered message for a view with no content or a finished result, with an icon, title, text and actions.
+- `field-group`: Group of fields in a `fieldset`, stacked by default or side by side.
+- `field-message`: Hint, error or success text under a form control, with a marker shape for each role.
+- `field`: Form field that stacks a label, a control and its messages, with a required marker and a floating label option.
+- `form-actions`: Footer row for form buttons, start-aligned by default.
+- `info-row`: One label and value pair, with a line between adjacent rows.
+- `input-group`: Joined row of text addons, an input and buttons that share one border and radius.
+- `input`: Text input in three sizes, with disabled, read-only and invalid looks, plus prefix, suffix and a clear button inside the field border.
+- `list`: Vertical list of rows with a title, text and room for leading or trailing content.
+- `modal`: Dialog built on the native `dialog` element, with header, body and footer.
+- `page-header`: Page title row with an optional description, breadcrumb and action buttons.
+- `pagination`: Page navigation made of button links, with optional total count and page size select.
+- `panel`: Flat bordered region for grouped settings or data.
+- `popover`: Small floating panel built on the native `popover` attribute.
+- `progress-circle`: Circular progress ring that shows a percentage.
+- `progress`: Horizontal progress bar on the native `progress` element.
+- `radio`: Radio button with a label, drawn from the native input.
+- `segmented`: Radio group shown as connected segments, one selected at a time.
+- `select`: Native `select` with the kit input look and a drawn arrow.
+- `sidebar`: Vertical navigation with sections, link lists and collapsible groups.
+- `skeleton`: Placeholder shapes shown while content loads.
+- `spinner`: Loading ring in the current text color, with an overlay for busy regions.
+- `stat`: One figure with a label, a large value in tabular figures and an optional change line.
+- `table`: Data table with sticky header and columns, selection, expandable rows, truncated cells, a summary row and striped styles.
+- `tabs`: Tabs that show one panel at a time, following the WAI-ARIA tabs pattern, in line, card, boxed and vertical styles.
+- `tag`: Label for a category or a filter, in seven hues, as plain text, a link or a button.
+- `text`: Body text on any element, with relaxed leading and space between paragraphs in a row.
+- `textarea`: Multi-line field with a bounded height that grows with the content, where the browser supports it.
+- `timeline`: Ordered list of events with markers and a rail, role colors and a progress mode.
+- `title`: Visual heading size on any element, in four steps.
+- `toast`: Short notification in a corner of the viewport, shown in a polite live region.
+- `toggle`: On and off switch built on a native checkbox with `role="switch"`.
+- `toolbar`: Wrapping row of controls, with groups, separators, an end group and a boxed variant.
+- `topbar`: Application header with a brand, a scrolling nav, an end group, a pinned variant and a page progress line.
+
+## accordion
+
+Stacked disclosure panels built on native `details`, in one bordered group.
+
+The same `name` on several `details` makes the group exclusive, one open at a time. Leave it out to allow several open.
+
+- Root class: `wu-accordion`
+- Sass entry: `@use "@wovenui/components/accordion";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-accordion">
+  <details class="wu-accordion-item" name="faq" open>
+    <summary class="wu-accordion-trigger">What is included?</summary>
+    <div class="wu-accordion-body">Every plan includes support.</div>
+  </details>
+  <details class="wu-accordion-item" name="faq">
+    <summary class="wu-accordion-trigger">Can I cancel?</summary>
+    <div class="wu-accordion-body">Yes, at any time.</div>
+  </details>
+</div>
+```
+
+```html
+<div class="wu-accordion animated">
+  <details class="wu-accordion-item">
+    <summary class="wu-accordion-trigger">Shipping</summary>
+    <div class="wu-accordion-body">Orders ship in two days.</div>
+  </details>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `animated` | The chevron turns and the panel height glides when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-accordion-item` | A `details` element holding one trigger and one body | 1.0.0 |
+| `wu-accordion-trigger` | The `summary` that opens and closes the item, with a chevron | 1.0.0 |
+| `wu-accordion-body` | The panel content shown when the item is open | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `open` | The chevron points up and the body is shown | 1.0.0 |
+
+## alert
+
+Inline message with a shape marker, a title, optional actions and a dismiss button.
+
+Meaning is carried by the `wu-alert-title` text, such as "Error" or "Saved"; the marker shape repeats it.
+
+Use `role="alert"` for urgent messages and `role="status"` for the rest. The close button is markup only; the app removes the alert.
+
+- Root class: `wu-alert`
+- Sass entry: `@use "@wovenui/components/alert";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-alert success" role="status">
+  <strong class="wu-alert-title">Saved</strong>
+  <p>Your changes are live.</p>
+</div>
+```
+
+```html
+<div class="wu-alert danger" role="alert">
+  <strong class="wu-alert-title">Payment failed</strong>
+  <p>Check the card details and try again.</p>
+  <div class="wu-alert-actions">
+    <button class="wu-btn danger" type="button">Retry</button>
+    <button class="wu-btn" type="button">Cancel</button>
+  </div>
+  <button class="wu-alert-close" type="button" aria-label="Dismiss"></button>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand`, `success`, `danger`, `warning`, `info` | Role color for border, fill, marker and title; `success`, `warning` and `danger` also change the marker shape | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-alert-title` | Bold title line that names the message | 1.0.0 |
+| `wu-alert-actions` | Row of buttons under the text | 1.0.0 |
+| `wu-alert-close` | Dismiss button in the end corner, last child of the alert | 1.0.0 |
+
+## autocomplete
+
+Combobox that filters a list of options as the user types.
+
+The kit script filters the options, handles the keyboard and sets `aria-expanded`, `aria-activedescendant`, `aria-selected` and `hidden`.
+
+- Root class: `wu-autocomplete`
+- Sass entry: `@use "@wovenui/components/autocomplete";`
+- Needs: `input`
+- JavaScript: required: `initAutocomplete` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-autocomplete">
+  <label for="city">City</label>
+  <input class="wu-input" id="city" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="city-list" autocomplete="off">
+  <ul class="wu-autocomplete-list" id="city-list" role="listbox" aria-label="Cities" hidden>
+    <li class="wu-autocomplete-option" id="city-1" role="option">Amsterdam</li>
+    <li class="wu-autocomplete-option" id="city-2" role="option">Berlin</li>
+    <li class="wu-autocomplete-option" id="city-3" role="option" aria-disabled="true">Closed city</li>
+  </ul>
+  <p class="wu-autocomplete-empty" hidden>No matches</p>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `animated` | The popup fades and slides in when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-autocomplete-list` | Popup `ul` that holds the options | 1.0.0 |
+| `wu-autocomplete-option` | One selectable `li` option | 1.0.0 |
+| `wu-autocomplete-empty` | Message shown when no option matches | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-autocomplete--MaxHeight` | `16rem` | Maximum height of the option list before it scrolls | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-selected="true"` | The active option: selected fill and a start bar | 1.0.0 |
+| `aria-disabled="true"` | Half opacity and a not-allowed cursor | 1.0.0 |
+| `hidden` | An option filtered out is not displayed | 1.0.0 |
+
+## avatar-group
+
+Overlapping stack of avatars with a ring between them.
+
+Put the overflow count, such as "+3", in a last `wu-avatar` as real text.
+
+- Root class: `wu-avatar-group`
+- Sass entry: `@use "@wovenui/components/avatar-group";`
+- Needs: `avatar`
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-avatar-group" role="group" aria-label="Members">
+  <span class="wu-avatar blue" role="img" aria-label="Ana Lopez">AL</span>
+  <span class="wu-avatar green" role="img" aria-label="Ben Kim">BK</span>
+  <span class="wu-avatar" role="img" aria-label="3 more members">+3</span>
+</div>
+```
+
+```html
+<div class="wu-avatar-group animated" role="group" aria-label="Team">
+  <span class="wu-avatar purple" role="img" aria-label="Cy Ray">CR</span>
+  <span class="wu-avatar pink" role="img" aria-label="Di Eze">DE</span>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `animated` | On hover or focus within, the stack fans out into a row when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+## avatar
+
+Round or square badge for a person or product, with initials, an image or an svg, and an optional status dot.
+
+Label it with `aria-label` or the image `alt`, status included.
+
+`--wu-avatar--Size` overrides every size.
+
+- Root class: `wu-avatar`
+- Sass entry: `@use "@wovenui/components/avatar";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<span class="wu-avatar" role="img" aria-label="Ana Lopez">AL</span>
+<span class="wu-avatar sm blue" role="img" aria-label="Ben Kim">BK</span>
+<span class="wu-avatar lg purple" role="img" aria-label="Cy Ray">CR</span>
+```
+
+```html
+<span class="wu-avatar green" data-status="online" role="img" aria-label="Di Eze, online">DE</span>
+<span class="wu-avatar tile"><img src="https://wovenui.com/images/logo.svg" alt="WovenUI"></span>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Small or large size; the default is medium | 1.0.0 |
+| `tile` | Square with rounded corners, for company and product logos | 1.0.0 |
+| `gray`, `red`, `blue`, `green`, `yellow`, `purple`, `pink` | Tinted fill and text in that hue | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-avatar--Size` | `var(--wu-space-10)` | Width and height; initials scale with it | 1.0.0 |
+| `--wu-avatar--RingColor` | `var(--wu-bg-surface)` | Color of the ring around the status dot, shared with avatar group and corner badge | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `data-status="online"` | Solid dot at the end corner | 1.0.0 |
+| `data-status="away"` | Half-filled dot | 1.0.0 |
+| `data-status="busy"` | Filled dot with a bar | 1.0.0 |
+| `data-status="offline"` | Hollow ring | 1.0.0 |
+
+## badge
+
+Small pill for counts and short labels, tinted by default and solid for emphasis.
+
+- Root class: `wu-badge`
+- Sass entry: `@use "@wovenui/components/badge";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<span class="wu-badge">Draft</span>
+<span class="wu-badge success">Paid</span>
+<span class="wu-badge danger solid">3</span>
+```
+
+```html
+<span class="wu-badge-host">
+  <button class="wu-btn" type="button" aria-label="Inbox, 3 unread">Inbox</button>
+  <span class="wu-badge corner danger solid">3</span>
+</span>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand`, `success`, `danger`, `warning`, `info` | Role color: tinted fill, border and text; solid fill with `solid` | 1.0.0 |
+| `solid` | Solid fill for stronger emphasis, gray without a role | 1.0.0 |
+| `corner` | Pins the badge to the top inline-end corner of a `wu-badge-host` | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-badge-host` | Wrapper that a corner badge pins to | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-badge--Offset` | `50%` | How far a corner badge sits outside the host corner | 1.0.0 |
+| `--wu-avatar--RingColor` | `var(--wu-bg-surface)` | Color of the ring around a corner badge, shared with avatar | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:empty` | A corner badge with no content is hidden | 1.0.0 |
+
+## breadcrumb
+
+Trail of links that shows where the page sits in the site.
+
+Wrap an ordered list in a `nav` with an `aria-label`, and mark the last item with `aria-current="page"`.
+
+- Root class: `wu-breadcrumb`
+- Sass entry: `@use "@wovenui/components/breadcrumb";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<nav class="wu-breadcrumb" aria-label="Breadcrumb">
+  <ol class="wu-breadcrumb-list">
+    <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/">Home</a></li>
+    <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/projects/">Projects</a></li>
+    <li class="wu-breadcrumb-item"><span aria-current="page">Website</span></li>
+  </ol>
+</nav>
+```
+
+```html
+<nav class="wu-breadcrumb slash sm" aria-label="Breadcrumb">
+  <ol class="wu-breadcrumb-list">
+    <li class="wu-breadcrumb-item"><a class="wu-breadcrumb-link" href="/">Home</a></li>
+    <li class="wu-breadcrumb-item"><span aria-current="page">Docs</span></li>
+  </ol>
+</nav>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `slash` | A slash separator instead of the chevron | 1.0.0 |
+| `sm` | Smaller font size | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-breadcrumb-list` | The `ol` that lays the items out and wraps them | 1.0.0 |
+| `wu-breadcrumb-item` | One `li` in the trail, with a separator before it | 1.0.0 |
+| `wu-breadcrumb-link` | Underlined link to a parent page | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-current="page"` | The current page: regular text weight and color, no underline | 1.0.0 |
+
+## btn-group
+
+Joins buttons into one segmented control, as a split button, a toggle set or a radio set.
+
+Split divider: use `brand`, `danger` or `quiet` on both buttons of a pair. Checkable: use `role="group"` with checkboxes or `role="radiogroup"` with radios.
+
+The checked label takes the `aria-pressed` look; arrow keys are native for radios. `animated` on a button gives it the press from `wu-btn`.
+
+- Root class: `wu-btn-group`
+- Sass entry: `@use "@wovenui/components/btn-group";`
+- Needs: `button`
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-btn-group">
+  <button class="wu-btn brand" type="button">Save</button>
+  <button class="wu-btn brand caret" type="button" popovertarget="more-save" aria-label="More save options"></button>
+</div>
+<div id="more-save" popover>Save as draft</div>
+```
+
+```html
+<div class="wu-btn-group" role="radiogroup" aria-label="Align">
+  <label class="wu-btn"><input type="radio" name="align" class="sr-only" checked> Left</label>
+  <label class="wu-btn"><input type="radio" name="align" class="sr-only"> Right</label>
+</div>
+```
+
+```html
+<div class="wu-btn-group vertical" role="group" aria-label="View">
+  <button class="wu-btn" type="button" aria-pressed="true">List</button>
+  <button class="wu-btn" type="button" aria-pressed="false">Grid</button>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `vertical` | Stacks the buttons in a column | 1.0.0 |
+| `brand`, `danger`, `quiet` | On two neighbor buttons: a divider line between them, for split buttons | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-pressed="true"` | Toggle on: selected tint and an inner ring; a checked input inside the label does the same | 1.0.0 |
+
+## button
+
+Buttons for actions, in roles and sizes, with a caret for menus and split buttons.
+
+A `button` element is the default; an `a` element with `wu-btn` looks the same for navigation.
+
+Inside a `wu-field-group sm` or `lg`, a button without its own size takes the group size.
+
+- Root class: `wu-btn`
+- Sass entry: `@use "@wovenui/components/button";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn" type="button">Cancel</button>
+<button class="wu-btn brand" type="button">Save</button>
+<button class="wu-btn danger subtle sm" type="button">Delete</button>
+```
+
+```html
+<button class="wu-btn icon round" type="button" aria-label="Settings">
+  <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /></svg>
+</button>
+<button class="wu-btn brand" type="button" aria-busy="true">Saving</button>
+```
+
+```html
+<button class="wu-btn caret" type="button" popovertarget="actions">Actions</button>
+<div id="actions" popover>Menu content</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand` | Solid brand fill for the main action | 1.0.0 |
+| `danger` | Solid danger fill for destructive actions | 1.0.0 |
+| `subtle` | With `brand` or `danger`: tinted fill and border, solid on hover | 1.0.0 |
+| `quiet` | No border or fill until hover | 1.0.0 |
+| `link` | Looks like a link, no padding, keeps the control height | 1.0.0 |
+| `round` | Pill shape; a circle when the button is empty or holds only an svg | 1.0.0 |
+| `icon` | Square button for one svg and no text; give it an `aria-label` | 1.0.0 |
+| `caret` | Adds a caret after the label; an empty caret button with an `aria-label` is a narrow caret-only button for split buttons | 1.0.0 |
+| `sm`, `lg` | Small or large control height and font size | 1.0.0 |
+| `animated` | Spring press scale when the user allows motion; `wu-animated` on an ancestor or `wu-btn-group animated` does the same | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-btn--CaretSize` | `0.4em` | Size of the caret | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `disabled`, `aria-disabled="true"` | Half opacity, no pointer events | 1.0.0 |
+| `aria-busy="true"` | Loading: blocks pointer clicks and keeps full opacity | 1.0.0 |
+| `:popover-open` | The caret turns while the popover right after the button is open | 1.0.0 |
+
+## card
+
+Bordered surface that groups a header, a body and a footer.
+
+Put one real link, usually in the title, on `wu-card-link` to make the whole card clickable. Other controls stay clickable above it.
+
+- Root class: `wu-card`
+- Sass entry: `@use "@wovenui/components/card";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-card">
+  <div class="wu-card-header"><h3 class="wu-card-title">Plan</h3></div>
+  <div class="wu-card-body">Everything you need to start.</div>
+  <div class="wu-card-footer"><button class="wu-btn brand" type="button">Choose</button></div>
+</div>
+```
+
+```html
+<div class="wu-card">
+  <div class="wu-card-body">
+    <h3 class="wu-card-title"><a class="wu-card-link" href="/docs/">Read the docs</a></h3>
+    <p>Guides for every component.</p>
+  </div>
+</div>
+```
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-card-header` | Top row for a title and actions, with a bottom border | 1.0.0 |
+| `wu-card-title` | Heading inside the header or body | 1.0.0 |
+| `wu-card-body` | Main content; it grows so footers line up across a row of cards | 1.0.0 |
+| `wu-card-footer` | Bottom row for actions, aligned to the end, with a top border | 1.0.0 |
+| `wu-card-link` | Link stretched over the whole card | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-card--Padding` | `var(--wu-space-5)` | Padding of the header, body and footer | 1.0.0 |
+
+## checkbox
+
+Custom checkbox with a label, a check mark and an indeterminate dash.
+
+The box is 1em, so it follows the root type size. The `wu-checkbox-input` part also works alone with an `aria-label`.
+
+Inside a `wu-field-group sm` or `lg`, a checkbox without its own size takes the group size.
+
+- Root class: `wu-checkbox`
+- Sass entry: `@use "@wovenui/components/checkbox";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<label class="wu-checkbox">
+  <input type="checkbox" class="wu-checkbox-input" name="terms" checked>
+  <span class="wu-checkbox-label">I accept the terms</span>
+</label>
+```
+
+```html
+<label class="wu-checkbox sm">
+  <input type="checkbox" class="wu-checkbox-input" name="news" disabled>
+  <span class="wu-checkbox-label">Send the newsletter</span>
+</label>
+<input type="checkbox" class="wu-checkbox-input" name="all" aria-label="Select all">
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Small or large font size, and so box size | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-checkbox-input` | The `input` drawn as a box | 1.0.0 |
+| `wu-checkbox-label` | Label text next to the box | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `checked` | Brand fill with a check mark | 1.0.0 |
+| `indeterminate` | Brand fill with a dash | 1.0.0 |
+| `disabled` | Half opacity and a not-allowed cursor | 1.0.0 |
+| `aria-invalid="true"` | Danger edge that stays on hover and when checked | 1.0.0 |
+
+## code-block
+
+Scrollable block for code, with edge shadows when the content overflows.
+
+Use `pre` with `code` inside, and add `tabindex="0"` and an `aria-label` so keyboard users can scroll it.
+
+For line numbers, wrap each line in a `wu-code-block-line` span. The numbers are not copied or read aloud.
+
+- Root class: `wu-code-block`
+- Sass entry: `@use "@wovenui/components/code-block";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<pre class="wu-code-block" tabindex="0" aria-label="Install command"><code>pnpm add @wovenui/components</code></pre>
+```
+
+```html
+<pre class="wu-code-block" tabindex="0" aria-label="Example"><code><span class="wu-code-block-line">const a = 1;</span>
+<span class="wu-code-block-line">const b = 2;</span></code></pre>
+```
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-code-block-line` | Inline span for one line, with an optional line number | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-code-block--Background` | `var(--wu-bg-alternate)` | Background of the block and of its scroll shadow covers | 1.0.0 |
+| `--wu-code-block--FontFamily` | `ui-monospace` | Font family; the default is a system monospace stack | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:focus-visible` | Focus ring, for the scrollable block | 1.0.0 |
+
+## confirm-modal
+
+Dialog that asks the user to confirm or cancel an action, with a title, a message and two buttons.
+
+Builds on `wu-modal` for open, close, backdrop and motion, and on `wu-btn` for the actions. Use `role="alertdialog"`.
+
+The subject is optional and names the object. `danger` gives the message full weight; the confirming button takes `wu-btn danger`. `dialog.returnValue` holds the value of the button that closed it.
+
+- Root class: `wu-confirm-modal`
+- Sass entry: `@use "@wovenui/components/confirm-modal";`
+- Needs: `modal`, `button`
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn" type="button" commandfor="c1" command="show-modal">Delete</button>
+<dialog class="wu-modal wu-confirm-modal danger" id="c1" role="alertdialog" aria-labelledby="c1-title" aria-describedby="c1-subject c1-message">
+  <h2 class="wu-confirm-modal-title" id="c1-title">Delete project?</h2>
+  <p class="wu-confirm-modal-subject" id="c1-subject">Website redesign</p>
+  <p class="wu-confirm-modal-message" id="c1-message">This cannot be undone.</p>
+  <form class="wu-confirm-modal-actions" method="dialog">
+    <button class="wu-btn" value="cancel" autofocus>Cancel</button>
+    <button class="wu-btn danger" value="confirm">Delete</button>
+  </form>
+</dialog>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `danger` | Message at full contrast and body size, for destructive actions | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-confirm-modal-title` | Heading that names the question | 1.0.0 |
+| `wu-confirm-modal-subject` | Optional line that names the object the action applies to | 1.0.0 |
+| `wu-confirm-modal-message` | Supporting text about the consequence | 1.0.0 |
+| `wu-confirm-modal-actions` | Form that holds the buttons, aligned to the end | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-confirm-modal--Width` | `26rem` | Width of the dialog | 1.0.0 |
+
+## data-table
+
+Sortable table: click a header to sort rows by text or number.
+
+Add it to a `wu-table`; the sort button and arrows come from the table component, and the kit script sorts the first `tbody` and sets `aria-sort`. A `data-sort-value` on a cell wins over its text.
+
+The script adds a `wu-data-table-status` live region after the table and announces each sort there.
+
+- Root class: `wu-data-table`
+- Sass entry: `@use "@wovenui/components/data-table";`
+- Needs: `table`
+- JavaScript: required: `initDataTable` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<table class="wu-table wu-data-table">
+  <thead>
+    <tr>
+      <th scope="col" aria-sort="ascending"><button class="wu-table-sort" type="button">Name</button></th>
+      <th scope="col" class="wu-table-num"><button class="wu-table-sort" type="button">Amount</button></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Ada</td><td class="wu-table-num" data-sort-value="1200">$1,200</td></tr>
+    <tr><td>Grace</td><td class="wu-table-num" data-sort-value="950">$950</td></tr>
+  </tbody>
+</table>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `animated` | Rows glide to their new place when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-data-table-status` | Visually hidden live region added by the script to announce each sort | 1.0.0 |
+| `wu-data-table-row` | View transition class, not an HTML class, set on body rows while they move; target `::view-transition-group(*.wu-data-table-row)` to restyle the glide | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-sort="ascending"` | Header cell sorted ascending, set by the script | 1.0.0 |
+| `aria-sort="descending"` | Header cell sorted descending, set by the script | 1.0.0 |
+| `aria-busy="true"` | Set while rows move: progress cursor, and the row animation runs | 1.0.0 |
+
+## desc-list
+
+Description list of terms and values, plain, divided, bordered or in columns.
+
+Use a `dl`; wrap each pair in a `div` for divided, bordered and column layouts.
+
+- Root class: `wu-desc-list`
+- Sass entry: `@use "@wovenui/components/desc-list";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<dl class="wu-desc-list horizontal divided">
+  <div><dt>Name</dt><dd>Ada Lovelace</dd></div>
+  <div><dt>Role</dt><dd>Engineer</dd></div>
+</dl>
+```
+
+```html
+<dl class="wu-desc-list bordered">
+  <div><dt>Plan</dt><dd>Team</dd></div>
+  <div><dt>Seats</dt><dd>12</dd></div>
+</dl>
+```
+
+```html
+<dl class="wu-desc-list columns">
+  <div><dt>City</dt><dd>Berlin</dd></div>
+  <div><dt>Country</dt><dd>Germany</dd></div>
+  <div><dt>Timezone</dt><dd>CET</dd></div>
+</dl>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `horizontal` | Terms in a column beside their descriptions | 1.0.0 |
+| `divided` | Lines between the `div` pairs | 1.0.0 |
+| `bordered` | Table look: lines around every cell, terms on the alternate background | 1.0.0 |
+| `columns` | Several pairs per row; with `bordered`, each pair is a term cell beside its description | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-desc-list--TermWidth` | `fit-content(40%)` | Width of the term column in `horizontal` and `bordered` | 1.0.0 |
+| `--wu-desc-list--Columns` | `3` | Most pairs per row in `columns` | 1.0.0 |
+| `--wu-desc-list--ColumnWidth` | `10rem` | Narrowest a pair gets in `columns` before a row holds fewer | 1.0.0 |
+
+## divider
+
+Horizontal or vertical separator line, optionally with a text label between two lines.
+
+Use an `hr` element. `aria-orientation="vertical"` turns it into a vertical line between inline items. With content, the text is read and the lines are decoration.
+
+- Root class: `wu-divider`
+- Sass entry: `@use "@wovenui/components/divider";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<hr class="wu-divider">
+<hr class="wu-divider dashed">
+```
+
+```html
+<div class="wu-divider">or</div>
+```
+
+```html
+<span>Edit</span><hr class="wu-divider" aria-orientation="vertical"><span>Share</span>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `dashed` | Dashed line, also on the lines beside a label | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-orientation="vertical"` | Vertical line that stretches to the row height | 1.0.0 |
+| `:not(:empty)` | With content: the text sits between two lines | 1.0.0 |
+
+## dot
+
+Small status dot for use next to status text, tinted by role.
+
+Add `aria-hidden="true"` and put the meaning in the text beside it. `success`, `warning` and `danger` also change the shape (check, triangle, octagon), so color is never the only signal.
+
+A corner dot pins to a `wu-badge-host`, the same wrapper a corner badge uses, and reads `--wu-badge--Offset` and `--wu-avatar--RingColor` from the badge and avatar.
+
+- Root class: `wu-dot`
+- Sass entry: `@use "@wovenui/components/dot";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<span class="wu-dot success" aria-hidden="true"></span> Online
+```
+
+```html
+<span class="wu-dot danger animated" aria-hidden="true"></span> Live
+```
+
+```html
+<span class="wu-badge-host">
+  <button class="wu-btn" type="button" aria-label="Inbox, new messages">Inbox</button>
+  <span class="wu-dot corner brand" aria-hidden="true"></span>
+</span>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand`, `success`, `danger`, `warning`, `info` | Role color; success, warning and danger also change the shape | 1.0.0 |
+| `corner` | Pins the dot to the top inline-end corner of a `wu-badge-host` | 1.0.0 |
+| `animated` | Fading ring for live status when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-dot--Size` | `var(--wu-space-2)` | Width and height of the dot | 1.0.0 |
+
+## drawer
+
+Side panel on the native `dialog` element, docked to the inline end, the inline start or the bottom.
+
+Opens with invoker commands (`commandfor` and `command`), no script. With `show-modal` the page does not scroll while it is open; the page keeps its scrollbar gutter so it does not shift. `show` opens it non-modal and leaves the page alone.
+
+Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide.
+
+- Root class: `wu-drawer`
+- Sass entry: `@use "@wovenui/components/drawer";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn" type="button" commandfor="d1" command="show-modal">Filters</button>
+<dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="any">
+  <header class="wu-drawer-header">
+    <h2 class="wu-drawer-title" id="d1-title">Filters</h2>
+    <button class="wu-drawer-close" type="button" commandfor="d1" command="close" aria-label="Close"></button>
+  </header>
+  <div class="wu-drawer-body">Content</div>
+  <form class="wu-drawer-footer" method="dialog">
+    <button class="wu-btn brand">Apply</button>
+  </form>
+</dialog>
+```
+
+```html
+<dialog class="wu-drawer bottom animated" id="d2" aria-label="Details" closedby="any">
+  <div class="wu-drawer-body">Content</div>
+</dialog>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `inline-start` | Docks to the inline start instead of the inline end | 1.0.0 |
+| `bottom` | Docks to the bottom edge with rounded top corners, up to `--wu-drawer--MaxHeight` | 1.0.0 |
+| `animated` | Slides in from its edge and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-drawer-header` | Top row with the title and close button | 1.0.0 |
+| `wu-drawer-title` | Heading in the header | 1.0.0 |
+| `wu-drawer-body` | Scrolling content area that fills the drawer | 1.0.0 |
+| `wu-drawer-footer` | Bottom row for actions, aligned to the inline end | 1.0.0 |
+| `wu-drawer-close` | Close button drawn by the shared close style; give it an `aria-label` | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-drawer--Width` | `24rem` | Drawer width when docked to a side | 1.0.0 |
+| `--wu-drawer--MaxHeight` | `75dvh` | Maximum height of a bottom drawer | 1.0.0 |
+| `--wu-drawer--Backdrop` | `50% black, 70% in dark themes` | Color behind a modal drawer | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `open` | Shown as a flex column so the body scrolls between header and footer | 1.0.0 |
+| `:modal` | Locks page scroll while the drawer is open with `show-modal` | 1.0.0 |
+
+## dropdown
+
+Menu of links and buttons in a native popover, anchored under its trigger.
+
+A button with `popovertarget` opens it; `commandfor` with `command="toggle-popover"` works as the trigger too. Esc and a click outside close it. `popovertargetaction="hide"` on a button item closes the menu after its click handler runs.
+
+Opens under the trigger where anchor positioning exists and flips when there is no room; elsewhere it is centered in the viewport. Engines without implicit anchors need `anchor-name` on the trigger and `position-anchor` on the menu, with the same name.
+
+`inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button.
+
+- Root class: `wu-dropdown`
+- Sass entry: `@use "@wovenui/components/dropdown";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn caret" type="button" popovertarget="menu1">Actions</button>
+<div class="wu-dropdown" id="menu1" popover>
+  <a class="wu-dropdown-item" href="/edit">Edit</a>
+  <button class="wu-dropdown-item" type="button" popovertarget="menu1" popovertargetaction="hide">Duplicate</button>
+  <hr class="wu-dropdown-separator">
+  <button class="wu-dropdown-item danger" type="button" popovertarget="menu1" popovertargetaction="hide">Delete</button>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `inline-end` | Aligns the menu's inline end with the trigger's inline end | 1.0.0 |
+| `danger` | On an item: danger text and a danger hover tint | 1.0.0 |
+| `animated` | Fades and slides in and out when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-dropdown-item` | Link or button row in the menu; an `svg` child is sized as an icon | 1.0.0 |
+| `wu-dropdown-separator` | Line between groups of items; use an `hr` | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-dropdown--MinWidth` | `10rem` | Minimum menu width | 1.0.0 |
+| `--wu-dropdown--MaxHeight` | `20rem` | Maximum menu height before it scrolls | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `disabled`, `aria-disabled="true"` | On an item: half opacity, no pointer events | 1.0.0 |
+| `:popover-open` | A plain trigger button right before the menu takes a hover look while it is open | 1.0.0 |
+
+## empty-state
+
+Centered message for a view with no content or a finished result, with an icon, title, text and actions.
+
+The icon slot holds the app's own icon; left empty, it draws a calm empty-box shape. Result roles tint the slot, and an empty slot draws the alert's marker shape.
+
+The title text carries the meaning ("Payment received"); the shape repeats it.
+
+- Root class: `wu-empty-state`
+- Sass entry: `@use "@wovenui/components/empty-state";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-empty-state">
+  <span class="wu-empty-state-icon" aria-hidden="true"></span>
+  <h3 class="wu-empty-state-title">No projects yet</h3>
+  <p class="wu-empty-state-text">Create a project to get started.</p>
+  <div class="wu-empty-state-actions">
+    <button class="wu-btn brand" type="button">New project</button>
+  </div>
+</div>
+```
+
+```html
+<div class="wu-empty-state success sm dashed">
+  <span class="wu-empty-state-icon" aria-hidden="true"></span>
+  <h3 class="wu-empty-state-title">Payment received</h3>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `dashed` | Dashed border and radius around the whole state | 1.0.0 |
+| `sm` | Compact size for use inside a card, panel or table | 1.0.0 |
+| `success`, `warning`, `danger`, `info` | Result: tints the icon slot; an empty slot draws the marker shape | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-empty-state-icon` | Round icon slot; empty, it draws a shape | 1.0.0 |
+| `wu-empty-state-title` | Heading | 1.0.0 |
+| `wu-empty-state-text` | Supporting text, limited to a readable width | 1.0.0 |
+| `wu-empty-state-actions` | Centered row for buttons | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:empty` | An empty icon slot draws the empty-box or marker shape | 1.0.0 |
+
+## field-group
+
+Group of fields in a `fieldset`, stacked by default or side by side.
+
+Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
+
+- Root class: `wu-field-group`
+- Sass entry: `@use "@wovenui/components/field-group";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<fieldset class="wu-field-group">
+  <legend class="wu-field-group-legend">Contact</legend>
+  <div class="wu-field">
+    <label class="wu-field-label" for="g-name">Name</label>
+    <input class="wu-input" id="g-name" type="text">
+  </div>
+  <div class="wu-field">
+    <label class="wu-field-label" for="g-mail">Email</label>
+    <input class="wu-input" id="g-mail" type="email">
+  </div>
+</fieldset>
+```
+
+```html
+<fieldset class="wu-field-group horizontal">
+  <legend class="wu-field-group-legend">Dates</legend>
+  <div class="wu-field">
+    <label class="wu-field-label" for="g-from">From</label>
+    <input class="wu-input" id="g-from" type="date">
+  </div>
+  <div class="wu-field">
+    <label class="wu-field-label" for="g-to">To</label>
+    <input class="wu-input" id="g-to" type="date">
+  </div>
+</fieldset>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `horizontal` | Fields side by side, wrapping when narrower than `--wu-field-group--MinWidth` | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-field-group-legend` | Group title | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-field-group--MinWidth` | `12rem` | Width at which a field in a horizontal group wraps | 1.0.0 |
+
+## field-message
+
+Hint, error or success text under a form control, with a marker shape for each role.
+
+Link it from the control with `aria-describedby`. The words carry the meaning ("Error: ..."); the role adds color and a marker shape: `error` a larger octagon with an exclamation mark, `success` a check, `info` a small circle.
+
+Inside a `wu-field`, an `error` message stays hidden until the control is invalid.
+
+- Root class: `wu-field-message`
+- Sass entry: `@use "@wovenui/components/field-message";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<p class="wu-field-message" id="hint">Use your work email.</p>
+<p class="wu-field-message error" id="err">Error: enter a valid email.</p>
+<p class="wu-field-message success" id="ok">Email confirmed.</p>
+<p class="wu-field-message info" id="note">We never share it.</p>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `error`, `success`, `info` | Role color and marker shape; error is also medium weight | 1.0.0 |
+
+## field
+
+Form field that stacks a label, a control and its messages, with a required marker and a floating label option.
+
+The required marker comes from `required` or `aria-required="true"` on the control. An `error` message is hidden until the control is invalid. Its id joins `aria-describedby` only while it shows: server-rendered with `aria-invalid="true"`, or added by your script. Leave it out otherwise, so a hidden error is never announced; for `:user-invalid` the browser's own validation message speaks on submit.
+
+`floating` needs `placeholder=" "` on the input and is not used with `horizontal`. `horizontal` puts the label beside the control from the `sm` breakpoint up.
+
+- Root class: `wu-field`
+- Sass entry: `@use "@wovenui/components/field";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-field">
+  <label class="wu-field-label" for="f1">Email</label>
+  <input class="wu-input" id="f1" type="email" required aria-describedby="f1-hint">
+  <p class="wu-field-message" id="f1-hint">Hint</p>
+  <p class="wu-field-message error" id="f1-error">Error: enter a valid email.</p>
+</div>
+```
+
+```html
+<div class="wu-field floating animated">
+  <label class="wu-field-label" for="f2">Name</label>
+  <input class="wu-input" id="f2" type="text" placeholder=" ">
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `horizontal` | Label beside the control from `sm` up, in a column of `--wu-field--LabelWidth` | 1.0.0 |
+| `error` | On a `wu-field-message` inside the field: hidden until the control is invalid | 1.0.0 |
+| `floating` | Label inside the input, moved up on focus or once filled | 1.0.0 |
+| `animated` | On a floating field: the label slides when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-field-label` | Label above the control | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-field--LabelWidth` | `10rem` | Label column width in a horizontal field | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:required`, `aria-required="true"` | On the control: adds a required marker to the label | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | On the control: shows the `error` message | 1.0.0 |
+
+## form-actions
+
+Footer row for form buttons, start-aligned by default.
+
+`wu-form-actions-end` inside the row pushes a set of buttons to the inline end.
+
+- Root class: `wu-form-actions`
+- Sass entry: `@use "@wovenui/components/form-actions";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-form-actions divided">
+  <button class="wu-btn brand" type="submit">Save</button>
+  <button class="wu-btn" type="reset">Reset</button>
+</div>
+```
+
+```html
+<div class="wu-form-actions">
+  <button class="wu-btn danger subtle" type="button">Delete</button>
+  <div class="wu-form-actions-end">
+    <button class="wu-btn" type="button">Cancel</button>
+    <button class="wu-btn brand" type="submit">Save</button>
+  </div>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `trailing` | Aligns the buttons to the inline end | 1.0.0 |
+| `centered` | Centers the buttons | 1.0.0 |
+| `divided` | Line and padding above the row | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-form-actions-end` | Set of buttons pushed to the inline end of the row | 1.0.0 |
+
+## info-row
+
+One label and value pair, with a line between adjacent rows.
+
+Works as a `div` with `dt` and `dd` inside a `dl`.
+
+- Root class: `wu-info-row`
+- Sass entry: `@use "@wovenui/components/info-row";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-info-row">
+  <span class="wu-info-row-label">Tax</span>
+  <span class="wu-info-row-value">$9.60</span>
+</div>
+<div class="wu-info-row total">
+  <span class="wu-info-row-label">Total</span>
+  <span class="wu-info-row-value">$129.60</span>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `total` | Strong line above, regular label text and a larger value | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-info-row-label` | Muted label | 1.0.0 |
+| `wu-info-row-value` | Value, end-aligned with tabular numbers | 1.0.0 |
+
+## input-group
+
+Joined row of text addons, an input and buttons that share one border and radius.
+
+Size the children (`wu-input sm`, `wu-btn sm`); addons stretch to the row height. Default buttons take the field border; `brand`, `danger`, `quiet` and `link` buttons keep their own look. The hovered, focused or invalid control rises above its neighbors.
+
+- Root class: `wu-input-group`
+- Sass entry: `@use "@wovenui/components/input-group";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-input-group">
+  <span class="wu-input-group-text">https://</span>
+  <input class="wu-input" type="text" aria-label="Website" placeholder="example.com">
+</div>
+```
+
+```html
+<div class="wu-input-group">
+  <input class="wu-input sm" type="search" aria-label="Search" placeholder="Search">
+  <button class="wu-btn brand sm" type="button">Search</button>
+</div>
+```
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-input-group-text` | Text addon with the alternate background; an `svg` child is sized as an icon | 1.0.0 |
+
+## input
+
+Text input in three sizes, with disabled, read-only and invalid looks, plus prefix, suffix and a clear button inside the field border.
+
+Core base already sets the border, background, hover, focus ring, invalid border, disabled look, placeholder color, padding and the md height; the kit adds the radius, type size and sizes.
+
+`wu-input-affix` draws the box and the input inside goes bare. Prefix and suffix sit on the inline start and end, so they swap in right-to-left pages. A `wu-select` can replace the input. `sm` and `lg` go on the wrapper. `wu-input-clear` is started by the kit script: it shows while the field has text, clears it and refocuses.
+
+- Root class: `wu-input`
+- Sass entry: `@use "@wovenui/components/input";`
+- Needs: none
+- JavaScript: optional: `initInputClear` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<input class="wu-input" type="text" aria-label="Name" placeholder="Name">
+<input class="wu-input sm" type="text" aria-label="Code" value="A-12" readonly>
+<input class="wu-input lg" type="email" aria-label="Email" aria-invalid="true">
+```
+
+```html
+<div class="wu-input-affix">
+  <span class="wu-input-prefix"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /></svg></span>
+  <input class="wu-input" type="search" aria-label="Search">
+  <button class="wu-input-clear" type="button" aria-label="Clear" hidden></button>
+  <span class="wu-input-suffix">USD</span>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group sm` or `lg` when the control has no size | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-input-affix` | Wrapper that draws the field box around a bare input or select, with a prefix, suffix and clear button | 1.0.0 |
+| `wu-input-prefix` | Content before the input, such as an icon or currency symbol | 1.0.0 |
+| `wu-input-suffix` | Content after the input, such as a unit | 1.0.0 |
+| `wu-input-clear` | Clear button inside the affix; an empty button shows a multiplication sign; give it an `aria-label` | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `disabled` | Not-allowed cursor; an affix with a disabled control dims | 1.0.0 |
+| `readonly` | Alternate background | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | Danger border doubled to 2px, so the change is not color alone | 1.0.0 |
+
+## list
+
+Vertical list of rows with a title, text and room for leading or trailing content.
+
+Use a `ul` or `ol`; add `role="list"` to keep list semantics without markers. `wu-list-body` grows between leading and trailing content such as an avatar, badge or button.
+
+- Root class: `wu-list`
+- Sass entry: `@use "@wovenui/components/list";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<ul class="wu-list divided" role="list">
+  <li class="wu-list-item">
+    <div class="wu-list-body">
+      <p class="wu-list-title">Ada Lovelace</p>
+      <p class="wu-list-text">Engineer</p>
+    </div>
+    <span class="wu-badge success">Active</span>
+  </li>
+  <li class="wu-list-item">
+    <div class="wu-list-body">
+      <p class="wu-list-title">Grace Hopper</p>
+    </div>
+  </li>
+</ul>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `divided` | Line between rows | 1.0.0 |
+| `sm` | Tighter row padding | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-list-item` | Row, a flex container | 1.0.0 |
+| `wu-list-body` | Column that grows between leading and trailing content | 1.0.0 |
+| `wu-list-title` | Row title, medium weight | 1.0.0 |
+| `wu-list-text` | Muted supporting text | 1.0.0 |
+
+## modal
+
+Dialog built on the native `dialog` element, with header, body and footer.
+
+Esc closes it, and `closedby="any"` adds click outside where supported. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
+
+The body scrolls on its own when the content is taller than the dialog.
+
+- Root class: `wu-modal`
+- Sass entry: `@use "@wovenui/components/modal";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn" type="button" commandfor="m1" command="show-modal">Open</button>
+<dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="any">
+  <header class="wu-modal-header">
+    <h2 class="wu-modal-title" id="m1-title">Title</h2>
+    <button class="wu-modal-close" type="button" commandfor="m1" command="close" aria-label="Close"></button>
+  </header>
+  <div class="wu-modal-body">Content</div>
+  <form class="wu-modal-footer" method="dialog">
+    <button class="wu-btn">Cancel</button>
+    <button class="wu-btn brand" value="confirm">Save</button>
+  </form>
+</dialog>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Narrow (24rem) or wide (48rem) dialog; the default is 32rem | 1.0.0 |
+| `animated` | Fades and scales the dialog in and out and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-modal-header` | Top row for the title and close button | 1.0.0 |
+| `wu-modal-title` | Dialog heading | 1.0.0 |
+| `wu-modal-close` | Close button drawn with the shared close icon; give it an `aria-label` | 1.0.0 |
+| `wu-modal-body` | Scrolling content area | 1.0.0 |
+| `wu-modal-footer` | Bottom row for actions, aligned to the inline end | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-modal--Width` | `32rem` | Dialog width | 1.0.0 |
+| `--wu-modal--MaxHeight` | `calc(100dvh - 4rem)` | Largest dialog height before the body scrolls | 1.0.0 |
+| `--wu-modal--Backdrop` | `50% black, 70% in dark themes` | Backdrop color | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `open` | Displays the dialog as a flex column | 1.0.0 |
+
+## page-header
+
+Page title row with an optional description, breadcrumb and action buttons.
+
+Actions line up with the title and wrap below it on narrow screens. A direct `wu-breadcrumb` child takes its own full-width row above the title.
+
+- Root class: `wu-page-header`
+- Sass entry: `@use "@wovenui/components/page-header";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<header class="wu-page-header divided">
+  <nav class="wu-breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/projects">Projects</a></li>
+      <li aria-current="page">Apollo</li>
+    </ol>
+  </nav>
+  <div class="wu-page-header-main">
+    <h1 class="wu-page-header-title">Apollo</h1>
+    <p class="wu-page-header-text">Launch plan and open tasks.</p>
+  </div>
+  <div class="wu-page-header-actions">
+    <button class="wu-btn" type="button">Share</button>
+    <button class="wu-btn brand" type="button">New task</button>
+  </div>
+</header>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `divided` | Adds a bottom border and padding under the header | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-page-header-main` | Column that holds the title and description | 1.0.0 |
+| `wu-page-header-title` | Page heading | 1.0.0 |
+| `wu-page-header-text` | Muted description under the title | 1.0.0 |
+| `wu-page-header-actions` | Row of buttons, centered on the title first line | 1.0.0 |
+
+## pagination
+
+Page navigation made of button links, with optional total count and page size select.
+
+Use a `nav` with an `aria-label`, and give an arrow-only previous or next link an `aria-label`. Mark the current link with `aria-current="page"`.
+
+Put a `wu-pagination-total` and a `wu-pagination-size` label holding a `wu-select` beside the list.
+
+- Root class: `wu-pagination`
+- Sass entry: `@use "@wovenui/components/pagination";`
+- Needs: `button`
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<nav class="wu-pagination" aria-label="Pagination">
+  <ul class="wu-pagination-list">
+    <li><a class="wu-btn wu-pagination-prev" href="/orders?page=1" aria-label="Previous page"></a></li>
+    <li><a class="wu-btn" href="/orders?page=1">1</a></li>
+    <li><a class="wu-btn" href="/orders?page=2" aria-current="page">2</a></li>
+    <li><span class="wu-pagination-ellipsis">&hellip;</span></li>
+    <li><a class="wu-btn" href="/orders?page=9">9</a></li>
+    <li><a class="wu-btn wu-pagination-next" href="/orders?page=3" aria-label="Next page"></a></li>
+  </ul>
+  <span class="wu-pagination-total">Showing 11 to 20 of 86</span>
+</nav>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger buttons and ellipsis | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-pagination-list` | List that holds the page links | 1.0.0 |
+| `wu-pagination-ellipsis` | Gap marker between page numbers | 1.0.0 |
+| `wu-pagination-prev` | On a link: draws a back arrow that follows the reading direction | 1.0.0 |
+| `wu-pagination-next` | On a link: draws a forward arrow that follows the reading direction | 1.0.0 |
+| `wu-pagination-total` | Muted total count text | 1.0.0 |
+| `wu-pagination-size` | Label that holds a `wu-select` for the page size | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-current="page"` | The current page: solid brand fill | 1.0.0 |
+
+## panel
+
+Flat bordered region for grouped settings or data.
+
+The card is the raised surface; the panel stays flat with a border.
+
+- Root class: `wu-panel`
+- Sass entry: `@use "@wovenui/components/panel";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<section class="wu-panel">
+  <header class="wu-panel-header">
+    <h2 class="wu-panel-title">Notifications</h2>
+    <button class="wu-btn sm" type="button">Edit</button>
+  </header>
+  <div class="wu-panel-body">Email me about new comments.</div>
+  <footer class="wu-panel-footer">
+    <button class="wu-btn brand" type="button">Save</button>
+  </footer>
+</section>
+```
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-panel-header` | Top row with a tinted background and bottom border | 1.0.0 |
+| `wu-panel-title` | Panel heading | 1.0.0 |
+| `wu-panel-body` | Content area | 1.0.0 |
+| `wu-panel-footer` | Bottom row for actions, aligned to the inline end | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-panel--Padding` | `1rem` | Inline padding of the header and footer, and padding of the body | 1.0.0 |
+
+## popover
+
+Small floating panel built on the native `popover` attribute.
+
+Esc and click outside close it. `commandfor` with `command="toggle-popover"` works as the trigger too.
+
+Opens under its trigger where anchor positioning exists, and flips when there is no room. Elsewhere it is centered in the viewport. It has no arrow.
+
+Placement follows the popover own direction, so it is right in an RTL section of an LTR page.
+
+- Root class: `wu-popover`
+- Sass entry: `@use "@wovenui/components/popover";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<button class="wu-btn" type="button" popovertarget="p1">Details</button>
+<div class="wu-popover" id="p1" popover>
+  <h3 class="wu-popover-title">Title</h3>
+  <p>Short content.</p>
+</div>
+```
+
+```html
+<button class="wu-btn" type="button" popovertarget="p2">Delete</button>
+<div class="wu-popover" id="p2" popover>
+  <p>Delete this item?</p>
+  <div class="wu-popover-actions">
+    <button class="wu-btn sm" type="button" popovertarget="p2" popovertargetaction="hide">Cancel</button>
+    <button class="wu-btn danger sm" type="button" popovertarget="p2" popovertargetaction="hide">Delete</button>
+  </div>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `animated` | Fades and scales the popover in and out, growing away from the trigger, when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-popover-title` | Popover heading | 1.0.0 |
+| `wu-popover-actions` | Button row at the inline end, for an inline confirm | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-popover--MaxWidth` | `20rem` | Largest popover width | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:popover-open` | Fully visible during the animated transition | 1.0.0 |
+
+## progress-circle
+
+Circular progress ring that shows a percentage.
+
+It is not a native element, so name the role and value: `role="progressbar"` with `aria-label`, `aria-valuenow`, `aria-valuemin` and `aria-valuemax`.
+
+The value is a percentage from 0 to 100, set with `--wu-progress-circle--Value`. The ring color is `currentcolor`, so roles and `color` set it.
+
+- Root class: `wu-progress-circle`
+- Sass entry: `@use "@wovenui/components/progress-circle";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-progress-circle" role="progressbar" aria-label="Upload" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="--wu-progress-circle--Value: 72">
+  <span class="wu-progress-circle-label">72%</span>
+</div>
+```
+
+```html
+<div class="wu-progress-circle success lg animated" role="progressbar" aria-label="Storage" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="--wu-progress-circle--Value: 40">
+  <span class="wu-progress-circle-label">40%</span>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `success`, `danger`, `warning`, `info` | Role color for the ring | 1.0.0 |
+| `sm`, `lg` | Smaller (2.5rem) or larger (6rem) ring with a thinner or thicker band | 1.0.0 |
+| `animated` | The ring eases to each new value when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-progress-circle-label` | Text centered in the ring | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-progress-circle--Value` | `0` | Percentage from 0 to 100; a registered property, so it can transition | 1.0.0 |
+| `--wu-progress-circle--Size` | `4rem` | Width and height of the ring | 1.0.0 |
+| `--wu-progress-circle--Thickness` | `0.5rem` | Width of the ring band | 1.0.0 |
+
+## progress
+
+Horizontal progress bar on the native `progress` element.
+
+Without a `value` attribute it is indeterminate and shows a sliding segment. Label it with a `label` element or `aria-label`.
+
+The fill uses `currentcolor`, so roles and `color` set it.
+
+- Root class: `wu-progress`
+- Sass entry: `@use "@wovenui/components/progress";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<label class="wu-progress-label" for="upload"><span>Uploading</span><span>72%</span></label>
+<progress class="wu-progress" id="upload" value="72" max="100"></progress>
+```
+
+```html
+<progress class="wu-progress success sm" value="40" max="100" aria-label="Storage used"></progress>
+<progress class="wu-progress lg" aria-label="Loading"></progress>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `success`, `danger`, `warning`, `info` | Role color for the fill | 1.0.0 |
+| `sm`, `lg` | Thinner (0.25rem) or thicker (0.75rem) bar | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-progress-label` | Row above the bar for a title and a value | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-progress--Height` | `0.5rem` | Bar height | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:indeterminate` | No value: a segment slides across the track | 1.0.0 |
+
+## radio
+
+Radio button with a label, drawn from the native input.
+
+The circle is `1em`, so it follows the root type size. The `wu-radio-input` part also works alone with an `aria-label`.
+
+Inside a `wu-field-group sm` or `lg`, a radio without its own size takes the group size.
+
+- Root class: `wu-radio`
+- Sass entry: `@use "@wovenui/components/radio";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<label class="wu-radio">
+  <input type="radio" class="wu-radio-input" name="plan" value="free" checked>
+  <span class="wu-radio-label">Free</span>
+</label>
+<label class="wu-radio">
+  <input type="radio" class="wu-radio-input" name="plan" value="pro">
+  <span class="wu-radio-label">Pro</span>
+</label>
+```
+
+```html
+<input type="radio" class="wu-radio-input" name="size" value="m" aria-label="Medium">
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger text and circle | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-radio-input` | The native radio input, drawn as a circle with a dot | 1.0.0 |
+| `wu-radio-label` | Label text beside the circle | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `disabled` | Half opacity, no pointer events | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | Two pixel danger edge that stays on hover and when checked | 1.0.0 |
+| `:checked` | Brand fill with a dot | 1.0.0 |
+
+## segmented
+
+Radio group shown as connected segments, one selected at a time.
+
+Arrow keys move the choice natively, and segments share the width equally. A `div` with `role="radiogroup"` and an `aria-label` works instead of a `fieldset`.
+
+Type follows the button: `xs`, `sm` and `md` for `sm`, default and `lg`. The animated thumb supports up to six label segments.
+
+- Root class: `wu-segmented`
+- Sass entry: `@use "@wovenui/components/segmented";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<fieldset class="wu-segmented">
+  <legend class="sr-only">View</legend>
+  <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="day" checked> Day</label>
+  <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="week"> Week</label>
+  <label class="wu-segmented-item"><input type="radio" name="view" class="wu-segmented-input" value="month"> Month</label>
+</fieldset>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger control height and font size | 1.0.0 |
+| `animated` | One thumb slides to the checked segment with a spring when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-segmented-item` | One segment: the label that wraps a radio input | 1.0.0 |
+| `wu-segmented-input` | The radio input, visually hidden but focusable and announced | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:checked` | The selected segment has a raised surface, an edge and a shadow | 1.0.0 |
+| `disabled` | Half opacity on that segment | 1.0.0 |
+
+## select
+
+Native `select` with the kit input look and a drawn arrow.
+
+Core base already sets the border, background, hover, focus ring, invalid border, disabled look, padding and the default height. List boxes (`multiple` or `size`) keep their natural height and have no arrow.
+
+Where `appearance: base-select` is supported, the picker matches the kit; other browsers keep the native list.
+
+Inside a `wu-field-group sm` or `lg`, a select without its own size takes the group size.
+
+- Root class: `wu-select`
+- Sass entry: `@use "@wovenui/components/select";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<select class="wu-select" name="country" aria-label="Country">
+  <option>Pakistan</option>
+  <option>United Arab Emirates</option>
+</select>
+```
+
+```html
+<select class="wu-select sm" name="sort" aria-label="Sort by" aria-invalid="true">
+  <option>Newest</option>
+  <option>Oldest</option>
+</select>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger control height and padding | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-select--ArrowColor` | `var(--wu-text-muted)` | Color of the arrow | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `disabled` | Not-allowed cursor on top of core disabled look | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | Danger edge doubled to two pixels, so the change is not color alone | 1.0.0 |
+
+## sidebar
+
+Vertical navigation with sections, link lists and collapsible groups.
+
+Use a `nav` with an `aria-label`, and mark the current link with `aria-current="page"`. A collapsible group is a `details` with the `wu-sidebar-group` class and a `summary` with `wu-sidebar-toggle`; the toggle may also be a `button` with `aria-expanded`.
+
+On narrow screens put the sidebar in a `dialog` with `wu-drawer inline-start`, where it fills the drawer.
+
+Icon rail: add `collapsed`; each link holds an `svg` and a `wu-sidebar-label`, shown as a tooltip on hover or focus.
+
+- Root class: `wu-sidebar`
+- Sass entry: `@use "@wovenui/components/sidebar";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<nav class="wu-sidebar" aria-label="Main">
+  <div class="wu-sidebar-section">
+    <h2 class="wu-sidebar-heading">Workspace</h2>
+    <ul class="wu-sidebar-list">
+      <li><a class="wu-sidebar-link" href="/dashboard" aria-current="page">Dashboard</a></li>
+      <li>
+        <details class="wu-sidebar-group" open>
+          <summary class="wu-sidebar-toggle">Projects</summary>
+          <ul class="wu-sidebar-list">
+            <li><a class="wu-sidebar-link" href="/projects/apollo">Apollo</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+  </div>
+  <div class="wu-sidebar-footer">Signed in as Sam</div>
+</nav>
+```
+
+```html
+<nav class="wu-sidebar collapsed pinned" aria-label="Main">
+  <ul class="wu-sidebar-list">
+    <li>
+      <a class="wu-sidebar-link" href="/settings">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /></svg>
+        <span class="wu-sidebar-label">Settings</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `pinned` | Sticks beside scrolling content and scrolls on its own | 1.0.0 |
+| `collapsed` | Icon rail: labels and headings are visually hidden, and a label shows as a tooltip on hover or focus | 1.0.0 |
+| `animated` | Animates the width, the chevron and the opening of groups when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-sidebar-header` | Top row for a logo or title | 1.0.0 |
+| `wu-sidebar-footer` | Bottom row, pushed to the end | 1.0.0 |
+| `wu-sidebar-section` | Group of a heading and a list | 1.0.0 |
+| `wu-sidebar-heading` | Small muted section heading | 1.0.0 |
+| `wu-sidebar-list` | Vertical list of links; nested inside a group it is indented | 1.0.0 |
+| `wu-sidebar-group` | A `details` element that collapses a nested list | 1.0.0 |
+| `wu-sidebar-toggle` | Row that opens or closes a group, with a chevron | 1.0.0 |
+| `wu-sidebar-link` | Navigation link row | 1.0.0 |
+| `wu-sidebar-label` | Text label of a link; hidden and shown as a tooltip when collapsed | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-sidebar--Width` | `16rem` | Sidebar width | 1.0.0 |
+| `--wu-sidebar--CollapsedWidth` | `calc(1em + 3rem)` | Width of the icon rail | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-current="page"` | The current link: tinted fill and a bar at the inline start | 1.0.0 |
+| `open`, `aria-expanded="true"` | The chevron points down | 1.0.0 |
+
+## skeleton
+
+Placeholder shapes shown while content loads.
+
+Placeholders are decorative: add `aria-hidden="true"` to each skeleton and `aria-busy="true"` to the region being loaded, plus visible or hidden Loading text. Remove both when the content arrives.
+
+The default shape is a block. Adjacent `text` skeletons stack with a gap, and a last `text` line is shorter.
+
+- Root class: `wu-skeleton`
+- Sass entry: `@use "@wovenui/components/skeleton";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div aria-busy="true">
+  <span class="sr-only">Loading</span>
+  <div class="wu-skeleton circle animated" aria-hidden="true"></div>
+  <div class="wu-skeleton text animated" aria-hidden="true"></div>
+  <div class="wu-skeleton text animated" aria-hidden="true"></div>
+</div>
+```
+
+```html
+<div class="wu-skeleton" aria-hidden="true" style="--wu-skeleton--Height: 8rem"></div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `text` | One line of text: height of `1em` | 1.0.0 |
+| `circle` | Round shape for an avatar | 1.0.0 |
+| `animated` | Shimmer sweep, staggered across siblings where supported, when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-skeleton--Width` | `100%` | Width; a last `text` line defaults to 60% | 1.0.0 |
+| `--wu-skeleton--Height` | `6rem` | Height; `text` defaults to 1em | 1.0.0 |
+| `--wu-skeleton--Size` | `2.5rem` | Width and height of a `circle` | 1.0.0 |
+
+## spinner
+
+Loading ring in the current text color, with an overlay for busy regions.
+
+Pair it with `role="status"` and hidden text, or use `aria-hidden="true"` next to visible text. Reduced motion is handled by core reset.
+
+The overlay covers its parent, dims the content and centers a spinner with optional text. The parent becomes the positioning box unless it already has a position.
+
+- Root class: `wu-spinner`
+- Sass entry: `@use "@wovenui/components/spinner";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<span class="wu-spinner" role="status"><span class="sr-only">Loading</span></span>
+<button class="wu-btn" type="button" aria-busy="true"><span class="wu-spinner sm" aria-hidden="true"></span> Saving</button>
+```
+
+```html
+<div aria-busy="true">
+  <div inert>Orders table</div>
+  <div class="wu-spinner-overlay"><span class="wu-spinner" aria-hidden="true"></span><span>Loading orders</span></div>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller (1rem) or larger (2rem, thicker band) ring | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-spinner-overlay` | Layer that covers a busy region and centers a spinner with text | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-spinner--Size` | `1.25rem` | Width and height of the ring | 1.0.0 |
+| `--wu-spinner-overlay--Background` | `85% surface` | Overlay background | 1.0.0 |
+
+## stat
+
+One figure with a label, a large value in tabular figures and an optional change line.
+
+Keep the signed number as text in the change line; the arrow and the color repeat it, they never replace it.
+
+- Root class: `wu-stat`
+- Sass entry: `@use "@wovenui/components/stat";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-stat">
+  <span class="wu-stat-label">Active users</span>
+  <span class="wu-stat-value">1,284</span>
+  <span class="wu-stat-delta success" data-trend="up">+12% from last month</span>
+</div>
+```
+
+```html
+<div class="wu-stat lg">
+  <span class="wu-stat-label">Open tickets</span>
+  <span class="wu-stat-value">37</span>
+  <span class="wu-stat-delta" data-trend="down">-5 this week</span>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger value | 1.0.0 |
+| `success`, `danger` | On the change line: success or danger text color | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-stat-label` | Muted label | 1.0.0 |
+| `wu-stat-value` | Large value | 1.0.0 |
+| `wu-stat-delta` | Change line, muted by default | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `data-trend="up"`, `data-trend="down"` | On the change line: draws an up or down arrow | 1.0.0 |
+
+## table
+
+Data table with sticky header and columns, selection, expandable rows, truncated cells, a summary row and striped styles.
+
+Put a wide table in a `wu-table-scroll` region with `tabindex="0"`, `role="region"` and an `aria-label`; it shows scroll shadows on the sides with more content. Sticky columns need that region.
+
+The select-all checkbox and expandable rows need the kit script; everything else is CSS. Sorting the rows and updating `aria-sort` is up to your script.
+
+A truncated cell takes the full text in core's `data-tooltip` and `tabindex="0"`. `aria-selected` on a row is valid only in a `role="grid"` table.
+
+- Root class: `wu-table`
+- Sass entry: `@use "@wovenui/components/table";`
+- Needs: none
+- JavaScript: optional: `initTable` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-table-scroll" tabindex="0" role="region" aria-label="Invoices">
+  <table class="wu-table striped hover">
+    <caption>Open invoices</caption>
+    <thead>
+      <tr>
+        <th scope="col">Invoice</th>
+        <th scope="col" class="wu-table-num">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">INV-1042</th><td class="wu-table-num">$1,200.00</td></tr>
+      <tr><th scope="row">INV-1043</th><td class="wu-table-num">$340.00</td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row">Total</th><td class="wu-table-num">$1,540.00</td></tr></tfoot>
+  </table>
+</div>
+```
+
+```html
+<table class="wu-table">
+  <thead>
+    <tr>
+      <th scope="col" class="wu-table-select"><input type="checkbox" class="wu-checkbox-input" aria-label="Select all rows"></th>
+      <th scope="col" aria-sort="ascending"><button class="wu-table-sort" type="button">Name</button></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="wu-table-select"><input type="checkbox" class="wu-checkbox-input" aria-label="Select Ana Lopez"></td>
+      <th scope="row"><button class="wu-table-expand" type="button" aria-expanded="false" aria-label="Details for Ana Lopez"></button> Ana Lopez</th>
+    </tr>
+    <tr class="wu-table-detail" hidden><td colspan="2">Owner since 2021</td></tr>
+  </tbody>
+</table>
+```
+
+```html
+<table class="wu-table">
+  <tbody>
+    <tr><td class="wu-table-truncate" tabindex="0" data-tooltip="Typo on the billing page"><span>Typo on the billing page</span></td></tr>
+  </tbody>
+</table>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm` | Tighter cell padding | 1.0.0 |
+| `striped` | Tint on every second body row | 1.0.0 |
+| `hover` | Tint on the row under the pointer | 1.0.0 |
+| `bordered` | Outer border with rounded corners and borders between cells | 1.0.0 |
+| `sticky-header` | Header cells stick to the top of the page, or of the scroll region when `--wu-table--MaxHeight` is set | 1.0.0 |
+| `sticky-start`, `sticky-end` | First or last column sticks inside a `wu-table-scroll` region, with an edge shadow on the scrolling side | 1.0.0 |
+| `animated` | Spring turn of the expand chevron when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-table-scroll` | Scroll region for a wide table, with scroll shadows | 1.0.0 |
+| `wu-table-num` | Cell with end-aligned numbers in tabular figures | 1.0.0 |
+| `wu-table-select` | Cell of a checkbox column, as narrow as its checkbox | 1.0.0 |
+| `wu-table-truncate` | Cell whose text child stays on one line with an ellipsis | 1.0.0 |
+| `wu-table-sort` | Button in a header cell that shows sort arrows | 1.0.0 |
+| `wu-table-expand` | Button with `aria-expanded` that shows or hides the detail row | 1.0.0 |
+| `wu-table-detail` | Row after an expandable row, with the alternate background | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-table--Background` | `var(--wu-bg-surface)` | Background that scroll shadows and sticky cells blend into | 1.0.0 |
+| `--wu-table--MaxHeight` | `none` | Maximum height of the scroll region, so the header can stick inside it | 1.0.0 |
+| `--wu-table--TruncateWidth` | `16rem` | Maximum width of a truncated cell text | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-sort="ascending"`, `aria-sort="descending"` | On a header cell: one arrow on the sort button and regular text color | 1.0.0 |
+| `aria-expanded="true"` | On an expand button: the chevron points down | 1.0.0 |
+| `aria-selected="true"` | On a row: selected tint and a bar at the start of the first cell; a checked `wu-table-select` box does the same | 1.0.0 |
+
+## tabs
+
+Tabs that show one panel at a time, following the WAI-ARIA tabs pattern, in line, card, boxed and vertical styles.
+
+The kit script adds arrow keys, Home and End, switches the panels and fills in roles, ids, `aria-controls`, `aria-labelledby` and `tabindex` when they are missing. Without it the first panel shows.
+
+In `vertical` tabs the script sets `aria-orientation="vertical"` on the list; without the script, add it yourself.
+
+- Root class: `wu-tabs`
+- Sass entry: `@use "@wovenui/components/tabs";`
+- Needs: none
+- JavaScript: required: `initTabs` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-tabs">
+  <div class="wu-tabs-list" role="tablist" aria-label="Account">
+    <button class="wu-tabs-tab" type="button" role="tab" id="tab-profile" aria-controls="panel-profile" aria-selected="true">Profile</button>
+    <button class="wu-tabs-tab" type="button" role="tab" id="tab-billing" aria-controls="panel-billing" aria-selected="false" tabindex="-1">Billing</button>
+  </div>
+  <div class="wu-tabs-panel" role="tabpanel" id="panel-profile" aria-labelledby="tab-profile" tabindex="0">Profile settings</div>
+  <div class="wu-tabs-panel" role="tabpanel" id="panel-billing" aria-labelledby="tab-billing" tabindex="0" hidden>Billing settings</div>
+</div>
+```
+
+```html
+<div class="wu-tabs vertical boxed">
+  <div class="wu-tabs-list" role="tablist" aria-label="Settings" aria-orientation="vertical">
+    <button class="wu-tabs-tab" type="button" role="tab" id="tab-general" aria-controls="panel-general" aria-selected="true">General</button>
+    <button class="wu-tabs-tab" type="button" role="tab" id="tab-team" aria-controls="panel-team" aria-selected="false" tabindex="-1" disabled>Team</button>
+  </div>
+  <div class="wu-tabs-panel" role="tabpanel" id="panel-general" aria-labelledby="tab-general" tabindex="0">General settings</div>
+  <div class="wu-tabs-panel" role="tabpanel" id="panel-team" aria-labelledby="tab-team" tabindex="0" hidden>Team settings</div>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `card` | Joined tab boxes; the selected tab opens into the panel | 1.0.0 |
+| `boxed` | Tabs and panels inside one bordered box | 1.0.0 |
+| `vertical` | Tab list at the inline start, selected bar on its inline end edge | 1.0.0 |
+| `animated` | Selected bar grows from the center and the panel fades in when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-tabs-list` | Row of tabs; scrolls sideways and fades the edge with more tabs | 1.0.0 |
+| `wu-tabs-tab` | One tab button; a direct child `svg` is sized to `1em` | 1.0.0 |
+| `wu-tabs-panel` | Content shown for the selected tab | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-selected="true"` | On a tab: regular text color and a brand bar | 1.0.0 |
+| `disabled`, `aria-disabled="true"` | On a tab: half opacity and a not-allowed cursor | 1.0.0 |
+
+## tag
+
+Label for a category or a filter, in seven hues, as plain text, a link or a button.
+
+A link or button tag gets a pointer, a hover color and the focus ring. `aria-pressed` on a button tag makes a checkable filter chip; toggling the attribute is up to your script.
+
+A direct child `svg` is sized to `1em`. The remove button needs an `aria-label` that names the tag.
+
+- Root class: `wu-tag`
+- Sass entry: `@use "@wovenui/components/tag";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<span class="wu-tag">Design</span>
+<span class="wu-tag blue">Frontend</span>
+```
+
+```html
+<div role="group" aria-label="Filter by topic">
+  <button class="wu-tag" type="button" aria-pressed="true">Design</button>
+  <button class="wu-tag" type="button" aria-pressed="false">Research</button>
+</div>
+```
+
+```html
+<span class="wu-tag purple">Research <button class="wu-tag-remove" type="button" aria-label="Remove Research"></button></span>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `gray`, `red`, `blue`, `green`, `yellow`, `purple`, `pink` | Hue color: subtle background, hue border and hue text | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-tag-remove` | Remove button inside the tag, its cross drawn in CSS | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-pressed="true"` | On a button tag: brand tint, ring and a check mark | 1.0.0 |
+
+## text
+
+Body text on any element, with relaxed leading and space between paragraphs in a row.
+
+- Root class: `wu-text`
+- Sass entry: `@use "@wovenui/components/text";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<p class="wu-text lg">A lead paragraph introduces the page.</p>
+<p class="wu-text">Body text follows with relaxed leading.</p>
+<p class="wu-text sm muted">Small, muted text for notes and fine print.</p>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm` | Small size | 1.0.0 |
+| `lg` | Large size, for a lead paragraph | 1.0.0 |
+| `muted` | Muted color | 1.0.0 |
+
+## textarea
+
+Multi-line field with a bounded height that grows with the content, where the browser supports it.
+
+Core base already styles a `textarea` like an input (border, focus ring, invalid border, disabled). The kit adds the radius, the type size and a height between three and twelve lines.
+
+Growth uses `field-sizing: content`, and `rows` is ignored there.
+
+- Root class: `wu-textarea`
+- Sass entry: `@use "@wovenui/components/textarea";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-field">
+  <label class="wu-field-label" for="textarea-notes">Notes</label>
+  <textarea class="wu-textarea" id="textarea-notes">Type more lines to see the field grow.</textarea>
+</div>
+```
+
+```html
+<textarea class="wu-textarea" aria-label="Short note" style="--wu-textarea--MinHeight: 2.5rem; --wu-textarea--MaxHeight: 6rem">One line to start.</textarea>
+```
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-textarea--MinHeight` | `3 lines plus padding and border` | Minimum height | 1.0.0 |
+| `--wu-textarea--MaxHeight` | `12 lines plus padding and border` | Maximum height | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:disabled` | Not-allowed cursor and no resize | 1.0.0 |
+| `readonly` | Alternate background | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | Danger border doubled to 2px, so the change is not color alone | 1.0.0 |
+
+## timeline
+
+Ordered list of events with markers and a rail, role colors and a progress mode.
+
+Role words on an item color its marker; `success`, `warning` and `danger` also change the marker shape, so color is not the only cue.
+
+With `aria-current="step"` on one item the list becomes a progress rail: earlier items filled, the current one ringed, later ones hollow. Say "completed" in the item text too.
+
+- Root class: `wu-timeline`
+- Sass entry: `@use "@wovenui/components/timeline";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<ol class="wu-timeline">
+  <li class="wu-timeline-item success">
+    <p class="wu-timeline-title">Order shipped</p>
+    <time class="wu-timeline-time" datetime="2026-03-02">2 March</time>
+    <p class="wu-timeline-text">Handed to the carrier.</p>
+  </li>
+  <li class="wu-timeline-item danger">
+    <p class="wu-timeline-title">Payment failed</p>
+    <time class="wu-timeline-time" datetime="2026-03-01">1 March</time>
+  </li>
+</ol>
+```
+
+```html
+<ol class="wu-timeline">
+  <li class="wu-timeline-item"><p class="wu-timeline-title">Cart (completed)</p></li>
+  <li class="wu-timeline-item" aria-current="step"><p class="wu-timeline-title">Payment</p></li>
+  <li class="wu-timeline-item"><p class="wu-timeline-title">Confirmation</p></li>
+</ol>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand`, `info` | On an item: marker color | 1.0.0 |
+| `success`, `warning`, `danger` | On an item: marker color and a check, triangle or octagon shape | 1.0.0 |
+| `animated` | Each rail segment draws once as it scrolls into view when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-timeline-item` | One event: a marker, a rail to the next item and the content | 1.0.0 |
+| `wu-timeline-title` | Event title in medium weight | 1.0.0 |
+| `wu-timeline-time` | Muted time or date line | 1.0.0 |
+| `wu-timeline-text` | Muted description | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-current="step"` | On an item: the current step, ringed; earlier items fill and later ones turn hollow | 1.0.0 |
+
+## title
+
+Visual heading size on any element, in four steps.
+
+Pick the heading level for the document outline and the size for the look.
+
+- Root class: `wu-title`
+- Sass entry: `@use "@wovenui/components/title";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<h2 class="wu-title xl">Extra large title</h2>
+<h2 class="wu-title">Default title</h2>
+```
+
+```html
+<h3 class="wu-title lg">An h3 with the large size</h3>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm` | Large size, one step below the default | 1.0.0 |
+| `lg` | 2xl size | 1.0.0 |
+| `xl` | 3xl size | 1.0.0 |
+
+## toast
+
+Short notification in a corner of the viewport, shown in a polite live region.
+
+The region sits at the bottom end corner by default and scrolls when the toasts are taller than the viewport. The title text carries the meaning, not the color.
+
+`toast("Saved")` from the kit script adds a toast, and the region when the page has none. It closes the toast after a delay, pauses on hover and focus, keeps at most three open and skips a repeat of an open message.
+
+Create the region at page load; a region added together with its first toast may not be announced.
+
+- Root class: `wu-toast`
+- Sass entry: `@use "@wovenui/components/toast";`
+- Needs: none
+- JavaScript: required: `toast`, `dismiss` from `@wovenui/components/js`
+- Since: 1.0.0
+
+### Markup
+
+```html
+<section class="wu-toast-region animated" aria-live="polite" aria-label="Notifications">
+  <div class="wu-toast success">
+    <p class="wu-toast-title">Saved</p>
+    <p>Your changes are live.</p>
+    <button class="wu-toast-close" type="button" aria-label="Close"></button>
+  </div>
+</section>
+```
+
+```html
+<section class="wu-toast-region top-end" aria-live="polite" aria-label="Notifications"></section>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `brand`, `success`, `danger`, `warning`, `info` | On a toast: role color on the start edge and the title | 1.0.0 |
+| `top-start`, `top-end`, `bottom-start` | On the region: moves it to another corner; the default is the bottom end corner | 1.0.0 |
+| `animated` | On the region: toasts slide in, fade out and stack behind the newest, fanning out on hover or focus; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-toast-region` | Fixed live region that holds the toasts; hidden when empty | 1.0.0 |
+| `wu-toast-title` | Toast title in semibold weight | 1.0.0 |
+| `wu-toast-close` | Close button with `aria-label`, its cross drawn in CSS | 1.0.0 |
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-toast--Width` | `22rem` | Width of the toasts in the region | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `hidden` | On a toast: removed from layout, after a fade out with `animated` | 1.0.0 |
+| `:empty` | A region with no toasts is hidden | 1.0.0 |
+
+## toggle
+
+On and off switch built on a native checkbox with `role="switch"`.
+
+The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size and the `sm` and `lg` steps.
+
+- Root class: `wu-toggle`
+- Sass entry: `@use "@wovenui/components/toggle";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<label class="wu-toggle">
+  <input class="wu-toggle-input" type="checkbox" role="switch" checked>
+  <span class="wu-toggle-label">Email notifications</span>
+</label>
+```
+
+```html
+<label class="wu-toggle lg animated">
+  <input class="wu-toggle-input" type="checkbox" role="switch" aria-invalid="true">
+  <span class="wu-toggle-label">Accept the terms</span>
+</label>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `sm`, `lg` | Smaller or larger switch and label | 1.0.0 |
+| `animated` | Spring thumb when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-toggle-input` | The checkbox: track and thumb | 1.0.0 |
+| `wu-toggle-label` | Label text beside the switch | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:checked` | Brand track and the thumb moved to the end | 1.0.0 |
+| `disabled` | Half opacity and a not-allowed cursor | 1.0.0 |
+| `aria-invalid="true"`, `:user-invalid` | Danger outline | 1.0.0 |
+
+## toolbar
+
+Wrapping row of controls, with groups, separators, an end group and a boxed variant.
+
+A toolbar holds controls of one height, so it lines up by itself. Status displays such as tags and badges go outside the row.
+
+`role="toolbar"` promises arrow-key focus, so add it only with a script that provides it; otherwise use a plain `div`.
+
+- Root class: `wu-toolbar`
+- Sass entry: `@use "@wovenui/components/toolbar";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<div class="wu-toolbar">
+  <div class="wu-toolbar-group">
+    <button class="wu-btn sm" type="button">Bold</button>
+    <button class="wu-btn sm" type="button">Italic</button>
+  </div>
+  <span class="wu-toolbar-separator" aria-hidden="true"></span>
+  <div class="wu-toolbar-end">
+    <button class="wu-btn brand sm" type="button">Publish</button>
+  </div>
+</div>
+```
+
+```html
+<div class="wu-toolbar boxed">
+  <span class="wu-text sm">3 selected</span>
+  <button class="wu-btn sm" type="button">Archive</button>
+</div>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `boxed` | Border, padding and the alternate background | 1.0.0 |
+| `sm` | Smaller gap | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-toolbar-group` | Controls that stay together | 1.0.0 |
+| `wu-toolbar-separator` | Vertical line between groups | 1.0.0 |
+| `wu-toolbar-end` | Pushes itself and what follows to the end | 1.0.0 |
+
+## topbar
+
+Application header with a brand, a scrolling nav, an end group, a pinned variant and a page progress line.
+
+`wu-topbar-nav` works on the `nav` itself or on the `ul` inside it. When space runs out the nav scrolls first, then the brand truncates.
+
+The bar stays in the flow; add `pinned` to stick it to the top. The progress line is decoration, so mark it `aria-hidden="true"`; it fills as the page scrolls and stays hidden when reduced motion is set.
+
+- Root class: `wu-topbar`
+- Sass entry: `@use "@wovenui/components/topbar";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.0.0
+
+### Markup
+
+```html
+<header class="wu-topbar pinned">
+  <a class="wu-topbar-brand" href="/">Acme</a>
+  <nav aria-label="Main">
+    <ul class="wu-topbar-nav">
+      <li><a class="wu-topbar-link" href="/dashboard" aria-current="page">Dashboard</a></li>
+      <li><a class="wu-topbar-link" href="/billing">Billing</a></li>
+    </ul>
+  </nav>
+  <div class="wu-topbar-end">
+    <button class="wu-btn sm" type="button">Sign out</button>
+  </div>
+  <div class="wu-topbar-progress" aria-hidden="true"></div>
+</header>
+```
+
+```html
+<header class="wu-topbar">
+  <a class="wu-topbar-brand" href="/">Acme</a>
+  <nav class="wu-topbar-nav" aria-label="Main">
+    <a class="wu-topbar-link" href="/billing" aria-current="page">Billing</a>
+    <a class="wu-topbar-link" href="/team">Team</a>
+  </nav>
+</header>
+```
+
+### Modifiers
+
+| Modifier | Description | Since |
+| --- | --- | --- |
+| `pinned` | Sticks to the top of its scroll container, with a shadow once stuck | 1.0.0 |
+
+### Parts
+
+| Part | Description | Since |
+| --- | --- | --- |
+| `wu-topbar-brand` | Brand link or text; truncates last | 1.0.0 |
+| `wu-topbar-nav` | Nav, or its list, that takes the free space and scrolls sideways | 1.0.0 |
+| `wu-topbar-link` | Nav link; a direct child `svg` is sized to `1em` | 1.0.0 |
+| `wu-topbar-end` | Group pushed to the inline end | 1.0.0 |
+| `wu-topbar-progress` | Line along the bottom edge that fills as the page scrolls | 1.0.0 |
+
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `aria-current="page"` | On a link: current page, brand underline | 1.0.0 |

@@ -1,0 +1,4 @@
+// @wovenui/components/empty-state: the empty-state and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("empty-state"));

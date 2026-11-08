@@ -1,0 +1,4 @@
+// @wovenui/components/select: the select and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("select"));

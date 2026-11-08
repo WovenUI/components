@@ -1,0 +1,127 @@
+////
+//// @component wu-field
+//// Form field that stacks a label, a control and its messages, with a required marker and a floating label option.
+////
+//// The required marker comes from `required` or `aria-required="true"` on the control. An `error` message is hidden until the control is invalid. Its id joins `aria-describedby` only while it shows: server-rendered with `aria-invalid="true"`, or added by your script. Leave it out otherwise, so a hidden error is never announced; for `:user-invalid` the browser's own validation message speaks on submit.
+////
+//// `floating` needs `placeholder=" "` on the input and is not used with `horizontal`. `horizontal` puts the label beside the control from the `sm` breakpoint up.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-field">
+////     <label class="wu-field-label" for="f1">Email</label>
+////     <input class="wu-input" id="f1" type="email" required aria-describedby="f1-hint">
+////     <p class="wu-field-message" id="f1-hint">Hint</p>
+////     <p class="wu-field-message error" id="f1-error">Error: enter a valid email.</p>
+////   </div>
+//// @example html
+////   <div class="wu-field floating animated">
+////     <label class="wu-field-label" for="f2">Name</label>
+////     <input class="wu-input" id="f2" type="text" placeholder=" ">
+////   </div>
+//// @modifier horizontal - Label beside the control from `sm` up, in a column of `--wu-field--LabelWidth` @since 1.0.0
+//// @modifier error - On a `wu-field-message` inside the field: hidden until the control is invalid @since 1.0.0
+//// @modifier floating - Label inside the input, moved up on focus or once filled @since 1.0.0
+//// @modifier animated - On a floating field: the label slides when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-field-label - Label above the control @since 1.0.0
+//// @variable --wu-field--LabelWidth [10rem] - Label column width in a horizontal field @since 1.0.0
+//// @state :required | aria-required="true" - On the control: adds a required marker to the label @since 1.0.0
+//// @state aria-invalid="true" | :user-invalid - On the control: shows the `error` message @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-field {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-1);
+    min-width: 0;
+}
+
+.wu-field-label {
+    margin-block-end: woven.token(space-1);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-medium);
+    line-height: woven.token(line-height-tight);
+}
+
+// Required marker from the control's required or aria-required; the empty alt text keeps it out of the label's name
+.wu-field:has(:is(:required, [aria-required="true"])) > .wu-field-label::after {
+    content: "*";
+    content: "*" / "";
+    margin-inline-start: woven.token(space-1);
+    color: woven.token(text-danger);
+}
+
+// The error message waits for aria-invalid="true" or :user-invalid (after the user has interacted)
+.wu-field .wu-field-message.error {
+    display: none;
+}
+
+.wu-field:has(:is([aria-invalid="true"], :user-invalid)) .wu-field-message.error {
+    display: flex;
+}
+
+// Label beside the control from sm up; --wu-field--LabelWidth sets the column
+@include woven.media-up(sm) {
+    .wu-field.horizontal {
+        display: grid;
+        grid-template-columns: var(--wu-field--LabelWidth, 10rem) minmax(0, 1fr);
+        gap: woven.token(space-1) woven.token(space-4);
+        align-items: start;
+
+        > * {
+            grid-column: 2;
+        }
+
+        > .wu-field-label {
+            display: flex;
+            grid-row: 1;
+            grid-column: 1;
+            align-items: center;
+            min-height: woven.token(control-height-md);
+            margin: 0;
+        }
+    }
+}
+
+// Label inside the input, moved up on focus or once filled. Needs placeholder=" " on the input; not with horizontal.
+.wu-field.floating {
+    position: relative;
+
+    > .wu-field-label {
+        position: absolute;
+        z-index: woven.token(z-hover);
+        inset-block-start: calc((#{woven.token(control-height-lg)} - 1lh) / 2);
+        inset-inline-start: calc(#{woven.token(control-padding-inline-md)} + #{woven.token(border-width-1)});
+        margin: 0;
+        color: woven.token(text-muted);
+        font-size: woven.token(font-size-md);
+        font-weight: woven.token(font-weight-normal);
+        pointer-events: none;
+    }
+
+    > .wu-input {
+        height: woven.token(control-height-lg);
+        padding-block: woven.token(space-5) woven.token(space-1);
+        padding-inline: woven.token(control-padding-inline-md);
+    }
+}
+
+.wu-field.floating:has(> .wu-input:is(:focus, :not(:placeholder-shown))) > .wu-field-label {
+    inset-block-start: woven.token(space-1);
+    font-size: woven.token(font-size-xs);
+}
+
+// Opt-in motion: the floating label slides
+@media (prefers-reduced-motion: no-preference) {
+    .wu-field.floating.animated > .wu-field-label,
+    .wu-animated .wu-field.floating > .wu-field-label {
+        transition-property: inset-block-start, font-size;
+        transition-duration: woven.token(duration-150);
+        transition-timing-function: woven.token(ease-out);
+    }
+}

@@ -1,0 +1,4 @@
+// @wovenui/components/input: the input and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("input"));

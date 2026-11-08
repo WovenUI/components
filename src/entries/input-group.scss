@@ -1,0 +1,4 @@
+// @wovenui/components/input-group: the input-group and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("input-group"));

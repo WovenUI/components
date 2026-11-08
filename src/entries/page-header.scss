@@ -1,0 +1,4 @@
+// @wovenui/components/page-header: the page-header and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("page-header"));

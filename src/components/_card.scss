@@ -1,0 +1,120 @@
+////
+//// @component wu-card
+//// Bordered surface that groups a header, a body and a footer.
+////
+//// Put one real link, usually in the title, on `wu-card-link` to make the whole card clickable. Other controls stay clickable above it.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-card">
+////     <div class="wu-card-header"><h3 class="wu-card-title">Plan</h3></div>
+////     <div class="wu-card-body">Everything you need to start.</div>
+////     <div class="wu-card-footer"><button class="wu-btn brand" type="button">Choose</button></div>
+////   </div>
+//// @example html
+////   <div class="wu-card">
+////     <div class="wu-card-body">
+////       <h3 class="wu-card-title"><a class="wu-card-link" href="/docs/">Read the docs</a></h3>
+////       <p>Guides for every component.</p>
+////     </div>
+////   </div>
+//// @part wu-card-header - Top row for a title and actions, with a bottom border @since 1.0.0
+//// @part wu-card-title - Heading inside the header or body @since 1.0.0
+//// @part wu-card-body - Main content; it grows so footers line up across a row of cards @since 1.0.0
+//// @part wu-card-footer - Bottom row for actions, aligned to the end, with a top border @since 1.0.0
+//// @part wu-card-link - Link stretched over the whole card @since 1.0.0
+//// @variable --wu-card--Padding [var(--wu-space-5)] - Padding of the header, body and footer @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-lg);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    box-shadow: woven.token(shadow-sm);
+}
+
+.wu-card-header,
+.wu-card-body,
+.wu-card-footer {
+    padding: var(--wu-card--Padding, #{woven.token(space-5)});
+}
+
+.wu-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: woven.token(space-3);
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-card-title {
+    margin: 0;
+    font-size: woven.token(font-size-md);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Grows so footers line up across a row of cards
+.wu-card-body {
+    flex-grow: 1;
+}
+
+.wu-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: woven.token(space-2);
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+// Whole-card link: one real link (usually in the title) stretched over the card
+.wu-card-link {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+    }
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:focus-visible::after {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+.wu-card:has(.wu-card-link) {
+    transition-property: border-color, box-shadow;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    // Other controls stay clickable above the stretched link
+    :is(a, button, input, select, textarea, summary, label):not(.wu-card-link) {
+        position: relative;
+        z-index: woven.token(z-hover);
+    }
+}
+
+.wu-card:has(.wu-card-link:hover) {
+    border-color: woven.token(border-strong);
+    box-shadow: woven.token(shadow-md);
+
+    .wu-card-link {
+        text-decoration: underline;
+    }
+}

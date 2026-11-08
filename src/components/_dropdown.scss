@@ -1,0 +1,182 @@
+////
+//// @component wu-dropdown
+//// Menu of links and buttons in a native popover, anchored under its trigger.
+////
+//// A button with `popovertarget` opens it; `commandfor` with `command="toggle-popover"` works as the trigger too. Esc and a click outside close it. `popovertargetaction="hide"` on a button item closes the menu after its click handler runs.
+////
+//// Opens under the trigger where anchor positioning exists and flips when there is no room; elsewhere it is centered in the viewport. Engines without implicit anchors need `anchor-name` on the trigger and `position-anchor` on the menu, with the same name.
+////
+//// `inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <button class="wu-btn caret" type="button" popovertarget="menu1">Actions</button>
+////   <div class="wu-dropdown" id="menu1" popover>
+////     <a class="wu-dropdown-item" href="/edit">Edit</a>
+////     <button class="wu-dropdown-item" type="button" popovertarget="menu1" popovertargetaction="hide">Duplicate</button>
+////     <hr class="wu-dropdown-separator">
+////     <button class="wu-dropdown-item danger" type="button" popovertarget="menu1" popovertargetaction="hide">Delete</button>
+////   </div>
+//// @modifier inline-end - Aligns the menu's inline end with the trigger's inline end @since 1.0.0
+//// @modifier danger - On an item: danger text and a danger hover tint @since 1.0.0
+//// @modifier animated - Fades and slides in and out when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-dropdown-item - Link or button row in the menu; an `svg` child is sized as an icon @since 1.0.0
+//// @part wu-dropdown-separator - Line between groups of items; use an `hr` @since 1.0.0
+//// @variable --wu-dropdown--MinWidth [10rem] - Minimum menu width @since 1.0.0
+//// @variable --wu-dropdown--MaxHeight [20rem] - Maximum menu height before it scrolls @since 1.0.0
+//// @state disabled | aria-disabled="true" - On an item: half opacity, no pointer events @since 1.0.0
+//// @state :popover-open - A plain trigger button right before the menu takes a hover look while it is open @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-dropdown {
+    inset: 0;
+    inline-size: fit-content;
+    block-size: fit-content;
+    min-inline-size: var(--wu-dropdown--MinWidth, 10rem);
+    max-block-size: var(--wu-dropdown--MaxHeight, 20rem);
+    margin: auto;
+    padding: woven.token(space-1);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-raised);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    box-shadow: woven.token(shadow-lg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: woven.token(z-dropdown);
+}
+
+@supports (anchor-name: --x) {
+    .wu-dropdown {
+        // auto keeps the implicit anchor, which normal drops without position-area
+        position-anchor: auto;
+        inset: auto;
+        inset-block-start: anchor(end);
+        inset-inline-start: anchor(self-start);
+        margin: 0;
+        margin-block: woven.token(space-1);
+        position-try-fallbacks:
+            flip-block,
+            flip-inline,
+            flip-block flip-inline;
+    }
+
+    // A split button's caret ends the group, so the menu ends with the group too
+    .wu-dropdown.inline-end {
+        inset-inline: auto anchor(self-end);
+    }
+}
+
+// Plain trigger while its menu is open; a caret trigger turns its caret, a filled one keeps its fill
+button:not(.caret, .brand, .danger):has(+ .wu-dropdown:popover-open) {
+    border-color: woven.token(border-control-hover);
+    background: woven.token(bg-hover);
+}
+
+.wu-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    inline-size: 100%;
+    min-block-size: woven.token(control-height-sm);
+    padding-block: 0;
+    padding-inline: woven.token(space-3);
+    border: 0;
+    border-radius: woven.token(radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color woven.token(duration-150) woven.token(ease-out);
+
+    // App icon
+    > svg {
+        flex-shrink: 0;
+        inline-size: 1em;
+        block-size: 1em;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+    }
+
+    // Inset ring, so the scrolling menu does not clip it
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.wu-dropdown-item.danger {
+    color: woven.token(text-danger);
+
+    &:hover {
+        background: woven.token(danger-subtle);
+    }
+}
+
+.wu-dropdown-separator {
+    block-size: 0;
+    margin-block: woven.token(space-1);
+    margin-inline: calc(-1 * #{woven.token(space-1)});
+    border: 0;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+// Opt-in motion: the menu fades and slides in and out. Anchored, the slide is a margin on the trigger side,
+// which flip-block mirrors, so a menu flipped above slides up; centered, it is a short translate.
+@media (prefers-reduced-motion: no-preference) {
+    .wu-dropdown.animated,
+    .wu-animated .wu-dropdown {
+        opacity: 0;
+        translate: 0 calc(-1 * #{woven.token(space-1)});
+        transition:
+            opacity woven.token(duration-150) woven.token(ease-out),
+            translate woven.token(duration-150) woven.token(ease-out),
+            margin woven.token(duration-150) woven.token(ease-out),
+            display woven.token(duration-150) allow-discrete,
+            overlay woven.token(duration-150) allow-discrete;
+
+        &:popover-open {
+            opacity: 1;
+            translate: 0;
+
+            @starting-style {
+                opacity: 0;
+                translate: 0 calc(-1 * #{woven.token(space-1)});
+            }
+        }
+    }
+
+    @supports (anchor-name: --x) {
+        .wu-dropdown.animated,
+        .wu-animated .wu-dropdown {
+            translate: 0;
+            margin-block-start: 0;
+
+            &:popover-open {
+                margin-block-start: woven.token(space-1);
+
+                @starting-style {
+                    translate: 0;
+                    margin-block-start: 0;
+                }
+            }
+        }
+    }
+}

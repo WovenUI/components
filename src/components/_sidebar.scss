@@ -1,0 +1,300 @@
+////
+//// @component wu-sidebar
+//// Vertical navigation with sections, link lists and collapsible groups.
+////
+//// Use a `nav` with an `aria-label`, and mark the current link with `aria-current="page"`. A collapsible group is a `details` with the `wu-sidebar-group` class and a `summary` with `wu-sidebar-toggle`; the toggle may also be a `button` with `aria-expanded`.
+////
+//// On narrow screens put the sidebar in a `dialog` with `wu-drawer inline-start`, where it fills the drawer.
+////
+//// Icon rail: add `collapsed`; each link holds an `svg` and a `wu-sidebar-label`, shown as a tooltip on hover or focus.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <nav class="wu-sidebar" aria-label="Main">
+////     <div class="wu-sidebar-section">
+////       <h2 class="wu-sidebar-heading">Workspace</h2>
+////       <ul class="wu-sidebar-list">
+////         <li><a class="wu-sidebar-link" href="/dashboard" aria-current="page">Dashboard</a></li>
+////         <li>
+////           <details class="wu-sidebar-group" open>
+////             <summary class="wu-sidebar-toggle">Projects</summary>
+////             <ul class="wu-sidebar-list">
+////               <li><a class="wu-sidebar-link" href="/projects/apollo">Apollo</a></li>
+////             </ul>
+////           </details>
+////         </li>
+////       </ul>
+////     </div>
+////     <div class="wu-sidebar-footer">Signed in as Sam</div>
+////   </nav>
+//// @example html
+////   <nav class="wu-sidebar collapsed pinned" aria-label="Main">
+////     <ul class="wu-sidebar-list">
+////       <li>
+////         <a class="wu-sidebar-link" href="/settings">
+////           <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /></svg>
+////           <span class="wu-sidebar-label">Settings</span>
+////         </a>
+////       </li>
+////     </ul>
+////   </nav>
+//// @modifier pinned - Sticks beside scrolling content and scrolls on its own @since 1.0.0
+//// @modifier collapsed - Icon rail: labels and headings are visually hidden, and a label shows as a tooltip on hover or focus @since 1.0.0
+//// @modifier animated - Animates the width, the chevron and the opening of groups when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-sidebar-header - Top row for a logo or title @since 1.0.0
+//// @part wu-sidebar-footer - Bottom row, pushed to the end @since 1.0.0
+//// @part wu-sidebar-section - Group of a heading and a list @since 1.0.0
+//// @part wu-sidebar-heading - Small muted section heading @since 1.0.0
+//// @part wu-sidebar-list - Vertical list of links; nested inside a group it is indented @since 1.0.0
+//// @part wu-sidebar-group - A `details` element that collapses a nested list @since 1.0.0
+//// @part wu-sidebar-toggle - Row that opens or closes a group, with a chevron @since 1.0.0
+//// @part wu-sidebar-link - Navigation link row @since 1.0.0
+//// @part wu-sidebar-label - Text label of a link; hidden and shown as a tooltip when collapsed @since 1.0.0
+//// @variable --wu-sidebar--Width [16rem] - Sidebar width @since 1.0.0
+//// @variable --wu-sidebar--CollapsedWidth [calc(1em + 3rem)] - Width of the icon rail @since 1.0.0
+//// @state aria-current="page" - The current link: tinted fill and a bar at the inline start @since 1.0.0
+//// @state open | aria-expanded="true" - The chevron points down @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-4);
+    inline-size: var(--wu-sidebar--Width, #{woven.token(space-64)});
+    max-inline-size: 100%;
+    padding: woven.token(space-3);
+    border-inline-end: woven.token(border-width-1) solid woven.token(border-regular);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+}
+
+.wu-drawer > .wu-sidebar {
+    flex: 1;
+    inline-size: auto;
+    border-inline-end: 0;
+    overflow-y: auto;
+}
+
+// Sticks beside scrolling content and scrolls on its own
+.wu-sidebar.pinned {
+    position: sticky;
+    inset-block-start: 0;
+    align-self: flex-start;
+    max-block-size: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.wu-sidebar-header,
+.wu-sidebar-footer {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    padding-inline: woven.token(space-3);
+}
+
+.wu-sidebar-footer {
+    margin-block-start: auto;
+}
+
+.wu-sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-1);
+}
+
+.wu-sidebar-heading {
+    margin: 0;
+    padding-inline: woven.token(space-3);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-xs);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-normal);
+}
+
+.wu-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wu-sidebar-group > .wu-sidebar-list {
+    margin-block-start: woven.token(space-1);
+    padding-inline-start: woven.token(space-4);
+}
+
+// Link and group toggle share one row look; the toggle may also be a <button aria-expanded>
+.wu-sidebar-link,
+.wu-sidebar-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    width: 100%;
+    min-height: woven.token(control-height-sm);
+    padding-block: 0;
+    padding-inline: woven.token(space-3);
+    border: 0;
+    border-radius: woven.token(radius-sm);
+    background: transparent;
+    color: woven.token(text-muted);
+    font: inherit;
+    font-weight: woven.token(font-weight-medium);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    transition-property: background-color, color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &:hover {
+        background: woven.token(bg-hover);
+        color: woven.token(text-regular);
+    }
+
+    // Inset ring, so a scrolling sidebar does not clip it
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+
+    > svg {
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+// Current page: tint plus a bar, so color is not the only signal
+.wu-sidebar-link[aria-current="page"] {
+    background: woven.token(bg-selected);
+    color: woven.token(text-brand);
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset-block: woven.token(space-1);
+        inset-inline-start: 0;
+        width: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: woven.token(brand);
+    }
+}
+
+.wu-sidebar-toggle {
+    list-style: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    // Chevron drawn with two borders: points to the end when closed, down when open
+    &::after {
+        content: "";
+        flex: none;
+        width: 0.4em;
+        height: 0.4em;
+        margin-inline-start: auto;
+        border-right: woven.token(border-width-2) solid currentcolor;
+        border-bottom: woven.token(border-width-2) solid currentcolor;
+        rotate: -45deg;
+    }
+
+    &:dir(rtl)::after {
+        rotate: 135deg;
+    }
+}
+
+.wu-sidebar-group[open] > .wu-sidebar-toggle::after,
+.wu-sidebar-toggle[aria-expanded="true"]::after {
+    rotate: 45deg;
+}
+
+.wu-sidebar-group:has([aria-current="page"]) > .wu-sidebar-toggle {
+    color: woven.token(text-regular);
+}
+
+// Icon rail: labels hidden visually but kept for screen readers, shown as a tooltip at the inline end on hover or focus
+.wu-sidebar.collapsed {
+    inline-size: var(--wu-sidebar--CollapsedWidth, calc(1em + 4 * #{woven.token(space-3)}));
+    overflow: visible;
+
+    .wu-sidebar-heading,
+    .wu-sidebar-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .wu-sidebar-group > .wu-sidebar-list {
+        padding-inline-start: 0;
+    }
+
+    .wu-sidebar-toggle::after {
+        display: none;
+    }
+
+    :is(.wu-sidebar-link, .wu-sidebar-toggle):is(:hover, :focus-visible) > .wu-sidebar-label {
+        inset-block-start: 50%;
+        inset-inline-start: 100%;
+        z-index: woven.token(z-tooltip);
+        width: auto;
+        height: auto;
+        margin-inline-start: woven.token(space-2);
+        padding-block: woven.token(space-1);
+        padding-inline: woven.token(space-2);
+        border-radius: woven.token(radius-xs);
+        background: woven.token(text-regular);
+        color: woven.token(text-inverted);
+        box-shadow: woven.token(shadow-md);
+        font-weight: woven.token(font-weight-normal);
+        clip-path: none;
+        pointer-events: none;
+        translate: 0 -50%;
+    }
+}
+
+// Opt-in motion: the chevron turns and groups slide open
+@media (prefers-reduced-motion: no-preference) {
+    .wu-sidebar.animated,
+    .wu-animated .wu-sidebar {
+        .wu-sidebar-toggle::after {
+            transition: rotate woven.token(duration-200) woven.token(ease-out);
+        }
+    }
+
+    .wu-sidebar.animated,
+    .wu-animated .wu-sidebar {
+        transition: inline-size woven.token(duration-200) woven.token(ease-out);
+    }
+
+    @supports (interpolate-size: allow-keywords) and selector(::details-content) {
+        .wu-sidebar.animated,
+        .wu-animated .wu-sidebar {
+            interpolate-size: allow-keywords;
+
+            .wu-sidebar-group::details-content {
+                block-size: 0;
+                overflow: clip;
+                transition:
+                    block-size woven.token(duration-200) woven.token(ease-out),
+                    content-visibility woven.token(duration-200) allow-discrete;
+            }
+
+            .wu-sidebar-group[open]::details-content {
+                block-size: auto;
+            }
+        }
+    }
+}

@@ -1,0 +1,122 @@
+////
+//// @component wu-progress
+//// Horizontal progress bar on the native `progress` element.
+////
+//// Without a `value` attribute it is indeterminate and shows a sliding segment. Label it with a `label` element or `aria-label`.
+////
+//// The fill uses `currentcolor`, so roles and `color` set it.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <label class="wu-progress-label" for="upload"><span>Uploading</span><span>72%</span></label>
+////   <progress class="wu-progress" id="upload" value="72" max="100"></progress>
+//// @example html
+////   <progress class="wu-progress success sm" value="40" max="100" aria-label="Storage used"></progress>
+////   <progress class="wu-progress lg" aria-label="Loading"></progress>
+//// @modifier success | danger | warning | info - Role color for the fill @since 1.0.0
+//// @modifier sm | lg - Thinner (0.25rem) or thicker (0.75rem) bar @since 1.0.0
+//// @part wu-progress-label - Row above the bar for a title and a value @since 1.0.0
+//// @variable --wu-progress--Height [0.5rem] - Bar height @since 1.0.0
+//// @state :indeterminate - No value: a segment slides across the track @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$roles: "success", "danger", "warning", "info";
+
+.wu-progress {
+    display: block;
+    width: 100%;
+    height: var(--wu-progress--Height, #{woven.token(space-2)});
+    overflow: hidden;
+    border: 0;
+    border-radius: woven.token(radius-full);
+    background-color: woven.token(border-regular);
+    color: woven.token(brand);
+    vertical-align: middle;
+    appearance: none;
+}
+
+.wu-progress::-webkit-progress-bar {
+    border-radius: inherit;
+    background: transparent;
+}
+
+.wu-progress::-webkit-progress-value {
+    border-radius: inherit;
+    background: currentcolor;
+}
+
+.wu-progress::-moz-progress-bar {
+    border-radius: inherit;
+    background: currentcolor;
+}
+
+// Indeterminate: a sliding segment on the track; the static frame keeps it centered
+.wu-progress:indeterminate {
+    background-image: linear-gradient(currentcolor, currentcolor);
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    background-size: 40% 100%;
+    animation: wu-progress-slide 1.5s ease-in-out infinite;
+
+    // The slide follows the reading direction
+    &:dir(rtl) {
+        animation-direction: reverse;
+    }
+}
+
+.wu-progress:indeterminate::-webkit-progress-value {
+    background: transparent;
+}
+
+.wu-progress:indeterminate::-moz-progress-bar {
+    background: transparent;
+}
+
+@each $role in $roles {
+    .wu-progress.#{$role} {
+        color: woven.token($role);
+    }
+}
+
+.wu-progress.sm {
+    height: var(--wu-progress--Height, #{woven.token(space-1)});
+}
+
+.wu-progress.lg {
+    height: var(--wu-progress--Height, #{woven.token(space-3)});
+}
+
+// <label class="wu-progress-label" for="id"><span>Uploading</span><span>72%</span></label>
+.wu-progress-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: woven.token(space-2);
+    margin-block-end: woven.token(space-1);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+@media (forced-colors: active) {
+    .wu-progress {
+        border: woven.token(border-width-1) solid CanvasText;
+        background-color: Canvas;
+        color: Highlight;
+        forced-color-adjust: none;
+    }
+}
+
+@keyframes wu-progress-slide {
+    from {
+        background-position: -70% 0;
+    }
+
+    to {
+        background-position: 170% 0;
+    }
+}

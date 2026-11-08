@@ -1,0 +1,4 @@
+// @wovenui/components/avatar-group: the avatar-group and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("avatar-group"));

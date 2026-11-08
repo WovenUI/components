@@ -1,0 +1,132 @@
+////
+//// @component wu-accordion
+//// Stacked disclosure panels built on native `details`, in one bordered group.
+////
+//// The same `name` on several `details` makes the group exclusive, one open at a time. Leave it out to allow several open.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-accordion">
+////     <details class="wu-accordion-item" name="faq" open>
+////       <summary class="wu-accordion-trigger">What is included?</summary>
+////       <div class="wu-accordion-body">Every plan includes support.</div>
+////     </details>
+////     <details class="wu-accordion-item" name="faq">
+////       <summary class="wu-accordion-trigger">Can I cancel?</summary>
+////       <div class="wu-accordion-body">Yes, at any time.</div>
+////     </details>
+////   </div>
+//// @example html
+////   <div class="wu-accordion animated">
+////     <details class="wu-accordion-item">
+////       <summary class="wu-accordion-trigger">Shipping</summary>
+////       <div class="wu-accordion-body">Orders ship in two days.</div>
+////     </details>
+////   </div>
+//// @modifier animated - The chevron turns and the panel height glides when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-accordion-item - A `details` element holding one trigger and one body @since 1.0.0
+//// @part wu-accordion-trigger - The `summary` that opens and closes the item, with a chevron @since 1.0.0
+//// @part wu-accordion-body - The panel content shown when the item is open @since 1.0.0
+//// @state open - The chevron points up and the body is shown @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-accordion {
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    overflow: clip;
+}
+
+.wu-accordion-item + .wu-accordion-item {
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-accordion-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: woven.token(space-3);
+    min-height: woven.token(control-height-lg);
+    padding-block: woven.token(space-2);
+    padding-inline: woven.token(space-4);
+    font-weight: woven.token(font-weight-medium);
+    list-style: none;
+    cursor: pointer;
+    transition: background-color woven.token(duration-150) woven.token(ease-out);
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+    }
+
+    // Inset ring, so the bordered group does not clip it
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+
+    // Chevron drawn with two borders: down when closed, up when open
+    &::after {
+        content: "";
+        flex: none;
+        width: 0.45em;
+        height: 0.45em;
+        border-right: woven.token(border-width-2) solid currentcolor;
+        border-bottom: woven.token(border-width-2) solid currentcolor;
+        color: woven.token(text-muted);
+        translate: 0 -0.1em;
+        rotate: 45deg;
+    }
+}
+
+.wu-accordion-item[open] > .wu-accordion-trigger::after {
+    translate: 0 0.1em;
+    rotate: -135deg;
+}
+
+// Regular text: the body is what the reader opened the item for, often settings, not a secondary hint
+.wu-accordion-body {
+    padding-block: 0 woven.token(space-4);
+    padding-inline: woven.token(space-4);
+    line-height: woven.token(line-height-normal);
+}
+
+// Opt-in motion: the chevron turns and the panel height glides
+@media (prefers-reduced-motion: no-preference) {
+    .wu-accordion.animated,
+    .wu-animated .wu-accordion {
+        .wu-accordion-trigger::after {
+            transition-property: rotate, translate;
+            transition-duration: woven.token(duration-200);
+            transition-timing-function: woven.token(ease-out);
+        }
+    }
+
+    @supports (interpolate-size: allow-keywords) and selector(::details-content) {
+        .wu-accordion.animated,
+        .wu-animated .wu-accordion {
+            interpolate-size: allow-keywords;
+
+            .wu-accordion-item::details-content {
+                block-size: 0;
+                overflow: clip;
+                transition:
+                    block-size woven.token(duration-200) woven.token(ease-out),
+                    content-visibility woven.token(duration-200) allow-discrete;
+            }
+
+            .wu-accordion-item[open]::details-content {
+                block-size: auto;
+            }
+        }
+    }
+}

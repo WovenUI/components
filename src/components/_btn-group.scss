@@ -1,0 +1,113 @@
+////
+//// @component wu-btn-group
+//// Joins buttons into one segmented control, as a split button, a toggle set or a radio set.
+////
+//// Split divider: use `brand`, `danger` or `quiet` on both buttons of a pair. Checkable: use `role="group"` with checkboxes or `role="radiogroup"` with radios.
+////
+//// The checked label takes the `aria-pressed` look; arrow keys are native for radios. `animated` on a button gives it the press from `wu-btn`.
+////
+//// @since 1.0.0
+//// @needs button
+//// @js none
+//// @example html
+////   <div class="wu-btn-group">
+////     <button class="wu-btn brand" type="button">Save</button>
+////     <button class="wu-btn brand caret" type="button" popovertarget="more-save" aria-label="More save options"></button>
+////   </div>
+////   <div id="more-save" popover>Save as draft</div>
+//// @example html
+////   <div class="wu-btn-group" role="radiogroup" aria-label="Align">
+////     <label class="wu-btn"><input type="radio" name="align" class="sr-only" checked> Left</label>
+////     <label class="wu-btn"><input type="radio" name="align" class="sr-only"> Right</label>
+////   </div>
+//// @example html
+////   <div class="wu-btn-group vertical" role="group" aria-label="View">
+////     <button class="wu-btn" type="button" aria-pressed="true">List</button>
+////     <button class="wu-btn" type="button" aria-pressed="false">Grid</button>
+////   </div>
+//// @modifier vertical - Stacks the buttons in a column @since 1.0.0
+//// @modifier brand | danger | quiet - On two neighbor buttons: a divider line between them, for split buttons @since 1.0.0
+//// @state aria-pressed="true" - Toggle on: selected tint and an inner ring; a checked input inside the label does the same @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-btn-group {
+    display: inline-flex;
+    vertical-align: middle;
+
+    > .wu-btn {
+        position: relative;
+        border-radius: 0;
+    }
+
+    > .wu-btn:is(:hover, :focus-visible, [aria-pressed="true"], :has(> input:checked, > input:focus-visible)) {
+        z-index: woven.token(z-hover);
+    }
+
+    // Toggle state: tint plus an inner ring, so color is not the only signal
+    > .wu-btn:is([aria-pressed="true"], :has(> input:checked)) {
+        background: woven.token(bg-selected);
+        box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(brand);
+        color: woven.token(text-brand);
+    }
+
+    > .wu-btn:has(> input:focus-visible) {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    > .wu-btn:has(> input:disabled) {
+        opacity: woven.token(opacity-50);
+        pointer-events: none;
+    }
+
+    // Split button divider
+    > .wu-btn.brand + .wu-btn.brand {
+        border-inline-start-color: color-mix(in srgb, woven.token(text-on-brand) 40%, transparent);
+    }
+
+    > .wu-btn.danger + .wu-btn.danger {
+        border-inline-start-color: color-mix(in srgb, woven.token(text-on-danger) 40%, transparent);
+    }
+
+    > .wu-btn.quiet + .wu-btn.quiet {
+        border-inline-start-color: woven.token(border-regular);
+    }
+}
+
+.wu-btn-group:not(.vertical) > .wu-btn {
+    &:first-child {
+        border-start-start-radius: woven.token(radius-md);
+        border-end-start-radius: woven.token(radius-md);
+    }
+
+    &:nth-last-child(1 of .wu-btn) {
+        border-start-end-radius: woven.token(radius-md);
+        border-end-end-radius: woven.token(radius-md);
+    }
+
+    & + .wu-btn {
+        margin-inline-start: calc(-1 * #{woven.token(border-width-1)});
+    }
+}
+
+.wu-btn-group.vertical {
+    flex-direction: column;
+
+    > .wu-btn:first-child {
+        border-start-start-radius: woven.token(radius-md);
+        border-start-end-radius: woven.token(radius-md);
+    }
+
+    > .wu-btn:nth-last-child(1 of .wu-btn) {
+        border-end-start-radius: woven.token(radius-md);
+        border-end-end-radius: woven.token(radius-md);
+    }
+
+    > .wu-btn + .wu-btn {
+        margin-block-start: calc(-1 * #{woven.token(border-width-1)});
+    }
+}
+
+// Opt-in motion: animated gives each button the .wu-btn.animated press, set in _button.scss

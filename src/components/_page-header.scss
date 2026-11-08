@@ -1,0 +1,85 @@
+////
+//// @component wu-page-header
+//// Page title row with an optional description, breadcrumb and action buttons.
+////
+//// Actions line up with the title and wrap below it on narrow screens. A direct `wu-breadcrumb` child takes its own full-width row above the title.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <header class="wu-page-header divided">
+////     <nav class="wu-breadcrumb" aria-label="Breadcrumb">
+////       <ol>
+////         <li><a href="/projects">Projects</a></li>
+////         <li aria-current="page">Apollo</li>
+////       </ol>
+////     </nav>
+////     <div class="wu-page-header-main">
+////       <h1 class="wu-page-header-title">Apollo</h1>
+////       <p class="wu-page-header-text">Launch plan and open tasks.</p>
+////     </div>
+////     <div class="wu-page-header-actions">
+////       <button class="wu-btn" type="button">Share</button>
+////       <button class="wu-btn brand" type="button">New task</button>
+////     </div>
+////   </header>
+//// @modifier divided - Adds a bottom border and padding under the header @since 1.0.0
+//// @part wu-page-header-main - Column that holds the title and description @since 1.0.0
+//// @part wu-page-header-title - Page heading @since 1.0.0
+//// @part wu-page-header-text - Muted description under the title @since 1.0.0
+//// @part wu-page-header-actions - Row of buttons, centered on the title first line @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: woven.token(space-3) woven.token(space-4);
+    color: woven.token(text-regular);
+
+    > .wu-breadcrumb {
+        flex-basis: 100%;
+    }
+}
+
+.wu-page-header-main {
+    display: flex;
+    flex: 1 1 woven.token(space-64);
+    flex-direction: column;
+    gap: woven.token(space-1);
+    min-width: 0;
+}
+
+.wu-page-header-title {
+    margin: 0;
+    font-size: woven.token(font-size-2xl);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+    text-wrap: balance;
+}
+
+.wu-page-header-text {
+    max-inline-size: 65ch;
+    margin: 0;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    text-wrap: pretty;
+}
+
+// Centered on the title's first line, however long the description is
+.wu-page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-2);
+    min-block-size: calc(#{woven.token(font-size-2xl)} * #{woven.token(line-height-tight)});
+}
+
+.wu-page-header.divided {
+    padding-block-end: woven.token(space-4);
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+}

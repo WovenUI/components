@@ -1,0 +1,204 @@
+////
+//// @component wu-topbar
+//// Application header with a brand, a scrolling nav, an end group, a pinned variant and a page progress line.
+////
+//// `wu-topbar-nav` works on the `nav` itself or on the `ul` inside it. When space runs out the nav scrolls first, then the brand truncates.
+////
+//// The bar stays in the flow; add `pinned` to stick it to the top. The progress line is decoration, so mark it `aria-hidden="true"`; it fills as the page scrolls and stays hidden when reduced motion is set.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <header class="wu-topbar pinned">
+////     <a class="wu-topbar-brand" href="/">Acme</a>
+////     <nav aria-label="Main">
+////       <ul class="wu-topbar-nav">
+////         <li><a class="wu-topbar-link" href="/dashboard" aria-current="page">Dashboard</a></li>
+////         <li><a class="wu-topbar-link" href="/billing">Billing</a></li>
+////       </ul>
+////     </nav>
+////     <div class="wu-topbar-end">
+////       <button class="wu-btn sm" type="button">Sign out</button>
+////     </div>
+////     <div class="wu-topbar-progress" aria-hidden="true"></div>
+////   </header>
+//// @example html
+////   <header class="wu-topbar">
+////     <a class="wu-topbar-brand" href="/">Acme</a>
+////     <nav class="wu-topbar-nav" aria-label="Main">
+////       <a class="wu-topbar-link" href="/billing" aria-current="page">Billing</a>
+////       <a class="wu-topbar-link" href="/team">Team</a>
+////     </nav>
+////   </header>
+//// @modifier pinned - Sticks to the top of its scroll container, with a shadow once stuck @since 1.0.0
+//// @part wu-topbar-brand - Brand link or text; truncates last @since 1.0.0
+//// @part wu-topbar-nav - Nav, or its list, that takes the free space and scrolls sideways @since 1.0.0
+//// @part wu-topbar-link - Nav link; a direct child `svg` is sized to `1em` @since 1.0.0
+//// @part wu-topbar-end - Group pushed to the inline end @since 1.0.0
+//// @part wu-topbar-progress - Line along the bottom edge that fills as the page scrolls @since 1.0.0
+//// @state aria-current="page" - On a link: current page, brand underline @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-topbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-4);
+    min-height: woven.token(space-16);
+    padding-inline: woven.token(space-4);
+    overflow-x: clip;
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+}
+
+.wu-topbar-brand {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: woven.token(space-2);
+    min-width: 0;
+    overflow: hidden;
+    color: inherit;
+    font-weight: woven.token(font-weight-semibold);
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+// On <nav> with links, or on its <ul>; scrolls sideways when it runs out of room.
+// A zero basis lets it take the free space and give it up before the brand and the end group.
+.wu-topbar-nav,
+.wu-topbar > :has(> .wu-topbar-nav) {
+    display: flex;
+    flex: 1 1 0;
+    align-self: stretch;
+    min-width: 0;
+}
+
+.wu-topbar-nav {
+    gap: woven.token(space-1);
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+
+    > li {
+        display: flex;
+    }
+}
+
+.wu-topbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-2);
+    padding-inline: woven.token(space-3);
+    box-shadow: inset 0 calc(-1 * #{woven.token(border-width-2)}) 0 transparent;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-medium);
+    text-decoration: none;
+    white-space: nowrap;
+    transition-property: color, box-shadow;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &:hover {
+        color: woven.token(text-regular);
+    }
+
+    // Inset ring, so the scrolling nav does not clip it
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+
+    &[aria-current="page"] {
+        box-shadow: inset 0 calc(-1 * #{woven.token(border-width-2)}) 0 woven.token(brand);
+        color: woven.token(text-regular);
+    }
+
+    > svg {
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+.wu-topbar-end {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: woven.token(space-2);
+    margin-inline-start: auto;
+}
+
+.wu-topbar.pinned {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: woven.token(z-sticky);
+}
+
+// Shadow only once the bar is stuck; the bottom border is the fallback
+@supports (container-type: scroll-state) {
+    .wu-topbar.pinned {
+        container-type: scroll-state;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            box-shadow: woven.token(shadow-md);
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    @container scroll-state(stuck: top) {
+        .wu-topbar.pinned::after {
+            opacity: 1;
+        }
+    }
+}
+
+// Page progress: <div class="wu-topbar-progress" aria-hidden="true">, filled by page scroll where supported
+.wu-topbar-progress {
+    display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .wu-topbar-progress {
+            display: block;
+            position: absolute;
+            inset-inline: 0;
+            inset-block-end: calc(-1 * #{woven.token(border-width-1)});
+            height: woven.token(border-width-2);
+            background: woven.token(brand);
+            transform-origin: left;
+            scale: 0 1;
+            animation-name: wu-topbar-progress;
+            animation-timing-function: linear;
+            animation-fill-mode: both;
+            animation-timeline: scroll(root block);
+
+            &:dir(rtl) {
+                transform-origin: right;
+            }
+        }
+    }
+}
+
+@keyframes wu-topbar-progress {
+    to {
+        scale: 1 1;
+    }
+}

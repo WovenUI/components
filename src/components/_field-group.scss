@@ -1,0 +1,68 @@
+////
+//// @component wu-field-group
+//// Group of fields in a `fieldset`, stacked by default or side by side.
+////
+//// Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <fieldset class="wu-field-group">
+////     <legend class="wu-field-group-legend">Contact</legend>
+////     <div class="wu-field">
+////       <label class="wu-field-label" for="g-name">Name</label>
+////       <input class="wu-input" id="g-name" type="text">
+////     </div>
+////     <div class="wu-field">
+////       <label class="wu-field-label" for="g-mail">Email</label>
+////       <input class="wu-input" id="g-mail" type="email">
+////     </div>
+////   </fieldset>
+//// @example html
+////   <fieldset class="wu-field-group horizontal">
+////     <legend class="wu-field-group-legend">Dates</legend>
+////     <div class="wu-field">
+////       <label class="wu-field-label" for="g-from">From</label>
+////       <input class="wu-input" id="g-from" type="date">
+////     </div>
+////     <div class="wu-field">
+////       <label class="wu-field-label" for="g-to">To</label>
+////       <input class="wu-input" id="g-to" type="date">
+////     </div>
+////   </fieldset>
+//// @modifier horizontal - Fields side by side, wrapping when narrower than `--wu-field-group--MinWidth` @since 1.0.0
+//// @part wu-field-group-legend - Group title @since 1.0.0
+//// @variable --wu-field-group--MinWidth [12rem] - Width at which a field in a horizontal group wraps @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-4);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.wu-field-group-legend {
+    margin-block-end: woven.token(space-3);
+    padding: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Fields side by side, wrapping; --wu-field-group--MinWidth sets when a field wraps
+.wu-field-group.horizontal {
+    flex-flow: row wrap;
+    align-items: flex-start;
+
+    > .wu-field {
+        flex: 1 1 var(--wu-field-group--MinWidth, 12rem);
+    }
+}

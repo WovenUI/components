@@ -1,0 +1,301 @@
+////
+//// @component wu-btn
+//// Buttons for actions, in roles and sizes, with a caret for menus and split buttons.
+////
+//// A `button` element is the default; an `a` element with `wu-btn` looks the same for navigation.
+////
+//// Inside a `wu-field-group sm` or `lg`, a button without its own size takes the group size.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <button class="wu-btn" type="button">Cancel</button>
+////   <button class="wu-btn brand" type="button">Save</button>
+////   <button class="wu-btn danger subtle sm" type="button">Delete</button>
+//// @example html
+////   <button class="wu-btn icon round" type="button" aria-label="Settings">
+////     <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /></svg>
+////   </button>
+////   <button class="wu-btn brand" type="button" aria-busy="true">Saving</button>
+//// @example html
+////   <button class="wu-btn caret" type="button" popovertarget="actions">Actions</button>
+////   <div id="actions" popover>Menu content</div>
+//// @modifier brand - Solid brand fill for the main action @since 1.0.0
+//// @modifier danger - Solid danger fill for destructive actions @since 1.0.0
+//// @modifier subtle - With `brand` or `danger`: tinted fill and border, solid on hover @since 1.0.0
+//// @modifier quiet - No border or fill until hover @since 1.0.0
+//// @modifier link - Looks like a link, no padding, keeps the control height @since 1.0.0
+//// @modifier round - Pill shape; a circle when the button is empty or holds only an svg @since 1.0.0
+//// @modifier icon - Square button for one svg and no text; give it an `aria-label` @since 1.0.0
+//// @modifier caret - Adds a caret after the label; an empty caret button with an `aria-label` is a narrow caret-only button for split buttons @since 1.0.0
+//// @modifier sm | lg - Small or large control height and font size @since 1.0.0
+//// @modifier animated - Spring press scale when the user allows motion; `wu-animated` on an ancestor or `wu-btn-group animated` does the same @since 1.0.0
+//// @variable --wu-btn--CaretSize [0.4em] - Size of the caret @since 1.0.0
+//// @state disabled | aria-disabled="true" - Half opacity, no pointer events @since 1.0.0
+//// @state aria-busy="true" - Loading: blocks pointer clicks and keeps full opacity @since 1.0.0
+//// @state :popover-open - The caret turns while the popover right after the button is open @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: woven.token(space-2);
+    min-height: woven.token(control-height-md);
+    padding-inline: woven.token(control-padding-inline-md);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    font: inherit;
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition-property: background-color, border-color, color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    &:hover {
+        border-color: woven.token(border-strong);
+        background: woven.token(bg-hover);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+        opacity: woven.token(opacity-50);
+        pointer-events: none;
+    }
+
+    &[aria-busy="true"] {
+        opacity: 1;
+        pointer-events: none;
+    }
+}
+
+.wu-btn.brand {
+    border-color: woven.token(brand);
+    background: woven.token(brand);
+    color: woven.token(text-on-brand);
+
+    &:hover {
+        border-color: woven.token(brand-hover);
+        background: woven.token(brand-hover);
+    }
+
+    &:active {
+        border-color: woven.token(brand-active);
+        background: woven.token(brand-active);
+    }
+}
+
+.wu-btn.danger {
+    border-color: woven.token(danger);
+    background: woven.token(danger);
+    color: woven.token(text-on-danger);
+
+    &:hover {
+        border-color: woven.token(danger-hover);
+        background: woven.token(danger-hover);
+    }
+
+    &:active {
+        border-color: woven.token(danger-active);
+        background: woven.token(danger-active);
+    }
+}
+
+// Subtle: tinted role fill and border, solid on hover
+.wu-btn.brand.subtle {
+    border-color: woven.token(brand-border);
+    background: woven.token(brand-subtle);
+    color: woven.token(text-brand);
+
+    &:hover {
+        border-color: woven.token(brand-hover);
+        background: woven.token(brand-hover);
+        color: woven.token(text-on-brand);
+    }
+
+    &:active {
+        border-color: woven.token(brand-active);
+        background: woven.token(brand-active);
+        color: woven.token(text-on-brand);
+    }
+}
+
+.wu-btn.danger.subtle {
+    border-color: woven.token(danger-border);
+    background: woven.token(danger-subtle);
+    color: woven.token(text-danger);
+
+    &:hover {
+        border-color: woven.token(danger-hover);
+        background: woven.token(danger-hover);
+        color: woven.token(text-on-danger);
+    }
+
+    &:active {
+        border-color: woven.token(danger-active);
+        background: woven.token(danger-active);
+        color: woven.token(text-on-danger);
+    }
+}
+
+.wu-btn > svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}
+
+.wu-btn.quiet {
+    border-color: transparent;
+    background: transparent;
+
+    &:hover {
+        border-color: transparent;
+        background: woven.token(bg-hover);
+    }
+}
+
+.wu-btn.sm {
+    min-height: woven.token(control-height-sm);
+    padding-inline: woven.token(control-padding-inline-sm);
+    font-size: woven.token(font-size-xs);
+}
+
+.wu-btn.lg {
+    min-height: woven.token(control-height-lg);
+    padding-inline: woven.token(control-padding-inline-lg);
+    font-size: woven.token(font-size-md);
+}
+
+.wu-btn.caret::after {
+    content: "";
+    inline-size: var(--wu-btn--CaretSize, 0.4em);
+    block-size: var(--wu-btn--CaretSize, 0.4em);
+    margin-block-start: -0.2em;
+    border-bottom: 0.125em solid currentcolor;
+    border-right: 0.125em solid currentcolor;
+    rotate: 45deg;
+}
+
+// Link: text only, no padding; keeps the control height so it lines up in a toolbar row
+.wu-btn.link {
+    padding-inline: 0;
+    border-color: transparent;
+    background: transparent;
+    color: woven.token(text-link);
+
+    &:hover {
+        border-color: transparent;
+        background: transparent;
+        color: woven.token(text-link-hover);
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+}
+
+// Icon: square box for one svg and no text; round makes it a circle
+.wu-btn.icon {
+    min-inline-size: woven.token(control-height-md);
+    padding: 0;
+
+    > svg {
+        width: 1.25em;
+        height: 1.25em;
+    }
+}
+
+.wu-btn.icon.sm {
+    min-inline-size: woven.token(control-height-sm);
+}
+
+.wu-btn.icon.lg {
+    min-inline-size: woven.token(control-height-lg);
+}
+
+// Round: pill; a circle when empty or holding only an svg
+.wu-btn.round {
+    border-radius: woven.token(radius-full);
+}
+
+.wu-btn.round:empty,
+.wu-btn.round:has(> svg:only-child) {
+    min-inline-size: woven.token(control-height-md);
+    padding-inline: 0;
+}
+
+.wu-btn.round.sm:empty,
+.wu-btn.round.sm:has(> svg:only-child) {
+    min-inline-size: woven.token(control-height-sm);
+}
+
+.wu-btn.round.lg:empty,
+.wu-btn.round.lg:has(> svg:only-child) {
+    min-inline-size: woven.token(control-height-lg);
+}
+
+// Caret-only: square, matched to the control height of each size
+.wu-btn.caret:empty {
+    min-inline-size: woven.token(control-height-md);
+    padding-inline: 0;
+}
+
+.wu-btn.caret.sm:empty {
+    min-inline-size: woven.token(control-height-sm);
+}
+
+.wu-btn.caret.lg:empty {
+    min-inline-size: woven.token(control-height-lg);
+}
+
+.wu-btn.caret:has(+ [popover]:popover-open)::after {
+    margin-block-start: 0.2em;
+    rotate: 225deg;
+}
+
+// Size from a wu-field-group sm or lg; a button with its own sm or lg keeps it
+@each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
+    $h: woven.token(control-height-#{$size});
+
+    :where(.wu-field-group.#{$size}) {
+        .wu-btn:not(.sm, .lg) {
+            min-height: $h;
+            font-size: woven.token(#{$font});
+        }
+
+        .wu-btn:not(.sm, .lg, .icon, .link, .caret:empty, .round:empty, .round:has(> svg:only-child)) {
+            padding-inline: woven.token(control-padding-inline-#{$size});
+        }
+
+        .wu-btn:not(.sm, .lg):is(.icon, .caret:empty, .round:empty, .round:has(> svg:only-child)) {
+            min-inline-size: $h;
+        }
+    }
+}
+
+// Opt-in motion: spring press scale, also for every button of an animated group
+@media (prefers-reduced-motion: no-preference) {
+    .wu-btn.animated,
+    .wu-btn-group.animated > .wu-btn,
+    .wu-animated .wu-btn {
+        transition-property: background-color, border-color, color, scale;
+        transition-duration: woven.token(duration-150), woven.token(duration-150), woven.token(duration-150), woven.token(duration-500);
+        transition-timing-function: woven.token(ease-out), woven.token(ease-out), woven.token(ease-out), var(--wu-kit-ease-spring);
+
+        &:active {
+            scale: 0.95;
+        }
+    }
+}

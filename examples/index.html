@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>WovenUI components: buttons</title>
+        <link rel="stylesheet" href="../node_modules/@wovenui/core/dist/wovenui.css" />
+        <link rel="stylesheet" href="../dist/wovenui-kit.css" />
+    </head>
+    <body class="p-6">
+        <header class="flex between x-center gap-4 mb-6">
+            <h1 class="text-xl">Buttons</h1>
+            <button class="wu-btn sm" type="button" id="theme-switch">Switch to dark</button>
+        </header>
+
+        <section class="mb-6">
+            <h2 class="text-lg mb-2">Calm (default)</h2>
+            <div class="flex wrap x-center gap-2">
+                <button class="wu-btn sm" type="button">Small</button>
+                <button class="wu-btn" type="button">Default</button>
+                <button class="wu-btn lg" type="button">Large</button>
+                <button class="wu-btn brand sm" type="button">Brand small</button>
+                <button class="wu-btn brand" type="button">Brand</button>
+                <button class="wu-btn brand lg" type="button">Brand large</button>
+                <button class="wu-btn" type="button" disabled>Disabled</button>
+                <button class="wu-btn brand" type="button" disabled>Brand disabled</button>
+                <a class="wu-btn" href="./" aria-disabled="true">Link disabled</a>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-lg mb-2">Danger, quiet and busy</h2>
+            <div class="flex wrap x-center gap-2">
+                <button class="wu-btn danger sm" type="button">Delete small</button>
+                <button class="wu-btn danger" type="button">Delete</button>
+                <button class="wu-btn danger lg" type="button">Delete large</button>
+                <button class="wu-btn quiet sm" type="button">Quiet small</button>
+                <button class="wu-btn quiet" type="button">Quiet</button>
+                <button class="wu-btn quiet lg caret" type="button">Quiet large</button>
+                <button class="wu-btn brand" type="button" aria-busy="true"><span class="wu-spinner sm" aria-hidden="true"></span>Saving</button>
+            </div>
+            <div class="flex wrap x-center gap-2 mt-4">
+                <div class="wu-btn-group">
+                    <button class="wu-btn danger" type="button">Delete</button>
+                    <button class="wu-btn danger caret" type="button" aria-label="More delete options"></button>
+                </div>
+                <div class="wu-btn-group">
+                    <button class="wu-btn quiet" type="button">Archive</button>
+                    <button class="wu-btn quiet caret" type="button" aria-label="More archive options"></button>
+                </div>
+                <div class="wu-btn-group animated" role="group" aria-label="Tools">
+                    <button class="wu-btn" type="button">Cut</button>
+                    <button class="wu-btn" type="button">Copy</button>
+                    <button class="wu-btn" type="button">Paste</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-lg mb-2">Animated per button</h2>
+            <div class="flex wrap x-center gap-2">
+                <button class="wu-btn animated" type="button">Press me</button>
+                <button class="wu-btn brand animated" type="button">Press me</button>
+            </div>
+        </section>
+
+        <section class="wu-animated">
+            <h2 class="text-lg mb-2">Animated section</h2>
+            <div class="flex wrap x-center gap-2">
+                <button class="wu-btn sm" type="button">Small</button>
+                <button class="wu-btn brand" type="button">Brand</button>
+                <button class="wu-btn lg" type="button">Large</button>
+            </div>
+        </section>
+
+        <script>
+            const root = document.documentElement;
+            const toggle = document.getElementById('theme-switch');
+            toggle.addEventListener('click', () => {
+                const dark = root.dataset.theme !== 'dark';
+                root.dataset.theme = dark ? 'dark' : 'light';
+                toggle.textContent = dark ? 'Switch to light' : 'Switch to dark';
+            });
+        </script>
+    </body>
+</html>

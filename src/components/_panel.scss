@@ -1,0 +1,69 @@
+////
+//// @component wu-panel
+//// Flat bordered region for grouped settings or data.
+////
+//// The card is the raised surface; the panel stays flat with a border.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <section class="wu-panel">
+////     <header class="wu-panel-header">
+////       <h2 class="wu-panel-title">Notifications</h2>
+////       <button class="wu-btn sm" type="button">Edit</button>
+////     </header>
+////     <div class="wu-panel-body">Email me about new comments.</div>
+////     <footer class="wu-panel-footer">
+////       <button class="wu-btn brand" type="button">Save</button>
+////     </footer>
+////   </section>
+//// @part wu-panel-header - Top row with a tinted background and bottom border @since 1.0.0
+//// @part wu-panel-title - Panel heading @since 1.0.0
+//// @part wu-panel-body - Content area @since 1.0.0
+//// @part wu-panel-footer - Bottom row for actions, aligned to the inline end @since 1.0.0
+//// @variable --wu-panel--Padding [1rem] - Inline padding of the header and footer, and padding of the body @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-panel {
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+}
+
+.wu-panel-header,
+.wu-panel-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-2);
+    padding-block: woven.token(space-3);
+    padding-inline: var(--wu-panel--Padding, #{woven.token(space-4)});
+}
+
+.wu-panel-header {
+    justify-content: space-between;
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+    border-start-start-radius: calc(#{woven.token(radius-md)} - #{woven.token(border-width-1)});
+    border-start-end-radius: calc(#{woven.token(radius-md)} - #{woven.token(border-width-1)});
+    background: woven.token(bg-alternate);
+}
+
+.wu-panel-title {
+    margin: 0;
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+.wu-panel-body {
+    padding: var(--wu-panel--Padding, #{woven.token(space-4)});
+}
+
+.wu-panel-footer {
+    justify-content: flex-end;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}

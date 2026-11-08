@@ -1,0 +1,11 @@
+// Kit-wide helpers, emitted with every component
+
+// <svg class="wu-mirror">: flips an app's directional icon (back, next, arrow) in right to left.
+// Works on svg, img and icon-font elements; inline elements become inline-block so the flip applies.
+:where(i, span, em).wu-mirror {
+    display: inline-block;
+}
+
+.wu-mirror:dir(rtl) {
+    scale: -1 1;
+}

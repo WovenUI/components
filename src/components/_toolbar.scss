@@ -1,0 +1,74 @@
+////
+//// @component wu-toolbar
+//// Wrapping row of controls, with groups, separators, an end group and a boxed variant.
+////
+//// A toolbar holds controls of one height, so it lines up by itself. Status displays such as tags and badges go outside the row.
+////
+//// `role="toolbar"` promises arrow-key focus, so add it only with a script that provides it; otherwise use a plain `div`.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-toolbar">
+////     <div class="wu-toolbar-group">
+////       <button class="wu-btn sm" type="button">Bold</button>
+////       <button class="wu-btn sm" type="button">Italic</button>
+////     </div>
+////     <span class="wu-toolbar-separator" aria-hidden="true"></span>
+////     <div class="wu-toolbar-end">
+////       <button class="wu-btn brand sm" type="button">Publish</button>
+////     </div>
+////   </div>
+//// @example html
+////   <div class="wu-toolbar boxed">
+////     <span class="wu-text sm">3 selected</span>
+////     <button class="wu-btn sm" type="button">Archive</button>
+////   </div>
+//// @modifier boxed - Border, padding and the alternate background @since 1.0.0
+//// @modifier sm - Smaller gap @since 1.0.0
+//// @part wu-toolbar-group - Controls that stay together @since 1.0.0
+//// @part wu-toolbar-separator - Vertical line between groups @since 1.0.0
+//// @part wu-toolbar-end - Pushes itself and what follows to the end @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-2);
+    color: woven.token(text-regular);
+}
+
+.wu-toolbar-group,
+.wu-toolbar-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: inherit;
+}
+
+// Pushes itself and what follows to the end
+.wu-toolbar-end {
+    margin-inline-start: auto;
+}
+
+.wu-toolbar-separator {
+    align-self: stretch;
+    width: woven.token(border-width-1);
+    margin-block: woven.token(space-1);
+    background: woven.token(border-regular);
+}
+
+.wu-toolbar.boxed {
+    padding: woven.token(space-2);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-alternate);
+}
+
+.wu-toolbar.sm {
+    gap: woven.token(space-1);
+}

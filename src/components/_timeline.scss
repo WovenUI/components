@@ -1,0 +1,196 @@
+////
+//// @component wu-timeline
+//// Ordered list of events with markers and a rail, role colors and a progress mode.
+////
+//// Role words on an item color its marker; `success`, `warning` and `danger` also change the marker shape, so color is not the only cue.
+////
+//// With `aria-current="step"` on one item the list becomes a progress rail: earlier items filled, the current one ringed, later ones hollow. Say "completed" in the item text too.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <ol class="wu-timeline">
+////     <li class="wu-timeline-item success">
+////       <p class="wu-timeline-title">Order shipped</p>
+////       <time class="wu-timeline-time" datetime="2026-03-02">2 March</time>
+////       <p class="wu-timeline-text">Handed to the carrier.</p>
+////     </li>
+////     <li class="wu-timeline-item danger">
+////       <p class="wu-timeline-title">Payment failed</p>
+////       <time class="wu-timeline-time" datetime="2026-03-01">1 March</time>
+////     </li>
+////   </ol>
+//// @example html
+////   <ol class="wu-timeline">
+////     <li class="wu-timeline-item"><p class="wu-timeline-title">Cart (completed)</p></li>
+////     <li class="wu-timeline-item" aria-current="step"><p class="wu-timeline-title">Payment</p></li>
+////     <li class="wu-timeline-item"><p class="wu-timeline-title">Confirmation</p></li>
+////   </ol>
+//// @modifier brand | info - On an item: marker color @since 1.0.0
+//// @modifier success | warning | danger - On an item: marker color and a check, triangle or octagon shape @since 1.0.0
+//// @modifier animated - Each rail segment draws once as it scrolls into view when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-timeline-item - One event: a marker, a rail to the next item and the content @since 1.0.0
+//// @part wu-timeline-title - Event title in medium weight @since 1.0.0
+//// @part wu-timeline-time - Muted time or date line @since 1.0.0
+//// @part wu-timeline-text - Muted description @since 1.0.0
+//// @state aria-current="step" - On an item: the current step, ringed; earlier items fill and later ones turn hollow @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$marker: woven.token(space-3);
+
+.wu-timeline {
+    margin: 0;
+    padding: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+    list-style: none;
+}
+
+.wu-timeline-item {
+    position: relative;
+    padding-block-end: woven.token(space-6);
+    padding-inline-start: calc(#{$marker} + #{woven.token(space-3)});
+
+    // Marker, centered on the first line
+    &::before {
+        content: "";
+        position: absolute;
+        inset-block-start: calc((1lh - #{$marker}) / 2);
+        inset-inline-start: 0;
+        width: $marker;
+        height: $marker;
+        border-radius: woven.token(radius-full);
+        background: woven.token(border-strong);
+    }
+
+    // Rail to the next marker
+    &::after {
+        content: "";
+        position: absolute;
+        inset-block: calc((1lh + #{$marker}) / 2 + #{woven.token(space-1)}) calc(#{woven.token(space-1)} - (1lh - #{$marker}) / 2);
+        inset-inline-start: calc((#{$marker} - #{woven.token(border-width-2)}) / 2);
+        width: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: woven.token(border-regular);
+    }
+
+    &:last-child {
+        padding-block-end: 0;
+
+        &::after {
+            content: none;
+        }
+    }
+}
+
+.wu-timeline-title {
+    margin: 0;
+    font-weight: woven.token(font-weight-medium);
+}
+
+.wu-timeline-time {
+    display: block;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+.wu-timeline-text {
+    margin: 0;
+    margin-block-start: woven.token(space-1);
+    color: woven.token(text-muted);
+    text-wrap: pretty;
+}
+
+@each $role in "brand", "success", "danger", "warning", "info" {
+    .wu-timeline-item.#{$role}::before {
+        background: woven.token($role);
+    }
+}
+
+// Shape markers from _shared.scss
+.wu-timeline-item:is(.success, .warning, .danger)::before {
+    border-radius: 0;
+}
+
+.wu-timeline-item.success::before {
+    clip-path: var(--wu-kit-marker-check);
+}
+
+.wu-timeline-item.warning::before {
+    clip-path: var(--wu-kit-marker-triangle);
+}
+
+.wu-timeline-item.danger::before {
+    clip-path: var(--wu-kit-marker-octagon);
+}
+
+// Progress: completed
+.wu-timeline-item:has(~ [aria-current="step"]) {
+    &::before,
+    &::after {
+        background: woven.token(brand);
+    }
+}
+
+// Progress: current, a ring
+.wu-timeline-item[aria-current="step"] {
+    &::before {
+        border-radius: woven.token(radius-full);
+        clip-path: none;
+        background: woven.token(bg-surface);
+        box-shadow:
+            inset 0 0 0 woven.token(border-width-2) woven.token(brand),
+            0 0 0 woven.token(border-width-4) woven.token(brand-subtle);
+    }
+
+    .wu-timeline-title {
+        font-weight: woven.token(font-weight-semibold);
+    }
+}
+
+// Progress: upcoming, hollow
+.wu-timeline-item[aria-current="step"] ~ .wu-timeline-item {
+    color: woven.token(text-muted);
+
+    &::before {
+        border-radius: woven.token(radius-full);
+        clip-path: none;
+        background: woven.token(bg-surface);
+        box-shadow: inset 0 0 0 woven.token(border-width-2) woven.token(border-strong);
+    }
+}
+
+// Opt-in motion: each rail segment draws once as it scrolls into view
+@media (prefers-reduced-motion: no-preference) {
+    .wu-timeline.animated,
+    .wu-animated .wu-timeline {
+        > .wu-timeline-item::after {
+            transform-origin: top;
+            animation: wu-timeline-draw woven.token(duration-500) woven.token(ease-out) both;
+        }
+
+        @supports (animation-timeline: view()) {
+            > .wu-timeline-item::after {
+                animation-duration: auto;
+                animation-timing-function: linear;
+                animation-timeline: view();
+                animation-range: entry 0% cover 40%;
+            }
+        }
+    }
+}
+
+@keyframes wu-timeline-draw {
+    from {
+        scale: 1 0;
+    }
+
+    to {
+        scale: 1 1;
+    }
+}

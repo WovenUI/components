@@ -1,0 +1,168 @@
+////
+//// @component wu-checkbox
+//// Custom checkbox with a label, a check mark and an indeterminate dash.
+////
+//// The box is 1em, so it follows the root type size. The `wu-checkbox-input` part also works alone with an `aria-label`.
+////
+//// Inside a `wu-field-group sm` or `lg`, a checkbox without its own size takes the group size.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <label class="wu-checkbox">
+////     <input type="checkbox" class="wu-checkbox-input" name="terms" checked>
+////     <span class="wu-checkbox-label">I accept the terms</span>
+////   </label>
+//// @example html
+////   <label class="wu-checkbox sm">
+////     <input type="checkbox" class="wu-checkbox-input" name="news" disabled>
+////     <span class="wu-checkbox-label">Send the newsletter</span>
+////   </label>
+////   <input type="checkbox" class="wu-checkbox-input" name="all" aria-label="Select all">
+//// @modifier sm | lg - Small or large font size, and so box size @since 1.0.0
+//// @part wu-checkbox-input - The `input` drawn as a box @since 1.0.0
+//// @part wu-checkbox-label - Label text next to the box @since 1.0.0
+//// @state checked - Brand fill with a check mark @since 1.0.0
+//// @state indeterminate - Brand fill with a dash @since 1.0.0
+//// @state disabled - Half opacity and a not-allowed cursor @since 1.0.0
+//// @state aria-invalid="true" - Danger edge that stays on hover and when checked @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-checkbox {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: woven.token(space-2);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-normal);
+    cursor: pointer;
+
+    &:has(.wu-checkbox-input:disabled) {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+}
+
+.wu-checkbox-input {
+    display: inline-grid;
+    flex: none;
+    place-content: center;
+    width: 1em;
+    height: 1em;
+    margin: 0;
+    margin-block-start: calc((1lh - 1em) / 2);
+    border: woven.token(border-width-1) solid woven.token(border-control);
+    border-radius: woven.token(radius-xs);
+    background: woven.token(bg-surface);
+    font-size: inherit;
+    line-height: inherit;
+    vertical-align: middle;
+    appearance: none;
+    cursor: pointer;
+    transition-property: background-color, border-color;
+    transition-duration: woven.token(duration-150);
+    transition-timing-function: woven.token(ease-out);
+
+    // Check mark, drawn with clip-path
+    &::before {
+        content: "";
+        width: 0.75em;
+        height: 0.75em;
+        background: woven.token(text-on-brand);
+        clip-path: var(--wu-kit-marker-check);
+        visibility: hidden;
+    }
+
+    &:hover:not(:disabled, :checked, :indeterminate) {
+        border-color: woven.token(border-control-hover);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+
+    &:is(:checked, :indeterminate) {
+        border-color: woven.token(brand);
+        background: woven.token(brand);
+
+        &::before {
+            visibility: visible;
+        }
+
+        &:hover:not(:disabled) {
+            border-color: woven.token(brand-hover);
+            background: woven.token(brand-hover);
+        }
+    }
+
+    // Invalid: a 2px danger edge that stays on hover and when checked
+    &:is([aria-invalid="true"], :user-invalid),
+    &:is([aria-invalid="true"], :user-invalid):is(:hover, :checked, :indeterminate) {
+        border-color: woven.token(danger);
+        box-shadow: 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+
+    // Indeterminate dash
+    &:indeterminate::before {
+        clip-path: inset(40% 10%);
+    }
+
+    &:disabled {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+
+    .wu-checkbox > &:disabled {
+        opacity: 1;
+    }
+}
+
+.wu-checkbox-label {
+    min-width: 0;
+}
+
+.wu-checkbox.sm {
+    font-size: woven.token(font-size-sm);
+}
+
+.wu-checkbox.lg {
+    font-size: woven.token(font-size-lg);
+}
+
+@media (forced-colors: active) {
+    .wu-checkbox-input {
+        border-color: CanvasText;
+        background: Canvas;
+        forced-color-adjust: none;
+
+        &::before {
+            background: HighlightText;
+        }
+
+        &:is(:checked, :indeterminate) {
+            border-color: Highlight;
+            background: Highlight;
+        }
+
+        &:disabled {
+            border-color: GrayText;
+        }
+
+        &:disabled:is(:checked, :indeterminate) {
+            background: GrayText;
+        }
+    }
+}
+
+// Size from a wu-field-group sm or lg
+:where(.wu-field-group.sm) .wu-checkbox:not(.sm, .lg) {
+    font-size: woven.token(font-size-sm);
+}
+
+:where(.wu-field-group.lg) .wu-checkbox:not(.sm, .lg) {
+    font-size: woven.token(font-size-lg);
+}

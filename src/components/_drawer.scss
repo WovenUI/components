@@ -1,0 +1,200 @@
+////
+//// @component wu-drawer
+//// Side panel on the native `dialog` element, docked to the inline end, the inline start or the bottom.
+////
+//// Opens with invoker commands (`commandfor` and `command`), no script. With `show-modal` the page does not scroll while it is open; the page keeps its scrollbar gutter so it does not shift. `show` opens it non-modal and leaves the page alone.
+////
+//// Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <button class="wu-btn" type="button" commandfor="d1" command="show-modal">Filters</button>
+////   <dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="any">
+////     <header class="wu-drawer-header">
+////       <h2 class="wu-drawer-title" id="d1-title">Filters</h2>
+////       <button class="wu-drawer-close" type="button" commandfor="d1" command="close" aria-label="Close"></button>
+////     </header>
+////     <div class="wu-drawer-body">Content</div>
+////     <form class="wu-drawer-footer" method="dialog">
+////       <button class="wu-btn brand">Apply</button>
+////     </form>
+////   </dialog>
+//// @example html
+////   <dialog class="wu-drawer bottom animated" id="d2" aria-label="Details" closedby="any">
+////     <div class="wu-drawer-body">Content</div>
+////   </dialog>
+//// @modifier inline-start - Docks to the inline start instead of the inline end @since 1.0.0
+//// @modifier bottom - Docks to the bottom edge with rounded top corners, up to `--wu-drawer--MaxHeight` @since 1.0.0
+//// @modifier animated - Slides in from its edge and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-drawer-header - Top row with the title and close button @since 1.0.0
+//// @part wu-drawer-title - Heading in the header @since 1.0.0
+//// @part wu-drawer-body - Scrolling content area that fills the drawer @since 1.0.0
+//// @part wu-drawer-footer - Bottom row for actions, aligned to the inline end @since 1.0.0
+//// @part wu-drawer-close - Close button drawn by the shared close style; give it an `aria-label` @since 1.0.0
+//// @variable --wu-drawer--Width [24rem] - Drawer width when docked to a side @since 1.0.0
+//// @variable --wu-drawer--MaxHeight [75dvh] - Maximum height of a bottom drawer @since 1.0.0
+//// @variable --wu-drawer--Backdrop [50% black, 70% in dark themes] - Color behind a modal drawer @since 1.0.0
+//// @state open - Shown as a flex column so the body scrolls between header and footer @since 1.0.0
+//// @state :modal - Locks page scroll while the drawer is open with `show-modal` @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+@use "../close";
+
+.wu-drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: var(--wu-drawer--Width, 24rem);
+    max-inline-size: calc(100% - #{woven.token(space-8)});
+    block-size: auto;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-inline-start: woven.token(border-width-1) solid woven.token(border-regular);
+    background: woven.token(bg-surface);
+    color: woven.token(text-regular);
+    box-shadow: woven.token(shadow-xl);
+    z-index: woven.token(z-drawer);
+
+    &[open] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &::backdrop {
+        background: var(--wu-drawer--Backdrop, color-mix(in srgb, #{woven.token(black)} 50%, transparent));
+
+        // Stronger in dark themes, so the drawer stands apart
+        @include woven.dark-mode {
+            background: var(--wu-drawer--Backdrop, color-mix(in srgb, #{woven.token(black)} 70%, transparent));
+        }
+    }
+}
+
+// Page scroll lock while one is open with showModal(); show() opens it non-modal and leaves the page alone.
+// The gutter keeps the page from shifting when its scrollbar goes away.
+:root:has(.wu-drawer:modal) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+}
+
+.wu-drawer.inline-start {
+    inset-inline: 0 auto;
+    border-inline-start: 0;
+    border-inline-end: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-drawer.bottom {
+    inset-block: auto 0;
+    inset-inline: 0;
+    inline-size: auto;
+    max-inline-size: none;
+    max-block-size: var(--wu-drawer--MaxHeight, 75dvh);
+    border-inline-start: 0;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+    border-start-start-radius: woven.token(radius-lg);
+    border-start-end-radius: woven.token(radius-lg);
+    padding-block-end: env(safe-area-inset-bottom, 0);
+}
+
+.wu-drawer-header,
+.wu-drawer-footer {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: woven.token(space-2);
+    margin: 0;
+    padding-block: woven.token(space-4);
+    padding-inline: woven.token(space-5);
+}
+
+.wu-drawer-header {
+    justify-content: space-between;
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-drawer-title {
+    margin: 0;
+    font-size: woven.token(font-size-lg);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+.wu-drawer-body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    padding: woven.token(space-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.wu-drawer-footer {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    border-block-start: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-drawer-close {
+    @include close.button;
+
+    margin-inline-end: calc(-1 * #{woven.token(space-2)});
+}
+
+// Off-screen position for the slide, mirrored in right-to-left pages
+@mixin -offscreen {
+    translate: 100% 0;
+
+    &:dir(rtl),
+    &.inline-start {
+        translate: -100% 0;
+    }
+
+    &.inline-start:dir(rtl) {
+        translate: 100% 0;
+    }
+
+    &.bottom {
+        translate: 0 100%;
+    }
+}
+
+// Opt-in motion: the drawer slides in from its edge and back out, the backdrop fades
+@media (prefers-reduced-motion: no-preference) {
+    .wu-drawer.animated,
+    .wu-animated .wu-drawer {
+        transition:
+            translate woven.token(duration-300) woven.token(ease-out),
+            display woven.token(duration-300) allow-discrete,
+            overlay woven.token(duration-300) allow-discrete;
+
+        &:not([open]) {
+            @include -offscreen;
+        }
+
+        &[open] {
+            @starting-style {
+                @include -offscreen;
+            }
+        }
+
+        &::backdrop {
+            opacity: 0;
+            transition:
+                opacity woven.token(duration-300) woven.token(ease-out),
+                display woven.token(duration-300) allow-discrete,
+                overlay woven.token(duration-300) allow-discrete;
+        }
+
+        &[open]::backdrop {
+            opacity: 1;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
+    }
+}

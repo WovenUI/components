@@ -1,0 +1,75 @@
+////
+//// @component wu-field-message
+//// Hint, error or success text under a form control, with a marker shape for each role.
+////
+//// Link it from the control with `aria-describedby`. The words carry the meaning ("Error: ..."); the role adds color and a marker shape: `error` a larger octagon with an exclamation mark, `success` a check, `info` a small circle.
+////
+//// Inside a `wu-field`, an `error` message stays hidden until the control is invalid.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <p class="wu-field-message" id="hint">Use your work email.</p>
+////   <p class="wu-field-message error" id="err">Error: enter a valid email.</p>
+////   <p class="wu-field-message success" id="ok">Email confirmed.</p>
+////   <p class="wu-field-message info" id="note">We never share it.</p>
+//// @modifier error | success | info - Role color and marker shape; error is also medium weight @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-field-message {
+    display: flex;
+    align-items: flex-start;
+    gap: woven.token(space-1);
+    margin: 0;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+}
+
+.wu-field-message:is(.error, .success, .info)::before {
+    content: "";
+    flex: none;
+    width: 0.75em;
+    height: 0.75em;
+    margin-block-start: calc((1lh - 0.75em) / 2);
+    border-radius: woven.token(radius-full);
+    background: currentcolor;
+}
+
+.wu-field-message.error {
+    color: woven.token(text-danger);
+    font-weight: woven.token(font-weight-medium);
+
+    // Larger octagon with an exclamation mark, so it reads apart from the info dot at small sizes
+    &::before {
+        content: "!";
+        content: "!" / "";
+        display: grid;
+        place-content: center;
+        width: 1em;
+        height: 1em;
+        margin-block-start: calc((1lh - 1em) / 2);
+        border-radius: 0;
+        background: woven.token(text-danger);
+        color: woven.token(bg-surface);
+        font-weight: woven.token(font-weight-bold);
+        clip-path: var(--wu-kit-marker-octagon);
+    }
+}
+
+.wu-field-message.success {
+    color: woven.token(text-success);
+
+    // Check mark
+    &::before {
+        border-radius: 0;
+        clip-path: var(--wu-kit-marker-check);
+    }
+}
+
+.wu-field-message.info {
+    color: woven.token(text-info);
+}

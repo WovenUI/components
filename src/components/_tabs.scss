@@ -1,0 +1,327 @@
+////
+//// @component wu-tabs
+//// Tabs that show one panel at a time, following the WAI-ARIA tabs pattern, in line, card, boxed and vertical styles.
+////
+//// The kit script adds arrow keys, Home and End, switches the panels and fills in roles, ids, `aria-controls`, `aria-labelledby` and `tabindex` when they are missing. Without it the first panel shows.
+////
+//// In `vertical` tabs the script sets `aria-orientation="vertical"` on the list; without the script, add it yourself.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js required initTabs
+//// @example html
+////   <div class="wu-tabs">
+////     <div class="wu-tabs-list" role="tablist" aria-label="Account">
+////       <button class="wu-tabs-tab" type="button" role="tab" id="tab-profile" aria-controls="panel-profile" aria-selected="true">Profile</button>
+////       <button class="wu-tabs-tab" type="button" role="tab" id="tab-billing" aria-controls="panel-billing" aria-selected="false" tabindex="-1">Billing</button>
+////     </div>
+////     <div class="wu-tabs-panel" role="tabpanel" id="panel-profile" aria-labelledby="tab-profile" tabindex="0">Profile settings</div>
+////     <div class="wu-tabs-panel" role="tabpanel" id="panel-billing" aria-labelledby="tab-billing" tabindex="0" hidden>Billing settings</div>
+////   </div>
+//// @example html
+////   <div class="wu-tabs vertical boxed">
+////     <div class="wu-tabs-list" role="tablist" aria-label="Settings" aria-orientation="vertical">
+////       <button class="wu-tabs-tab" type="button" role="tab" id="tab-general" aria-controls="panel-general" aria-selected="true">General</button>
+////       <button class="wu-tabs-tab" type="button" role="tab" id="tab-team" aria-controls="panel-team" aria-selected="false" tabindex="-1" disabled>Team</button>
+////     </div>
+////     <div class="wu-tabs-panel" role="tabpanel" id="panel-general" aria-labelledby="tab-general" tabindex="0">General settings</div>
+////     <div class="wu-tabs-panel" role="tabpanel" id="panel-team" aria-labelledby="tab-team" tabindex="0" hidden>Team settings</div>
+////   </div>
+//// @modifier card - Joined tab boxes; the selected tab opens into the panel @since 1.0.0
+//// @modifier boxed - Tabs and panels inside one bordered box @since 1.0.0
+//// @modifier vertical - Tab list at the inline start, selected bar on its inline end edge @since 1.0.0
+//// @modifier animated - Selected bar grows from the center and the panel fades in when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-tabs-list - Row of tabs; scrolls sideways and fades the edge with more tabs @since 1.0.0
+//// @part wu-tabs-tab - One tab button; a direct child `svg` is sized to `1em` @since 1.0.0
+//// @part wu-tabs-panel - Content shown for the selected tab @since 1.0.0
+//// @state aria-selected="true" - On a tab: regular text color and a brand bar @since 1.0.0
+//// @state disabled | aria-disabled="true" - On a tab: half opacity and a not-allowed cursor @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-tabs-list {
+    display: flex;
+    gap: woven.token(space-1);
+    border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+// Scroll cue: the edge with more tabs behind it fades out; the scrollbar hides where the cue works
+@property --wu-kit-tabs-fade-start {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --wu-kit-tabs-fade-end {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@supports (animation-timeline: scroll()) {
+    .wu-tabs-list {
+        scrollbar-width: none;
+        mask-image: linear-gradient(to right, transparent, #000 var(--wu-kit-tabs-fade-start), #000 calc(100% - var(--wu-kit-tabs-fade-end)), transparent);
+        animation-name: wu-tabs-fade;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(self inline);
+
+        &:dir(rtl) {
+            mask-image: linear-gradient(to left, transparent, #000 var(--wu-kit-tabs-fade-start), #000 calc(100% - var(--wu-kit-tabs-fade-end)), transparent);
+        }
+    }
+}
+
+@keyframes wu-tabs-fade {
+    0% {
+        --wu-kit-tabs-fade-start: 0px;
+        --wu-kit-tabs-fade-end: #{woven.token(space-8)};
+    }
+
+    8% {
+        --wu-kit-tabs-fade-start: #{woven.token(space-8)};
+    }
+
+    92% {
+        --wu-kit-tabs-fade-end: #{woven.token(space-8)};
+    }
+
+    100% {
+        --wu-kit-tabs-fade-start: #{woven.token(space-8)};
+        --wu-kit-tabs-fade-end: 0px;
+    }
+}
+
+.wu-tabs-tab {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: woven.token(space-2);
+    min-block-size: woven.token(control-height-md);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: woven.token(space-3);
+    border: 0;
+    border-radius: woven.token(radius-sm) woven.token(radius-sm) 0 0;
+    background: transparent;
+    color: woven.token(text-muted);
+    font: inherit;
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color woven.token(duration-150) woven.token(ease-out);
+
+    // Selected bar, drawn inside the tab so the scrolling list does not clip it
+    &::after {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        inset-block-end: 0;
+        block-size: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: transparent;
+    }
+
+    &:hover {
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+
+    &[aria-selected="true"] {
+        color: woven.token(text-regular);
+
+        &::after {
+            background: woven.token(brand);
+        }
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+        opacity: woven.token(opacity-50);
+        cursor: not-allowed;
+    }
+
+    > svg {
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+    }
+}
+
+// Inline padding lines the text up with the tab labels and keeps the inset focus ring off the text
+.wu-tabs-panel {
+    padding-block: woven.token(space-4);
+    padding-inline: woven.token(space-3);
+
+    &:focus-visible {
+        border-radius: woven.token(radius-sm);
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: calc(-1 * #{woven.token(border-focus-width)});
+    }
+}
+
+// Card: joined tab boxes; the selected one has no bottom line, so it opens into the content.
+// A filler after the tabs carries the line to the end of the list.
+.wu-tabs.card > .wu-tabs-list {
+    gap: 0;
+    border-block-end: 0;
+
+    &::after {
+        content: "";
+        flex: 1 0 0;
+        border-block-end: woven.token(border-width-1) solid woven.token(border-regular);
+    }
+}
+
+.wu-tabs.card > .wu-tabs-list > .wu-tabs-tab {
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: 0;
+    background: woven.token(bg-alternate);
+
+    & + .wu-tabs-tab {
+        margin-inline-start: calc(-1 * #{woven.token(border-width-1)});
+    }
+
+    &:first-child {
+        border-start-start-radius: woven.token(radius-md);
+    }
+
+    &:last-child {
+        border-start-end-radius: woven.token(radius-md);
+    }
+
+    &[aria-selected="true"] {
+        border-block-end-color: transparent;
+        background: transparent;
+    }
+}
+
+// Boxed: the list line is an inset shadow, so the selected tab's background can cover it
+.wu-tabs.boxed > .wu-tabs-list {
+    border-block-end: 0;
+    box-shadow: inset 0 calc(-1 * #{woven.token(border-width-1)}) 0 woven.token(border-regular);
+}
+
+// Boxed: tabs and panels inside one bordered box, the selected tab joined to the panel
+.wu-tabs.boxed {
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
+
+    > .wu-tabs-list {
+        gap: 0;
+        border-start-start-radius: calc(#{woven.token(radius-md)} - #{woven.token(border-width-1)});
+        border-start-end-radius: calc(#{woven.token(radius-md)} - #{woven.token(border-width-1)});
+        background: woven.token(bg-alternate);
+    }
+
+    > .wu-tabs-list > .wu-tabs-tab {
+        border-inline: woven.token(border-width-1) solid transparent;
+        border-radius: 0;
+
+        &[aria-selected="true"] {
+            border-inline-color: woven.token(border-regular);
+            background: woven.token(bg-surface);
+        }
+
+        &:first-child {
+            border-inline-start-color: transparent;
+        }
+    }
+
+    > .wu-tabs-panel {
+        padding: woven.token(space-4);
+    }
+}
+
+.wu-tabs:is(.card, .boxed) > .wu-tabs-list > .wu-tabs-tab::after {
+    content: none;
+}
+
+// Vertical: the list sits at the inline start, the selected bar on its inline end edge
+.wu-tabs.vertical {
+    display: flex;
+    align-items: flex-start;
+
+    > .wu-tabs-list {
+        flex: none;
+        flex-direction: column;
+        align-self: stretch;
+        border-block-end: 0;
+        border-inline-end: woven.token(border-width-1) solid woven.token(border-regular);
+        overflow: visible;
+        mask-image: none;
+        animation: none;
+    }
+
+    > .wu-tabs-list > .wu-tabs-tab {
+        border-radius: 0;
+        border-start-start-radius: woven.token(radius-sm);
+        border-end-start-radius: woven.token(radius-sm);
+        justify-content: flex-start;
+        text-align: start;
+
+        &::after {
+            inset-block: 0;
+            inset-inline: auto 0;
+            inline-size: woven.token(border-width-2);
+            block-size: auto;
+        }
+    }
+
+    > .wu-tabs-panel {
+        flex: 1;
+        min-inline-size: 0;
+        padding-block: woven.token(space-2);
+        padding-inline: woven.token(space-4);
+    }
+}
+
+// Opt-in motion: the bar grows from the center, the panel fades in
+@media (prefers-reduced-motion: no-preference) {
+    .wu-tabs.animated,
+    .wu-animated .wu-tabs {
+        .wu-tabs-tab::after {
+            scale: 0 1;
+            transition:
+                scale woven.token(duration-300) var(--wu-kit-ease-spring),
+                background-color woven.token(duration-150) woven.token(ease-out);
+        }
+
+        .wu-tabs-tab[aria-selected="true"]::after {
+            scale: 1;
+        }
+
+        &.vertical .wu-tabs-tab:not([aria-selected="true"])::after {
+            scale: 1 0;
+        }
+
+        .wu-tabs-panel {
+            transition:
+                opacity woven.token(duration-200) woven.token(ease-out),
+                translate woven.token(duration-200) woven.token(ease-out);
+
+            @starting-style {
+                opacity: 0;
+                translate: 0 woven.token(space-1);
+            }
+        }
+    }
+}
+
+@media (forced-colors: active) {
+    .wu-tabs-tab[aria-selected="true"]::after {
+        background: Highlight;
+    }
+}

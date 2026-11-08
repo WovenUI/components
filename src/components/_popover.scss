@@ -1,0 +1,154 @@
+////
+//// @component wu-popover
+//// Small floating panel built on the native `popover` attribute.
+////
+//// Esc and click outside close it. `commandfor` with `command="toggle-popover"` works as the trigger too.
+////
+//// Opens under its trigger where anchor positioning exists, and flips when there is no room. Elsewhere it is centered in the viewport. It has no arrow.
+////
+//// Placement follows the popover own direction, so it is right in an RTL section of an LTR page.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <button class="wu-btn" type="button" popovertarget="p1">Details</button>
+////   <div class="wu-popover" id="p1" popover>
+////     <h3 class="wu-popover-title">Title</h3>
+////     <p>Short content.</p>
+////   </div>
+//// @example html
+////   <button class="wu-btn" type="button" popovertarget="p2">Delete</button>
+////   <div class="wu-popover" id="p2" popover>
+////     <p>Delete this item?</p>
+////     <div class="wu-popover-actions">
+////       <button class="wu-btn sm" type="button" popovertarget="p2" popovertargetaction="hide">Cancel</button>
+////       <button class="wu-btn danger sm" type="button" popovertarget="p2" popovertargetaction="hide">Delete</button>
+////     </div>
+////   </div>
+//// @modifier animated - Fades and scales the popover in and out, growing away from the trigger, when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-popover-title - Popover heading @since 1.0.0
+//// @part wu-popover-actions - Button row at the inline end, for an inline confirm @since 1.0.0
+//// @variable --wu-popover--MaxWidth [20rem] - Largest popover width @since 1.0.0
+//// @state :popover-open - Fully visible during the animated transition @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-popover {
+    inset: 0;
+    inline-size: fit-content;
+    block-size: fit-content;
+    max-inline-size: var(--wu-popover--MaxWidth, 20rem);
+    margin: auto;
+    padding-block: woven.token(space-3);
+    padding-inline: woven.token(space-4);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-radius: woven.token(radius-md);
+    background: woven.token(bg-raised);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+    box-shadow: woven.token(shadow-lg);
+    z-index: woven.token(z-popover);
+
+    > :first-child {
+        margin-block-start: 0;
+    }
+
+    > :last-child {
+        margin-block-end: 0;
+    }
+}
+
+.wu-popover-title {
+    margin-block: 0 woven.token(space-1);
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Buttons at the inline end, as in a dialog footer
+.wu-popover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: woven.token(space-2);
+    margin-block-start: woven.token(space-3);
+}
+
+// Centered on the trigger; when that overflows, tries above (flip-block), then edge-aligned placements below and above
+@position-try --wu-popover-below-start {
+    inset-inline: auto;
+    inset-inline-start: anchor(self-start);
+    justify-self: normal;
+}
+
+@position-try --wu-popover-below-end {
+    inset-inline: auto;
+    inset-inline-end: anchor(self-end);
+    justify-self: normal;
+}
+
+@supports (anchor-name: --x) {
+    .wu-popover {
+        position-anchor: auto;
+        inset: auto;
+        margin: 0;
+        margin-block: woven.token(space-2);
+        inline-size: max-content;
+        max-inline-size: min(var(--wu-popover--MaxWidth, 20rem), calc(100vw - 1rem));
+        inset-block-start: anchor(end);
+
+        // A viewport-clipped box centered on the trigger: safe centering keeps it on screen in every engine
+        inset-inline: max(0px, calc(2 * anchor(center) - 100%));
+        justify-self: center;
+        position-try-fallbacks:
+            flip-block,
+            --wu-popover-below-start,
+            --wu-popover-below-end,
+            --wu-popover-below-start flip-block,
+            --wu-popover-below-end flip-block;
+    }
+}
+
+// Opt-in motion: the panel fades and scales in and out. Anchored, it also grows away from the trigger
+// through the trigger-side margin, which flip-block mirrors when the panel opens above.
+@media (prefers-reduced-motion: no-preference) {
+    .wu-popover.animated,
+    .wu-animated .wu-popover {
+        opacity: 0;
+        scale: 0.96;
+        transition:
+            opacity woven.token(duration-150) woven.token(ease-out),
+            scale woven.token(duration-150) woven.token(ease-out),
+            margin woven.token(duration-150) woven.token(ease-out),
+            display woven.token(duration-150) allow-discrete,
+            overlay woven.token(duration-150) allow-discrete;
+
+        &:popover-open {
+            opacity: 1;
+            scale: 1;
+
+            @starting-style {
+                opacity: 0;
+                scale: 0.96;
+            }
+        }
+    }
+
+    @supports (anchor-name: --x) {
+        .wu-popover.animated,
+        .wu-animated .wu-popover {
+            margin-block-start: woven.token(space-1);
+
+            &:popover-open {
+                margin-block-start: woven.token(space-2);
+
+                @starting-style {
+                    margin-block-start: woven.token(space-1);
+                }
+            }
+        }
+    }
+}

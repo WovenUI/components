@@ -1,0 +1,42 @@
+////
+//// @component wu-text
+//// Body text on any element, with relaxed leading and space between paragraphs in a row.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <p class="wu-text lg">A lead paragraph introduces the page.</p>
+////   <p class="wu-text">Body text follows with relaxed leading.</p>
+////   <p class="wu-text sm muted">Small, muted text for notes and fine print.</p>
+//// @modifier sm - Small size @since 1.0.0
+//// @modifier lg - Large size, for a lead paragraph @since 1.0.0
+//// @modifier muted - Muted color @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-text {
+    margin: 0;
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-md);
+    line-height: woven.token(line-height-relaxed);
+    text-wrap: pretty;
+}
+
+.wu-text + .wu-text {
+    margin-block-start: woven.token(space-3);
+}
+
+.wu-text.sm {
+    font-size: woven.token(font-size-sm);
+}
+
+// Lead paragraph
+.wu-text.lg {
+    font-size: woven.token(font-size-lg);
+}
+
+.wu-text.muted {
+    color: woven.token(text-muted);
+}

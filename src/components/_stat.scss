@@ -1,0 +1,92 @@
+////
+//// @component wu-stat
+//// One figure with a label, a large value in tabular figures and an optional change line.
+////
+//// Keep the signed number as text in the change line; the arrow and the color repeat it, they never replace it.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-stat">
+////     <span class="wu-stat-label">Active users</span>
+////     <span class="wu-stat-value">1,284</span>
+////     <span class="wu-stat-delta success" data-trend="up">+12% from last month</span>
+////   </div>
+//// @example html
+////   <div class="wu-stat lg">
+////     <span class="wu-stat-label">Open tickets</span>
+////     <span class="wu-stat-value">37</span>
+////     <span class="wu-stat-delta" data-trend="down">-5 this week</span>
+////   </div>
+//// @modifier sm | lg - Smaller or larger value @since 1.0.0
+//// @modifier success | danger - On the change line: success or danger text color @since 1.0.0
+//// @part wu-stat-label - Muted label @since 1.0.0
+//// @part wu-stat-value - Large value @since 1.0.0
+//// @part wu-stat-delta - Change line, muted by default @since 1.0.0
+//// @state data-trend="up" | data-trend="down" - On the change line: draws an up or down arrow @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-stat {
+    display: flex;
+    flex-direction: column;
+    gap: woven.token(space-1);
+}
+
+.wu-stat-label {
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    font-weight: woven.token(font-weight-medium);
+}
+
+.wu-stat-value {
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-3xl);
+    font-variant-numeric: tabular-nums;
+    font-weight: woven.token(font-weight-semibold);
+    line-height: woven.token(line-height-tight);
+}
+
+// Change line: keep the signed number as text; data-trend draws the arrow, role words set the tone
+.wu-stat-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-1);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: woven.token(font-weight-medium);
+}
+
+.wu-stat-delta[data-trend]::before {
+    content: "";
+    width: woven.token(space-2);
+    height: woven.token(space-2);
+    background: currentcolor;
+}
+
+.wu-stat-delta[data-trend="up"]::before {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.wu-stat-delta[data-trend="down"]::before {
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.wu-stat-delta.success {
+    color: woven.token(text-success);
+}
+
+.wu-stat-delta.danger {
+    color: woven.token(text-danger);
+}
+
+.wu-stat.sm .wu-stat-value {
+    font-size: woven.token(font-size-xl);
+}
+
+.wu-stat.lg .wu-stat-value {
+    font-size: woven.token(font-size-4xl);
+}

@@ -1,0 +1,138 @@
+////
+//// @component wu-pagination
+//// Page navigation made of button links, with optional total count and page size select.
+////
+//// Use a `nav` with an `aria-label`, and give an arrow-only previous or next link an `aria-label`. Mark the current link with `aria-current="page"`.
+////
+//// Put a `wu-pagination-total` and a `wu-pagination-size` label holding a `wu-select` beside the list.
+////
+//// @since 1.0.0
+//// @needs button
+//// @js none
+//// @example html
+////   <nav class="wu-pagination" aria-label="Pagination">
+////     <ul class="wu-pagination-list">
+////       <li><a class="wu-btn wu-pagination-prev" href="/orders?page=1" aria-label="Previous page"></a></li>
+////       <li><a class="wu-btn" href="/orders?page=1">1</a></li>
+////       <li><a class="wu-btn" href="/orders?page=2" aria-current="page">2</a></li>
+////       <li><span class="wu-pagination-ellipsis">&hellip;</span></li>
+////       <li><a class="wu-btn" href="/orders?page=9">9</a></li>
+////       <li><a class="wu-btn wu-pagination-next" href="/orders?page=3" aria-label="Next page"></a></li>
+////     </ul>
+////     <span class="wu-pagination-total">Showing 11 to 20 of 86</span>
+////   </nav>
+//// @modifier sm | lg - Smaller or larger buttons and ellipsis @since 1.0.0
+//// @part wu-pagination-list - List that holds the page links @since 1.0.0
+//// @part wu-pagination-ellipsis - Gap marker between page numbers @since 1.0.0
+//// @part wu-pagination-prev - On a link: draws a back arrow that follows the reading direction @since 1.0.0
+//// @part wu-pagination-next - On a link: draws a forward arrow that follows the reading direction @since 1.0.0
+//// @part wu-pagination-total - Muted total count text @since 1.0.0
+//// @part wu-pagination-size - Label that holds a `wu-select` for the page size @since 1.0.0
+//// @state aria-current="page" - The current page: solid brand fill @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-2) woven.token(space-4);
+}
+
+.wu-pagination-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: woven.token(space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wu-pagination .wu-btn {
+    min-width: woven.token(control-height-md);
+    padding-inline: woven.token(space-3);
+    font-variant-numeric: tabular-nums;
+}
+
+.wu-pagination .wu-btn[aria-current="page"] {
+    border-color: woven.token(brand);
+    background: woven.token(brand);
+    color: woven.token(text-on-brand);
+
+    &:hover {
+        border-color: woven.token(brand-hover);
+        background: woven.token(brand-hover);
+    }
+}
+
+.wu-pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: woven.token(control-height-md);
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+}
+
+.wu-pagination.sm {
+    .wu-btn,
+    .wu-pagination-ellipsis {
+        min-width: woven.token(control-height-sm);
+        min-height: woven.token(control-height-sm);
+        padding-inline: woven.token(space-2);
+        font-size: woven.token(font-size-xs);
+    }
+}
+
+.wu-pagination.lg {
+    .wu-btn,
+    .wu-pagination-ellipsis {
+        min-width: woven.token(control-height-lg);
+        min-height: woven.token(control-height-lg);
+        font-size: woven.token(font-size-md);
+    }
+}
+
+// Arrow: one corner shape, turned to point back or forward in the reading direction
+.wu-pagination-prev::before,
+.wu-pagination-next::after {
+    content: "";
+    flex: none;
+    width: 0.45em;
+    height: 0.45em;
+    border-bottom: woven.token(border-width-2) solid currentcolor;
+    border-left: woven.token(border-width-2) solid currentcolor;
+}
+
+// Points left (previous in LTR, next in RTL), then right; nudged away from the tip to look centered
+.wu-pagination-prev::before,
+.wu-pagination-next:dir(rtl)::after {
+    rotate: 45deg;
+    translate: 0.1em 0;
+}
+
+.wu-pagination-next::after,
+.wu-pagination-prev:dir(rtl)::before {
+    rotate: -135deg;
+    translate: -0.1em 0;
+}
+
+.wu-pagination-total,
+.wu-pagination-size {
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-sm);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.wu-pagination-size {
+    display: inline-flex;
+    align-items: center;
+    gap: woven.token(space-2);
+
+    > .wu-select {
+        inline-size: auto;
+    }
+}

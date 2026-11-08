@@ -1,0 +1,90 @@
+////
+//// @component wu-skeleton
+//// Placeholder shapes shown while content loads.
+////
+//// Placeholders are decorative: add `aria-hidden="true"` to each skeleton and `aria-busy="true"` to the region being loaded, plus visible or hidden Loading text. Remove both when the content arrives.
+////
+//// The default shape is a block. Adjacent `text` skeletons stack with a gap, and a last `text` line is shorter.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div aria-busy="true">
+////     <span class="sr-only">Loading</span>
+////     <div class="wu-skeleton circle animated" aria-hidden="true"></div>
+////     <div class="wu-skeleton text animated" aria-hidden="true"></div>
+////     <div class="wu-skeleton text animated" aria-hidden="true"></div>
+////   </div>
+//// @example html
+////   <div class="wu-skeleton" aria-hidden="true" style="--wu-skeleton--Height: 8rem"></div>
+//// @modifier text - One line of text: height of `1em` @since 1.0.0
+//// @modifier circle - Round shape for an avatar @since 1.0.0
+//// @modifier animated - Shimmer sweep, staggered across siblings where supported, when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @variable --wu-skeleton--Width [100%] - Width; a last `text` line defaults to 60% @since 1.0.0
+//// @variable --wu-skeleton--Height [6rem] - Height; `text` defaults to 1em @since 1.0.0
+//// @variable --wu-skeleton--Size [2.5rem] - Width and height of a `circle` @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+$base: color-mix(in srgb, #{woven.token(text-regular)} 10%, transparent);
+$shine: color-mix(in srgb, #{woven.token(text-regular)} 6%, transparent);
+
+.wu-skeleton {
+    display: block;
+    width: var(--wu-skeleton--Width, 100%);
+    height: var(--wu-skeleton--Height, #{woven.token(space-24)});
+    border-radius: woven.token(radius-md);
+    background: linear-gradient(90deg, transparent 25%, #{$shine} 50%, transparent 75%) 150% 0 / 200% 100% no-repeat #{$base};
+}
+
+.wu-skeleton.text {
+    height: var(--wu-skeleton--Height, 1em);
+    border-radius: woven.token(radius-sm);
+}
+
+.wu-skeleton.text + .wu-skeleton.text {
+    margin-block-start: woven.token(space-2);
+}
+
+// Shorter last line of a paragraph
+.wu-skeleton.text:last-child:not(:first-child) {
+    width: var(--wu-skeleton--Width, 60%);
+}
+
+.wu-skeleton.circle {
+    flex-shrink: 0;
+    width: var(--wu-skeleton--Size, #{woven.token(space-10)});
+    height: var(--wu-skeleton--Size, #{woven.token(space-10)});
+    border-radius: woven.token(radius-full);
+}
+
+@media (forced-colors: active) {
+    .wu-skeleton {
+        border: woven.token(border-width-1) solid GrayText;
+    }
+}
+
+// Opt-in shimmer, a staggered wave where sibling-index() is supported; it sweeps in the reading direction
+@media (prefers-reduced-motion: no-preference) {
+    .wu-skeleton.animated,
+    .wu-animated .wu-skeleton {
+        animation: wu-skeleton-shimmer 1.6s ease-in-out infinite;
+        animation-delay: calc((sibling-index() - 1) * 80ms);
+
+        &:dir(rtl) {
+            animation-direction: reverse;
+        }
+    }
+}
+
+@keyframes wu-skeleton-shimmer {
+    from {
+        background-position: 150% 0;
+    }
+
+    to {
+        background-position: -50% 0;
+    }
+}

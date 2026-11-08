@@ -1,0 +1,4 @@
+// @wovenui/components/progress-circle: the progress-circle and what it needs, without the bundle
+@use "../kit";
+
+@include kit.emit(kit.with-needs("progress-circle"));

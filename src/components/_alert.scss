@@ -1,0 +1,161 @@
+////
+//// @component wu-alert
+//// Inline message with a shape marker, a title, optional actions and a dismiss button.
+////
+//// Meaning is carried by the `wu-alert-title` text, such as "Error" or "Saved"; the marker shape repeats it.
+////
+//// Use `role="alert"` for urgent messages and `role="status"` for the rest. The close button is markup only; the app removes the alert.
+////
+//// @since 1.0.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-alert success" role="status">
+////     <strong class="wu-alert-title">Saved</strong>
+////     <p>Your changes are live.</p>
+////   </div>
+//// @example html
+////   <div class="wu-alert danger" role="alert">
+////     <strong class="wu-alert-title">Payment failed</strong>
+////     <p>Check the card details and try again.</p>
+////     <div class="wu-alert-actions">
+////       <button class="wu-btn danger" type="button">Retry</button>
+////       <button class="wu-btn" type="button">Cancel</button>
+////     </div>
+////     <button class="wu-alert-close" type="button" aria-label="Dismiss"></button>
+////   </div>
+//// @modifier brand | success | danger | warning | info - Role color for border, fill, marker and title; `success`, `warning` and `danger` also change the marker shape @since 1.0.0
+//// @part wu-alert-title - Bold title line that names the message @since 1.0.0
+//// @part wu-alert-actions - Row of buttons under the text @since 1.0.0
+//// @part wu-alert-close - Dismiss button in the end corner, last child of the alert @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-alert {
+    position: relative;
+    padding-block: woven.token(space-3);
+    padding-inline: calc(#{woven.token(space-4)} * 2 + #{woven.token(space-3)}) woven.token(space-4);
+    border: woven.token(border-width-1) solid woven.token(gray-border);
+    border-radius: woven.token(radius-md);
+    background: woven.token(gray-subtle);
+    color: woven.token(text-regular);
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
+
+    // Marker, centered on the first line: circle by default
+    &::before {
+        content: "";
+        position: absolute;
+        inset-block-start: calc(#{woven.token(space-3)} + (1lh - #{woven.token(space-4)}) / 2);
+        inset-inline-start: woven.token(space-4);
+        width: woven.token(space-4);
+        height: woven.token(space-4);
+        border-radius: woven.token(radius-full);
+        background: woven.token(text-gray);
+    }
+
+    > * {
+        margin: 0;
+    }
+
+    > * + * {
+        margin-block-start: woven.token(space-1);
+    }
+}
+
+.wu-alert-title {
+    display: block;
+    font-weight: woven.token(font-weight-semibold);
+}
+
+@each $role in "brand", "success", "danger", "warning", "info" {
+    .wu-alert.#{$role} {
+        border-color: woven.token(#{$role}-border);
+        background: woven.token(#{$role}-subtle);
+
+        &::before {
+            background: woven.token(text-#{$role});
+        }
+
+        .wu-alert-title {
+            color: woven.token(text-#{$role});
+        }
+    }
+}
+
+// Shape markers from _shared.scss
+.wu-alert:is(.success, .warning, .danger)::before {
+    border-radius: 0;
+}
+
+.wu-alert.success::before {
+    clip-path: var(--wu-kit-marker-check);
+}
+
+.wu-alert.warning::before {
+    clip-path: var(--wu-kit-marker-triangle);
+}
+
+.wu-alert.danger::before {
+    clip-path: var(--wu-kit-marker-octagon);
+}
+
+// Buttons under the text
+.wu-alert > .wu-alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: woven.token(space-2);
+    margin-block-start: woven.token(space-3);
+}
+
+// Dismiss: <button class="wu-alert-close" type="button" aria-label="Dismiss">, last in the alert.
+// Markup only; the app removes the alert. Cross drawn like .wu-tag-remove.
+.wu-alert:has(> .wu-alert-close) {
+    padding-inline-end: calc(#{woven.token(space-2)} + #{woven.token(space-6)} + #{woven.token(space-2)});
+}
+
+.wu-alert > .wu-alert-close {
+    position: absolute;
+    inset-block-start: calc(#{woven.token(space-3)} + (1lh - #{woven.token(space-6)}) / 2);
+    inset-inline-end: woven.token(space-2);
+    display: inline-grid;
+    place-items: center;
+    width: woven.token(space-6);
+    height: woven.token(space-6);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: woven.token(radius-xs);
+    background: transparent;
+    color: woven.token(text-muted);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+        content: "";
+        grid-area: 1 / 1;
+        width: woven.token(space-3);
+        height: woven.token(border-width-2);
+        border-radius: woven.token(radius-full);
+        background: currentcolor;
+        rotate: 45deg;
+    }
+
+    &::after {
+        rotate: -45deg;
+    }
+
+    &:hover {
+        background: color-mix(in srgb, currentcolor 15%, transparent);
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}

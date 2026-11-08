@@ -1,0 +1,79 @@
+////
+//// @component wu-data-table
+//// Sortable table: click a header to sort rows by text or number.
+////
+//// Add it to a `wu-table`; the sort button and arrows come from the table component, and the kit script sorts the first `tbody` and sets `aria-sort`. A `data-sort-value` on a cell wins over its text.
+////
+//// The script adds a `wu-data-table-status` live region after the table and announces each sort there.
+////
+//// @since 1.0.0
+//// @needs table
+//// @js required initDataTable
+//// @example html
+////   <table class="wu-table wu-data-table">
+////     <thead>
+////       <tr>
+////         <th scope="col" aria-sort="ascending"><button class="wu-table-sort" type="button">Name</button></th>
+////         <th scope="col" class="wu-table-num"><button class="wu-table-sort" type="button">Amount</button></th>
+////       </tr>
+////     </thead>
+////     <tbody>
+////       <tr><td>Ada</td><td class="wu-table-num" data-sort-value="1200">$1,200</td></tr>
+////       <tr><td>Grace</td><td class="wu-table-num" data-sort-value="950">$950</td></tr>
+////     </tbody>
+////   </table>
+//// @modifier animated - Rows glide to their new place when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @part wu-data-table-status - Visually hidden live region added by the script to announce each sort @since 1.0.0
+//// @part wu-data-table-row - View transition class, not an HTML class, set on body rows while they move; target `::view-transition-group(*.wu-data-table-row)` to restyle the glide @since 1.0.0
+//// @state aria-sort="ascending" - Header cell sorted ascending, set by the script @since 1.0.0
+//// @state aria-sort="descending" - Header cell sorted descending, set by the script @since 1.0.0
+//// @state aria-busy="true" - Set while rows move: progress cursor, and the row animation runs @since 1.0.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-data-table[aria-busy="true"] {
+    cursor: progress;
+}
+
+// Larger sort arrows than the plain table's, drawn at 1.25 times its paths
+.wu-data-table .wu-table-sort::after {
+    width: 10px;
+    height: 15px;
+    clip-path: path("M5 0L10 6.25H0Z M0 8.75H10L5 15Z");
+}
+
+.wu-data-table th[aria-sort="ascending"] > .wu-table-sort::after {
+    clip-path: path("M5 4.375L10 10.625H0Z");
+}
+
+.wu-data-table th[aria-sort="descending"] > .wu-table-sort::after {
+    clip-path: path("M0 4.375H10L5 10.625Z");
+}
+
+// Visually hidden live region for the sort announcement
+.wu-data-table-status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+// Opt-in motion: rows glide to their new place (view transition, started by the script)
+@media (prefers-reduced-motion: no-preference) {
+    .wu-data-table.animated[aria-busy="true"] > tbody > tr,
+    .wu-animated .wu-data-table[aria-busy="true"] > tbody > tr {
+        view-transition-class: wu-data-table-row;
+        view-transition-name: match-element;
+    }
+
+    ::view-transition-group(*.wu-data-table-row) {
+        animation-duration: woven.token(duration-300);
+        animation-timing-function: woven.token(ease-out);
+    }
+}
