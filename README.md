@@ -63,7 +63,7 @@ Load core first, then the components:
 
 ### With Sass
 
-To compile the components from SCSS (turn components off, load one component at a time, share your core settings), add Dart Sass:
+To compile the components from SCSS (turn components off, load one component at a time, share your core settings), add Sass:
 
 ```bash
 npm i @wovenui/core @wovenui/components sass
@@ -78,7 +78,7 @@ Download the built CSS and JS files from [wovenui.com](https://wovenui.com/compo
 ## Requirements
 
 - [`@wovenui/core`](https://www.npmjs.com/package/@wovenui/core), loaded before the components.
-- Dart Sass `>=1.79.0 <2`, only when you compile from SCSS. The prebuilt CSS needs no Sass.
+- Sass 1.79 or later, the `sass` or `sass-embedded` package (`>=1.79.0 <2`), only when you compile from SCSS. The prebuilt CSS needs no Sass.
 
 Works in current Chrome, Firefox and Safari.
 

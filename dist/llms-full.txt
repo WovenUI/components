@@ -981,6 +981,7 @@ Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-t
 | Modifier | Description | Since |
 | --- | --- | --- |
 | `inline-start` | Docks to the inline start instead of the inline end | 1.0.0 |
+| `sm`, `lg` | Narrow (18rem) or wide (32rem) side drawer; the default is 24rem | 1.1.0 |
 | `bottom` | Docks to the bottom edge with rounded top corners, up to `--wu-drawer--MaxHeight` | 1.0.0 |
 | `animated` | Slides in from its edge and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
 

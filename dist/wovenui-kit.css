@@ -4087,6 +4087,12 @@
     border-inline-start: 0;
     border-inline-end: var(--wu-border-width-1) solid var(--wu-border-regular);
   }
+  .wu-drawer.sm {
+    inline-size: var(--wu-drawer--Width, 18rem);
+  }
+  .wu-drawer.lg {
+    inline-size: var(--wu-drawer--Width, 32rem);
+  }
   .wu-drawer.bottom {
     inset-block: auto 0;
     inset-inline: 0;

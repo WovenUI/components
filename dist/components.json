@@ -1340,6 +1340,14 @@
         },
         {
           "names": [
+            "sm",
+            "lg"
+          ],
+          "description": "Narrow (18rem) or wide (32rem) side drawer; the default is 24rem",
+          "since": "1.1.0"
+        },
+        {
+          "names": [
             "bottom"
           ],
           "description": "Docks to the bottom edge with rounded top corners, up to `--wu-drawer--MaxHeight`",
