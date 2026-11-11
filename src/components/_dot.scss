@@ -34,7 +34,7 @@
     height: var(--wu-dot--Size, #{woven.token(space-2)});
     border-radius: woven.token(radius-full);
     background: currentcolor;
-    color: woven.token(border-strong);
+    color: woven.token(border-control);
     vertical-align: middle;
 }
 

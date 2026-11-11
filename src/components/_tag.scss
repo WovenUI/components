@@ -62,7 +62,7 @@ $hues: "gray", "red", "blue", "green", "yellow", "purple", "pink";
     transition-timing-function: woven.token(ease-out);
 
     &:hover {
-        border-color: woven.token(border-strong);
+        border-color: woven.token(border-control);
         background: woven.token(bg-hover);
     }
 }

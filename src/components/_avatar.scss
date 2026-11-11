@@ -129,6 +129,6 @@ $hues: "gray", "red", "blue", "green", "yellow", "purple", "pink";
 .wu-avatar[data-status="offline"]::after {
     background: var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
     box-shadow:
-        inset 0 0 0 woven.token(border-width-2) woven.token(border-strong),
+        inset 0 0 0 woven.token(border-width-2) woven.token(border-control),
         0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
 }

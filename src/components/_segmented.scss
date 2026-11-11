@@ -73,7 +73,7 @@ $-max-animated: 6;
 
     // Selected: raised surface with an edge and a shadow, so color is not the only signal
     &:has(:checked) {
-        background: woven.token(bg-surface);
+        background: woven.token(bg-raised);
         box-shadow:
             inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
             woven.token(shadow-sm);
@@ -125,7 +125,7 @@ $-max-animated: 6;
             inset-block: $-inset;
             inset-inline-start: $-inset;
             border-radius: woven.token(radius-sm);
-            background: woven.token(bg-surface);
+            background: woven.token(bg-raised);
             box-shadow:
                 inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
                 woven.token(shadow-sm);

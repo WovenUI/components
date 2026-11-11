@@ -111,7 +111,7 @@
 }
 
 .wu-card:has(.wu-card-link:hover) {
-    border-color: woven.token(border-strong);
+    border-color: woven.token(border-control);
     box-shadow: woven.token(shadow-md);
 
     .wu-card-link {
