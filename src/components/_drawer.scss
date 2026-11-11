@@ -26,6 +26,7 @@
 ////     <div class="wu-drawer-body">Content</div>
 ////   </dialog>
 //// @modifier inline-start - Docks to the inline start instead of the inline end @since 1.0.0
+//// @modifier sm | lg - Narrow (18rem) or wide (32rem) side drawer; the default is 24rem @since 1.1.0
 //// @modifier bottom - Docks to the bottom edge with rounded top corners, up to `--wu-drawer--MaxHeight` @since 1.0.0
 //// @modifier animated - Slides in from its edge and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
 //// @part wu-drawer-header - Top row with the title and close button @since 1.0.0
@@ -86,6 +87,14 @@
     inset-inline: 0 auto;
     border-inline-start: 0;
     border-inline-end: woven.token(border-width-1) solid woven.token(border-regular);
+}
+
+.wu-drawer.sm {
+    inline-size: var(--wu-drawer--Width, 18rem);
+}
+
+.wu-drawer.lg {
+    inline-size: var(--wu-drawer--Width, 32rem);
 }
 
 .wu-drawer.bottom {
