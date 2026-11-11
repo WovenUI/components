@@ -64,7 +64,7 @@ $marker: woven.token(space-3);
         width: $marker;
         height: $marker;
         border-radius: woven.token(radius-full);
-        background: woven.token(border-strong);
+        background: woven.token(border-control);
     }
 
     // Rail to the next marker
@@ -110,6 +110,11 @@ $marker: woven.token(space-3);
     .wu-timeline-item.#{$role}::before {
         background: woven.token($role);
     }
+}
+
+// The warning fill is too light on the page in light theme; text-warning keeps 3:1 in both themes
+.wu-timeline-item.warning::before {
+    background: woven.token(text-warning);
 }
 
 // Shape markers from _shared.scss
@@ -161,7 +166,7 @@ $marker: woven.token(space-3);
         border-radius: woven.token(radius-full);
         clip-path: none;
         background: woven.token(bg-surface);
-        box-shadow: inset 0 0 0 woven.token(border-width-2) woven.token(border-strong);
+        box-shadow: inset 0 0 0 woven.token(border-width-2) woven.token(border-control);
     }
 }
 

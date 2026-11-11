@@ -7,6 +7,7 @@ export function initAutocomplete(root = document) {
         const list = box.querySelector('.wu-autocomplete-list');
         if (!input || !list) continue;
         const empty = box.querySelector('.wu-autocomplete-empty');
+        empty?.setAttribute('role', 'status');
         const options = [...list.querySelectorAll('.wu-autocomplete-option')];
         let active = null;
 

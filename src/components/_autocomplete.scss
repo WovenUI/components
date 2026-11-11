@@ -16,7 +16,7 @@
 ////       <li class="wu-autocomplete-option" id="city-2" role="option">Berlin</li>
 ////       <li class="wu-autocomplete-option" id="city-3" role="option" aria-disabled="true">Closed city</li>
 ////     </ul>
-////     <p class="wu-autocomplete-empty" hidden>No matches</p>
+////     <p class="wu-autocomplete-empty" role="status" hidden>No matches</p>
 ////   </div>
 //// @modifier animated - The popup fades and slides in when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
 //// @part wu-autocomplete-list - Popup `ul` that holds the options @since 1.0.0

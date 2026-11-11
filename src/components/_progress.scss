@@ -82,6 +82,11 @@ $roles: "success", "danger", "warning", "info";
     }
 }
 
+// The warning fill is too light on the track in light theme; text-warning keeps 3:1 in both themes
+.wu-progress.warning {
+    color: woven.token(text-warning);
+}
+
 .wu-progress.sm {
     height: var(--wu-progress--Height, #{woven.token(space-1)});
 }
