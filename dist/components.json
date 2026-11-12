@@ -151,7 +151,7 @@
       "examples": [
         {
           "lang": "html",
-          "code": "<div class=\"wu-autocomplete\">\n  <label for=\"city\">City</label>\n  <input class=\"wu-input\" id=\"city\" type=\"text\" role=\"combobox\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\">\n  <ul class=\"wu-autocomplete-list\" id=\"city-list\" role=\"listbox\" aria-label=\"Cities\" hidden>\n    <li class=\"wu-autocomplete-option\" id=\"city-1\" role=\"option\">Amsterdam</li>\n    <li class=\"wu-autocomplete-option\" id=\"city-2\" role=\"option\">Berlin</li>\n    <li class=\"wu-autocomplete-option\" id=\"city-3\" role=\"option\" aria-disabled=\"true\">Closed city</li>\n  </ul>\n  <p class=\"wu-autocomplete-empty\" hidden>No matches</p>\n</div>"
+          "code": "<div class=\"wu-autocomplete\">\n  <label for=\"city\">City</label>\n  <input class=\"wu-input\" id=\"city\" type=\"text\" role=\"combobox\" aria-autocomplete=\"list\" aria-expanded=\"false\" aria-controls=\"city-list\" autocomplete=\"off\">\n  <ul class=\"wu-autocomplete-list\" id=\"city-list\" role=\"listbox\" aria-label=\"Cities\" hidden>\n    <li class=\"wu-autocomplete-option\" id=\"city-1\" role=\"option\">Amsterdam</li>\n    <li class=\"wu-autocomplete-option\" id=\"city-2\" role=\"option\">Berlin</li>\n    <li class=\"wu-autocomplete-option\" id=\"city-3\" role=\"option\" aria-disabled=\"true\">Closed city</li>\n  </ul>\n  <p class=\"wu-autocomplete-empty\" role=\"status\" hidden>No matches</p>\n</div>"
         }
       ],
       "modifiers": [
@@ -224,8 +224,9 @@
     {
       "name": "avatar-group",
       "root": "wu-avatar-group",
-      "summary": "Overlapping stack of avatars with a ring between them.",
+      "summary": "Overlapping stack of avatars with a ring in the page background between them.",
       "notes": [
+        "Each avatar overlaps the previous one by a fifth of its size, so two initials stay readable. Set `--wu-avatar--RingColor` when the group sits on a card.",
         "Put the overflow count, such as \"+3\", in a last `wu-avatar` as real text."
       ],
       "since": "1.0.0",
@@ -328,7 +329,7 @@
           "names": [
             "--wu-avatar--RingColor"
           ],
-          "description": "Color of the ring around the status dot, shared with avatar group and corner badge",
+          "description": "Color of the ring around the status dot, shared with corner badge and avatar group, where it defaults to `bg-base`",
           "since": "1.0.0",
           "default": "var(--wu-bg-surface)"
         }
@@ -368,8 +369,10 @@
     {
       "name": "badge",
       "root": "wu-badge",
-      "summary": "Small pill for counts and short labels, tinted by default and solid for emphasis.",
-      "notes": [],
+      "summary": "Count pill for numbers and short counters, tinted by default and solid for emphasis, inline or pinned to a corner.",
+      "notes": [
+        "For a status word or a category, use `wu-tag`. Role tints mark counts that need attention, such as failed jobs."
+      ],
       "since": "1.0.0",
       "needs": [],
       "js": {
@@ -379,7 +382,7 @@
       "examples": [
         {
           "lang": "html",
-          "code": "<span class=\"wu-badge\">Draft</span>\n<span class=\"wu-badge success\">Paid</span>\n<span class=\"wu-badge danger solid\">3</span>"
+          "code": "<span class=\"wu-badge\">24</span>\n<span class=\"wu-badge danger\">3 failed</span>\n<span class=\"wu-badge danger solid\">3</span>"
         },
         {
           "lang": "html",
@@ -592,7 +595,7 @@
       "summary": "Buttons for actions, in roles and sizes, with a caret for menus and split buttons.",
       "notes": [
         "A `button` element is the default; an `a` element with `wu-btn` looks the same for navigation.",
-        "Inside a `wu-field-group sm` or `lg`, a button without its own size takes the group size."
+        "Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a button without its own size takes the group size."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -803,8 +806,8 @@
       "root": "wu-checkbox",
       "summary": "Custom checkbox with a label, a check mark and an indeterminate dash.",
       "notes": [
-        "The box is 1em, so it follows the root type size. The `wu-checkbox-input` part also works alone with an `aria-label`.",
-        "Inside a `wu-field-group sm` or `lg`, a checkbox without its own size takes the group size."
+        "The box is 1em, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps. The `wu-checkbox-input` part also works alone with an `aria-label`.",
+        "Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a checkbox without its own size takes the group size."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -1312,7 +1315,9 @@
       "summary": "Side panel on the native `dialog` element, docked to the inline end, the inline start or the bottom.",
       "notes": [
         "Opens with invoker commands (`commandfor` and `command`), no script. With `show-modal` the page does not scroll while it is open; the page keeps its scrollbar gutter so it does not shift. `show` opens it non-modal and leaves the page alone.",
-        "Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide."
+        "Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide.",
+        "Esc closes it. `closedby=\"any\"` adds click outside for read-only content; a drawer holding a form takes `closedby=\"closerequest\"`, because a backdrop click with a menu open closes both and loses the input.",
+        "A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -1323,7 +1328,7 @@
       "examples": [
         {
           "lang": "html",
-          "code": "<button class=\"wu-btn\" type=\"button\" commandfor=\"d1\" command=\"show-modal\">Filters</button>\n<dialog class=\"wu-drawer\" id=\"d1\" aria-labelledby=\"d1-title\" closedby=\"any\">\n  <header class=\"wu-drawer-header\">\n    <h2 class=\"wu-drawer-title\" id=\"d1-title\">Filters</h2>\n    <button class=\"wu-drawer-close\" type=\"button\" commandfor=\"d1\" command=\"close\" aria-label=\"Close\"></button>\n  </header>\n  <div class=\"wu-drawer-body\">Content</div>\n  <form class=\"wu-drawer-footer\" method=\"dialog\">\n    <button class=\"wu-btn brand\">Apply</button>\n  </form>\n</dialog>"
+          "code": "<button class=\"wu-btn\" type=\"button\" commandfor=\"d1\" command=\"show-modal\">Filters</button>\n<dialog class=\"wu-drawer\" id=\"d1\" aria-labelledby=\"d1-title\" closedby=\"closerequest\">\n  <header class=\"wu-drawer-header\">\n    <h2 class=\"wu-drawer-title\" id=\"d1-title\">Filters</h2>\n    <button class=\"wu-drawer-close\" type=\"button\" commandfor=\"d1\" command=\"close\" aria-label=\"Close\"></button>\n  </header>\n  <div class=\"wu-drawer-body\">Content</div>\n  <form class=\"wu-drawer-footer\" method=\"dialog\">\n    <button class=\"wu-btn brand\">Apply</button>\n  </form>\n</dialog>"
         },
         {
           "lang": "html",
@@ -1449,7 +1454,8 @@
       "notes": [
         "A button with `popovertarget` opens it; `commandfor` with `command=\"toggle-popover\"` works as the trigger too. Esc and a click outside close it. `popovertargetaction=\"hide\"` on a button item closes the menu after its click handler runs.",
         "Opens under the trigger where anchor positioning exists and flips when there is no room; elsewhere it is centered in the viewport. Engines without implicit anchors need `anchor-name` on the trigger and `position-anchor` on the menu, with the same name.",
-        "`inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button."
+        "`inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button.",
+        "A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -1636,7 +1642,7 @@
       "root": "wu-field-group",
       "summary": "Group of fields in a `fieldset`, stacked by default or side by side.",
       "notes": [
-        "Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials."
+        "Use a `fieldset` with a `legend` of class `wu-field-group-legend`. The legend gets the field's required marker when a required control sits in the group outside a `wu-field` and outside any nested `wu-field-group`, such as a required radio set. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -1648,6 +1654,10 @@
         {
           "lang": "html",
           "code": "<fieldset class=\"wu-field-group\">\n  <legend class=\"wu-field-group-legend\">Contact</legend>\n  <div class=\"wu-field\">\n    <label class=\"wu-field-label\" for=\"g-name\">Name</label>\n    <input class=\"wu-input\" id=\"g-name\" type=\"text\">\n  </div>\n  <div class=\"wu-field\">\n    <label class=\"wu-field-label\" for=\"g-mail\">Email</label>\n    <input class=\"wu-input\" id=\"g-mail\" type=\"email\">\n  </div>\n</fieldset>"
+        },
+        {
+          "lang": "html",
+          "code": "<fieldset class=\"wu-field-group\">\n  <legend class=\"wu-field-group-legend\">Plan</legend>\n  <label class=\"wu-radio\"><input class=\"wu-radio-input\" type=\"radio\" name=\"plan\" required> <span class=\"wu-radio-label\">Monthly</span></label>\n  <label class=\"wu-radio\"><input class=\"wu-radio-input\" type=\"radio\" name=\"plan\"> <span class=\"wu-radio-label\">Yearly</span></label>\n</fieldset>"
         },
         {
           "lang": "html",
@@ -1682,7 +1692,16 @@
           "default": "12rem"
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "names": [
+            ":required",
+            "aria-required=\"true\""
+          ],
+          "description": "On a control in the group outside a `wu-field`: adds a required marker to the legend",
+          "since": "1.2.0"
+        }
+      ],
       "changed": []
     },
     {
@@ -1722,11 +1741,50 @@
       "changed": []
     },
     {
+      "name": "field-row",
+      "root": "wu-field-row",
+      "summary": "Fields and buttons on one line with a shared gap, controls aligned on one line, wrapping when the space runs out.",
+      "notes": [
+        "Items line up at their bottom edge, so a button sits level with the controls. Keep messages out of a row, or use `live` on every field. A control without a visible label takes `wu-field-label visually-hidden`, which keeps the label's line so the controls stay aligned. A field grows from `--wu-field-row--MinWidth`; buttons keep their width.",
+        "A field row is for filter bars and inline forms where labels show, not for toolbars; use `wu-toolbar` with bare controls there. The visually hidden label keeps its line height on purpose, so an unlabeled control aligns with labeled neighbors.",
+        "A `sm` or `lg` on the row sizes the inputs, selects and buttons inside it that have no size of their own; that rule lives in each control's partial."
+      ],
+      "since": "1.2.0",
+      "needs": [],
+      "js": {
+        "mode": "none",
+        "exports": []
+      },
+      "examples": [
+        {
+          "lang": "html",
+          "code": "<div class=\"wu-field-row\">\n  <div class=\"wu-field\">\n    <label class=\"wu-field-label visually-hidden\" for=\"r-q\">Search</label>\n    <input class=\"wu-input\" id=\"r-q\" type=\"search\" placeholder=\"Search\">\n  </div>\n  <div class=\"wu-field\">\n    <label class=\"wu-field-label\" for=\"r-status\">Status</label>\n    <select class=\"wu-select\" id=\"r-status\"><option>Any</option><option>Open</option></select>\n  </div>\n  <button class=\"wu-btn\" type=\"button\">Filter</button>\n</div>"
+        }
+      ],
+      "modifiers": [],
+      "parts": [],
+      "variables": [
+        {
+          "names": [
+            "--wu-field-row--MinWidth"
+          ],
+          "description": "Width a field starts from before it grows or wraps",
+          "since": "1.2.0",
+          "default": "8rem"
+        }
+      ],
+      "states": [],
+      "changed": []
+    },
+    {
       "name": "field",
       "root": "wu-field",
       "summary": "Form field that stacks a label, a control and its messages, with a required marker and a floating label option.",
       "notes": [
         "The required marker comes from `required` or `aria-required=\"true\"` on the control. An `error` message is hidden until the control is invalid. Its id joins `aria-describedby` only while it shows: server-rendered with `aria-invalid=\"true\"`, or added by your script. Leave it out otherwise, so a hidden error is never announced; for `:user-invalid` the browser's own validation message speaks on submit.",
+        "`wu-field-label-row` holds the label and a `wu-field-help` button at the inline end. The button opens a native `popover` with the help text through `popovertarget`, so it works by touch and keyboard and is read by screen readers. Give it an `aria-label`; an empty button shows a question mark. Not used with `floating`.",
+        "`wu-field-label visually-hidden` hides the label text but keeps its line, so a control without a visible label lines up with labeled neighbors in a row. Screen readers still read the label. The kept height is deliberate: in a toolbar, where it would push the control down, use a bare control instead.",
+        "`live` reserves one message line, so a message that appears does not move the layout. Validate on blur or on submit; the error then replaces the hint in the same slot. Reserve the line only in forms that validate while the user types.",
         "`floating` needs `placeholder=\" \"` on the input and is not used with `horizontal`. `horizontal` puts the label beside the control from the `sm` breakpoint up."
       ],
       "since": "1.0.0",
@@ -1739,6 +1797,18 @@
         {
           "lang": "html",
           "code": "<div class=\"wu-field\">\n  <label class=\"wu-field-label\" for=\"f1\">Email</label>\n  <input class=\"wu-input\" id=\"f1\" type=\"email\" required aria-describedby=\"f1-hint\">\n  <p class=\"wu-field-message\" id=\"f1-hint\">Hint</p>\n  <p class=\"wu-field-message error\" id=\"f1-error\">Error: enter a valid email.</p>\n</div>"
+        },
+        {
+          "lang": "html",
+          "code": "<div class=\"wu-field\">\n  <div class=\"wu-field-label-row\">\n    <label class=\"wu-field-label\" for=\"f3\">API key</label>\n    <button class=\"wu-field-help\" type=\"button\" popovertarget=\"f3-help\" aria-label=\"About the API key\"></button>\n  </div>\n  <input class=\"wu-input\" id=\"f3\" type=\"text\" required>\n  <div class=\"wu-popover\" id=\"f3-help\" popover>Find the key under Settings, then Developers.</div>\n</div>"
+        },
+        {
+          "lang": "html",
+          "code": "<div class=\"wu-field live\">\n  <label class=\"wu-field-label\" for=\"f4\">Username</label>\n  <input class=\"wu-input\" id=\"f4\" type=\"text\" required minlength=\"3\">\n  <p class=\"wu-field-message error\">Error: use 3 characters or more.</p>\n</div>"
+        },
+        {
+          "lang": "html",
+          "code": "<div class=\"wu-field\">\n  <label class=\"wu-field-label visually-hidden\" for=\"f5\">Search</label>\n  <input class=\"wu-input\" id=\"f5\" type=\"search\">\n</div>"
         },
         {
           "lang": "html",
@@ -1773,6 +1843,20 @@
           ],
           "description": "On a floating field: the label slides when the user allows motion; `wu-animated` on an ancestor does the same",
           "since": "1.0.0"
+        },
+        {
+          "names": [
+            "live"
+          ],
+          "description": "Reserves one message line; while the control is invalid, the error replaces the hint",
+          "since": "1.2.0"
+        },
+        {
+          "names": [
+            "visually-hidden"
+          ],
+          "description": "On `wu-field-label`: hides the text and keeps its line, for a control in a row of labeled ones",
+          "since": "1.2.0"
         }
       ],
       "parts": [
@@ -1782,6 +1866,20 @@
           ],
           "description": "Label above the control",
           "since": "1.0.0"
+        },
+        {
+          "names": [
+            "wu-field-label-row"
+          ],
+          "description": "Row of the label and a help button at the inline end",
+          "since": "1.2.0"
+        },
+        {
+          "names": [
+            "wu-field-help"
+          ],
+          "description": "Small round help button; an empty button shows a question mark; give it an `aria-label`",
+          "since": "1.2.0"
         }
       ],
       "variables": [
@@ -1981,6 +2079,10 @@
         },
         {
           "lang": "html",
+          "code": "<input class=\"wu-input\" type=\"file\" aria-label=\"Attachment\">"
+        },
+        {
+          "lang": "html",
           "code": "<div class=\"wu-input-affix\">\n  <span class=\"wu-input-prefix\"><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"6\" /></svg></span>\n  <input class=\"wu-input\" type=\"search\" aria-label=\"Search\">\n  <button class=\"wu-input-clear\" type=\"button\" aria-label=\"Clear\" hidden></button>\n  <span class=\"wu-input-suffix\">USD</span>\n</div>"
         }
       ],
@@ -1990,7 +2092,7 @@
             "sm",
             "lg"
           ],
-          "description": "Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group sm` or `lg` when the control has no size",
+          "description": "Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group` or `wu-field-row` with `sm` or `lg` when the control has no size",
           "since": "1.0.0"
         }
       ],
@@ -2026,6 +2128,13 @@
       ],
       "variables": [],
       "states": [
+        {
+          "names": [
+            "type=\"file\""
+          ],
+          "description": "Sizes to its content, with the field edge, hover and focus ring; the browser's file button sits inside the edge; `sm` and `lg` change only the type size",
+          "since": "1.2.0"
+        },
         {
           "names": [
             "disabled"
@@ -2125,8 +2234,9 @@
       "root": "wu-modal",
       "summary": "Dialog built on the native `dialog` element, with header, body and footer.",
       "notes": [
-        "Esc closes it, and `closedby=\"any\"` adds click outside where supported. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.",
-        "The body scrolls on its own when the content is taller than the dialog."
+        "Esc closes it. `closedby=\"any\"` adds click outside for read-only content; a dialog holding a form takes `closedby=\"closerequest\"`, because a backdrop click with a menu open closes both and loses the input. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.",
+        "The body scrolls on its own when the content is taller than the dialog.",
+        "A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -2137,7 +2247,7 @@
       "examples": [
         {
           "lang": "html",
-          "code": "<button class=\"wu-btn\" type=\"button\" commandfor=\"m1\" command=\"show-modal\">Open</button>\n<dialog class=\"wu-modal\" id=\"m1\" aria-labelledby=\"m1-title\" closedby=\"any\">\n  <header class=\"wu-modal-header\">\n    <h2 class=\"wu-modal-title\" id=\"m1-title\">Title</h2>\n    <button class=\"wu-modal-close\" type=\"button\" commandfor=\"m1\" command=\"close\" aria-label=\"Close\"></button>\n  </header>\n  <div class=\"wu-modal-body\">Content</div>\n  <form class=\"wu-modal-footer\" method=\"dialog\">\n    <button class=\"wu-btn\">Cancel</button>\n    <button class=\"wu-btn brand\" value=\"confirm\">Save</button>\n  </form>\n</dialog>"
+          "code": "<button class=\"wu-btn\" type=\"button\" commandfor=\"m1\" command=\"show-modal\">Open</button>\n<dialog class=\"wu-modal\" id=\"m1\" aria-labelledby=\"m1-title\" closedby=\"closerequest\">\n  <header class=\"wu-modal-header\">\n    <h2 class=\"wu-modal-title\" id=\"m1-title\">Title</h2>\n    <button class=\"wu-modal-close\" type=\"button\" commandfor=\"m1\" command=\"close\" aria-label=\"Close\"></button>\n  </header>\n  <div class=\"wu-modal-body\">Content</div>\n  <form class=\"wu-modal-footer\" method=\"dialog\">\n    <button class=\"wu-btn\">Cancel</button>\n    <button class=\"wu-btn brand\" value=\"confirm\">Save</button>\n  </form>\n</dialog>"
         }
       ],
       "modifiers": [
@@ -2148,6 +2258,13 @@
           ],
           "description": "Narrow (24rem) or wide (48rem) dialog; the default is 32rem",
           "since": "1.0.0"
+        },
+        {
+          "names": [
+            "full"
+          ],
+          "description": "Fills the viewport with no radius or margin; the header and footer stay and the body scrolls",
+          "since": "1.2.0"
         },
         {
           "names": [
@@ -2312,7 +2429,7 @@
       "examples": [
         {
           "lang": "html",
-          "code": "<nav class=\"wu-pagination\" aria-label=\"Pagination\">\n  <ul class=\"wu-pagination-list\">\n    <li><a class=\"wu-btn wu-pagination-prev\" href=\"/orders?page=1\" aria-label=\"Previous page\"></a></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=1\">1</a></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=2\" aria-current=\"page\">2</a></li>\n    <li><span class=\"wu-pagination-ellipsis\">&hellip;</span></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=9\">9</a></li>\n    <li><a class=\"wu-btn wu-pagination-next\" href=\"/orders?page=3\" aria-label=\"Next page\"></a></li>\n  </ul>\n  <span class=\"wu-pagination-total\">Showing 11 to 20 of 86</span>\n</nav>"
+          "code": "<nav class=\"wu-pagination\" aria-label=\"Pagination\">\n  <ul class=\"wu-pagination-list\">\n    <li><a class=\"wu-btn wu-pagination-prev\" href=\"/orders?page=1\" aria-label=\"Previous page\"></a></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=1\">1</a></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=2\" aria-current=\"page\">2</a></li>\n    <li><span class=\"wu-pagination-ellipsis\">&hellip;</span></li>\n    <li><a class=\"wu-btn\" href=\"/orders?page=9\">9</a></li>\n    <li><a class=\"wu-btn wu-pagination-next\" href=\"/orders?page=3\" aria-label=\"Next page\"></a></li>\n  </ul>\n  <span class=\"wu-pagination-total\">Showing 11 to 20 of 86</span>\n  <label class=\"wu-pagination-size\">\n    <select class=\"wu-select\">\n      <option>10</option>\n      <option>20</option>\n    </select>\n    per page\n  </label>\n</nav>"
         }
       ],
       "modifiers": [
@@ -2321,7 +2438,7 @@
             "sm",
             "lg"
           ],
-          "description": "Smaller or larger buttons and ellipsis",
+          "description": "Smaller or larger buttons, ellipsis, total text and page size select",
           "since": "1.0.0"
         }
       ],
@@ -2451,7 +2568,8 @@
       "notes": [
         "Esc and click outside close it. `commandfor` with `command=\"toggle-popover\"` works as the trigger too.",
         "Opens under its trigger where anchor positioning exists, and flips when there is no room. Elsewhere it is centered in the viewport. It has no arrow.",
-        "Placement follows the popover own direction, so it is right in an RTL section of an LTR page."
+        "Placement follows the popover own direction, so it is right in an RTL section of an LTR page.",
+        "A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -2683,8 +2801,8 @@
       "root": "wu-radio",
       "summary": "Radio button with a label, drawn from the native input.",
       "notes": [
-        "The circle is `1em`, so it follows the root type size. The `wu-radio-input` part also works alone with an `aria-label`.",
-        "Inside a `wu-field-group sm` or `lg`, a radio without its own size takes the group size."
+        "The circle is `1em`, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps. The `wu-radio-input` part also works alone with an `aria-label`.",
+        "Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a radio without its own size takes the group size."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -2814,7 +2932,7 @@
           "names": [
             ":checked"
           ],
-          "description": "The selected segment has a raised surface, an edge and a shadow",
+          "description": "The selected segment takes the button group pressed look: selected tint, brand text and an inner brand ring",
           "since": "1.0.0"
         },
         {
@@ -2834,7 +2952,7 @@
       "notes": [
         "Core base already sets the border, background, hover, focus ring, invalid border, disabled look, padding and the default height. List boxes (`multiple` or `size`) keep their natural height and have no arrow.",
         "Where `appearance: base-select` is supported, the picker matches the kit; other browsers keep the native list.",
-        "Inside a `wu-field-group sm` or `lg`, a select without its own size takes the group size."
+        "Inside a `wu-field-group`, `wu-field-row` or `wu-pagination` with `sm` or `lg`, a select without its own size takes that size."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -2858,7 +2976,7 @@
             "sm",
             "lg"
           ],
-          "description": "Smaller or larger control height and padding",
+          "description": "Smaller or larger control height, padding and font size",
           "since": "1.0.0"
         }
       ],
@@ -3477,7 +3595,7 @@
           "names": [
             "card"
           ],
-          "description": "Joined tab boxes; the selected tab opens into the panel",
+          "description": "Joined tab boxes; the selected tab opens into the framed panel",
           "since": "1.0.0"
         },
         {
@@ -3548,8 +3666,9 @@
     {
       "name": "tag",
       "root": "wu-tag",
-      "summary": "Label for a category or a filter, in seven hues, as plain text, a link or a button.",
+      "summary": "Word chip for a status, a category or a filter, as plain text, a link or a button.",
       "notes": [
+        "For a count, use `wu-badge`. Status words use roles so they follow the theme and high contrast; categories use hues. Give a tag one color word, a role or a hue, not both.",
         "A link or button tag gets a pointer, a hover color and the focus ring. `aria-pressed` on a button tag makes a checkable filter chip; toggling the attribute is up to your script.",
         "A direct child `svg` is sized to `1em`. The remove button needs an `aria-label` that names the tag."
       ],
@@ -3566,6 +3685,10 @@
         },
         {
           "lang": "html",
+          "code": "<span class=\"wu-tag success\">Paid</span>\n<span class=\"wu-tag danger\">Failed</span>"
+        },
+        {
+          "lang": "html",
           "code": "<div role=\"group\" aria-label=\"Filter by topic\">\n  <button class=\"wu-tag\" type=\"button\" aria-pressed=\"true\">Design</button>\n  <button class=\"wu-tag\" type=\"button\" aria-pressed=\"false\">Research</button>\n</div>"
         },
         {
@@ -3574,6 +3697,17 @@
         }
       ],
       "modifiers": [
+        {
+          "names": [
+            "brand",
+            "success",
+            "danger",
+            "warning",
+            "info"
+          ],
+          "description": "Role color for a status word: subtle background, role border and role text",
+          "since": "1.2.0"
+        },
         {
           "names": [
             "gray",
@@ -3874,7 +4008,8 @@
       "notes": [
         "The region sits at the bottom end corner by default and scrolls when the toasts are taller than the viewport. The title text carries the meaning, not the color.",
         "`toast(\"Saved\")` from the kit script adds a toast, and the region when the page has none. It closes the toast after a delay, pauses on hover and focus, keeps at most three open and skips a repeat of an open message.",
-        "Create the region at page load; a region added together with its first toast may not be announced."
+        "Create the region at page load; a region added together with its first toast may not be announced.",
+        "While a modal dialog is open, `toast()` moves the region into the topmost one, so its toasts can be clicked and are announced, and moves it back when that dialog closes. A region already showing toasts when a dialog opens moves at the next `toast()` call."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -3920,7 +4055,7 @@
           "names": [
             "animated"
           ],
-          "description": "On the region: toasts slide in, fade out and stack behind the newest, fanning out on hover or focus; `wu-animated` on an ancestor does the same",
+          "description": "On the region: toasts slide in and fade out; `wu-animated` on an ancestor does the same",
           "since": "1.0.0"
         }
       ],
@@ -3980,7 +4115,7 @@
       "root": "wu-toggle",
       "summary": "On and off switch built on a native checkbox with `role=\"switch\"`.",
       "notes": [
-        "The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size and the `sm` and `lg` steps."
+        "The track is 2.25em by 1.25em with a 1em thumb, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps."
       ],
       "since": "1.0.0",
       "needs": [],
@@ -4063,7 +4198,8 @@
       "root": "wu-toolbar",
       "summary": "Wrapping row of controls, with groups, separators, an end group and a boxed variant.",
       "notes": [
-        "A toolbar holds controls of one height, so it lines up by itself. Status displays such as tags and badges go outside the row.",
+        "A toolbar holds controls of one height, so it lines up by itself. Inputs and selects size to their content, up to `16rem`. Status displays such as tags and badges go outside the row.",
+        "Put bare `wu-input` and `wu-select` in a toolbar, each with an `aria-label`, or a placeholder plus an `aria-label`. Never wrap them in `wu-field`: a label line, visible or visually hidden, keeps its height and pushes the control below its neighbors.",
         "`role=\"toolbar\"` promises arrow-key focus, so add it only with a script that provides it; otherwise use a plain `div`."
       ],
       "since": "1.0.0",

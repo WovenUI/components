@@ -39,9 +39,9 @@ Calm by default. Motion is opt-in with the compound word `animated` (`wu-btn-gro
 - `accordion`: Stacked disclosure panels built on native `details`, in one bordered group.
 - `alert`: Inline message with a shape marker, a title, optional actions and a dismiss button.
 - `autocomplete`: Combobox that filters a list of options as the user types.
-- `avatar-group`: Overlapping stack of avatars with a ring between them.
+- `avatar-group`: Overlapping stack of avatars with a ring in the page background between them.
 - `avatar`: Round or square badge for a person or product, with initials, an image or an svg, and an optional status dot.
-- `badge`: Small pill for counts and short labels, tinted by default and solid for emphasis.
+- `badge`: Count pill for numbers and short counters, tinted by default and solid for emphasis, inline or pinned to a corner.
 - `breadcrumb`: Trail of links that shows where the page sits in the site.
 - `btn-group`: Joins buttons into one segmented control, as a split button, a toggle set or a radio set.
 - `button`: Buttons for actions, in roles and sizes, with a caret for menus and split buttons.
@@ -58,6 +58,7 @@ Calm by default. Motion is opt-in with the compound word `animated` (`wu-btn-gro
 - `empty-state`: Centered message for a view with no content or a finished result, with an icon, title, text and actions.
 - `field-group`: Group of fields in a `fieldset`, stacked by default or side by side.
 - `field-message`: Hint, error or success text under a form control, with a marker shape for each role.
+- `field-row`: Fields and buttons on one line with a shared gap, controls aligned on one line, wrapping when the space runs out.
 - `field`: Form field that stacks a label, a control and its messages, with a required marker and a floating label option.
 - `form-actions`: Footer row for form buttons, start-aligned by default.
 - `info-row`: One label and value pair, with a line between adjacent rows.
@@ -80,7 +81,7 @@ Calm by default. Motion is opt-in with the compound word `animated` (`wu-btn-gro
 - `stat`: One figure with a label, a large value in tabular figures and an optional change line.
 - `table`: Data table with sticky header and columns, selection, expandable rows, truncated cells, a summary row and striped styles.
 - `tabs`: Tabs that show one panel at a time, following the WAI-ARIA tabs pattern, in line, card, boxed and vertical styles.
-- `tag`: Label for a category or a filter, in seven hues, as plain text, a link or a button.
+- `tag`: Word chip for a status, a category or a filter, as plain text, a link or a button.
 - `text`: Body text on any element, with relaxed leading and space between paragraphs in a row.
 - `textarea`: Multi-line field with a bounded height that grows with the content, where the browser supports it.
 - `timeline`: Ordered list of events with markers and a rail, role colors and a progress mode.
@@ -218,7 +219,7 @@ The kit script filters the options, handles the keyboard and sets `aria-expanded
     <li class="wu-autocomplete-option" id="city-2" role="option">Berlin</li>
     <li class="wu-autocomplete-option" id="city-3" role="option" aria-disabled="true">Closed city</li>
   </ul>
-  <p class="wu-autocomplete-empty" hidden>No matches</p>
+  <p class="wu-autocomplete-empty" role="status" hidden>No matches</p>
 </div>
 ```
 
@@ -252,7 +253,9 @@ The kit script filters the options, handles the keyboard and sets `aria-expanded
 
 ## avatar-group
 
-Overlapping stack of avatars with a ring between them.
+Overlapping stack of avatars with a ring in the page background between them.
+
+Each avatar overlaps the previous one by a fifth of its size, so two initials stay readable. Set `--wu-avatar--RingColor` when the group sits on a card.
 
 Put the overflow count, such as "+3", in a last `wu-avatar` as real text.
 
@@ -325,7 +328,7 @@ Label it with `aria-label` or the image `alt`, status included.
 | Variable | Default | Description | Since |
 | --- | --- | --- | --- |
 | `--wu-avatar--Size` | `var(--wu-space-10)` | Width and height; initials scale with it | 1.0.0 |
-| `--wu-avatar--RingColor` | `var(--wu-bg-surface)` | Color of the ring around the status dot, shared with avatar group and corner badge | 1.0.0 |
+| `--wu-avatar--RingColor` | `var(--wu-bg-surface)` | Color of the ring around the status dot, shared with corner badge and avatar group, where it defaults to `bg-base` | 1.0.0 |
 
 ### States
 
@@ -338,7 +341,9 @@ Label it with `aria-label` or the image `alt`, status included.
 
 ## badge
 
-Small pill for counts and short labels, tinted by default and solid for emphasis.
+Count pill for numbers and short counters, tinted by default and solid for emphasis, inline or pinned to a corner.
+
+For a status word or a category, use `wu-tag`. Role tints mark counts that need attention, such as failed jobs.
 
 - Root class: `wu-badge`
 - Sass entry: `@use "@wovenui/components/badge";`
@@ -349,8 +354,8 @@ Small pill for counts and short labels, tinted by default and solid for emphasis
 ### Markup
 
 ```html
-<span class="wu-badge">Draft</span>
-<span class="wu-badge success">Paid</span>
+<span class="wu-badge">24</span>
+<span class="wu-badge danger">3 failed</span>
 <span class="wu-badge danger solid">3</span>
 ```
 
@@ -499,7 +504,7 @@ Buttons for actions, in roles and sizes, with a caret for menus and split button
 
 A `button` element is the default; an `a` element with `wu-btn` looks the same for navigation.
 
-Inside a `wu-field-group sm` or `lg`, a button without its own size takes the group size.
+Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a button without its own size takes the group size.
 
 - Root class: `wu-btn`
 - Sass entry: `@use "@wovenui/components/button";`
@@ -607,9 +612,9 @@ Put one real link, usually in the title, on `wu-card-link` to make the whole car
 
 Custom checkbox with a label, a check mark and an indeterminate dash.
 
-The box is 1em, so it follows the root type size. The `wu-checkbox-input` part also works alone with an `aria-label`.
+The box is 1em, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps. The `wu-checkbox-input` part also works alone with an `aria-label`.
 
-Inside a `wu-field-group sm` or `lg`, a checkbox without its own size takes the group size.
+Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a checkbox without its own size takes the group size.
 
 - Root class: `wu-checkbox`
 - Sass entry: `@use "@wovenui/components/checkbox";`
@@ -948,6 +953,10 @@ Opens with invoker commands (`commandfor` and `command`), no script. With `show-
 
 Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide.
 
+Esc closes it. `closedby="any"` adds click outside for read-only content; a drawer holding a form takes `closedby="closerequest"`, because a backdrop click with a menu open closes both and loses the input.
+
+A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts.
+
 - Root class: `wu-drawer`
 - Sass entry: `@use "@wovenui/components/drawer";`
 - Needs: none
@@ -958,7 +967,7 @@ Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-t
 
 ```html
 <button class="wu-btn" type="button" commandfor="d1" command="show-modal">Filters</button>
-<dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="any">
+<dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="closerequest">
   <header class="wu-drawer-header">
     <h2 class="wu-drawer-title" id="d1-title">Filters</h2>
     <button class="wu-drawer-close" type="button" commandfor="d1" command="close" aria-label="Close"></button>
@@ -1019,6 +1028,8 @@ A button with `popovertarget` opens it; `commandfor` with `command="toggle-popov
 Opens under the trigger where anchor positioning exists and flips when there is no room; elsewhere it is centered in the viewport. Engines without implicit anchors need `anchor-name` on the trigger and `position-anchor` on the menu, with the same name.
 
 `inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button.
+
+A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked.
 
 - Root class: `wu-dropdown`
 - Sass entry: `@use "@wovenui/components/dropdown";`
@@ -1128,7 +1139,7 @@ The title text carries the meaning ("Payment received"); the shape repeats it.
 
 Group of fields in a `fieldset`, stacked by default or side by side.
 
-Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
+Use a `fieldset` with a `legend` of class `wu-field-group-legend`. The legend gets the field's required marker when a required control sits in the group outside a `wu-field` and outside any nested `wu-field-group`, such as a required radio set. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
 
 - Root class: `wu-field-group`
 - Sass entry: `@use "@wovenui/components/field-group";`
@@ -1149,6 +1160,14 @@ Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg
     <label class="wu-field-label" for="g-mail">Email</label>
     <input class="wu-input" id="g-mail" type="email">
   </div>
+</fieldset>
+```
+
+```html
+<fieldset class="wu-field-group">
+  <legend class="wu-field-group-legend">Plan</legend>
+  <label class="wu-radio"><input class="wu-radio-input" type="radio" name="plan" required> <span class="wu-radio-label">Monthly</span></label>
+  <label class="wu-radio"><input class="wu-radio-input" type="radio" name="plan"> <span class="wu-radio-label">Yearly</span></label>
 </fieldset>
 ```
 
@@ -1184,6 +1203,12 @@ Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg
 | --- | --- | --- | --- |
 | `--wu-field-group--MinWidth` | `12rem` | Width at which a field in a horizontal group wraps | 1.0.0 |
 
+### States
+
+| State | Description | Since |
+| --- | --- | --- |
+| `:required`, `aria-required="true"` | On a control in the group outside a `wu-field`: adds a required marker to the legend | 1.2.0 |
+
 ## field-message
 
 Hint, error or success text under a form control, with a marker shape for each role.
@@ -1213,11 +1238,55 @@ Inside a `wu-field`, an `error` message stays hidden until the control is invali
 | --- | --- | --- |
 | `error`, `success`, `info` | Role color and marker shape; error is also medium weight | 1.0.0 |
 
+## field-row
+
+Fields and buttons on one line with a shared gap, controls aligned on one line, wrapping when the space runs out.
+
+Items line up at their bottom edge, so a button sits level with the controls. Keep messages out of a row, or use `live` on every field. A control without a visible label takes `wu-field-label visually-hidden`, which keeps the label's line so the controls stay aligned. A field grows from `--wu-field-row--MinWidth`; buttons keep their width.
+
+A field row is for filter bars and inline forms where labels show, not for toolbars; use `wu-toolbar` with bare controls there. The visually hidden label keeps its line height on purpose, so an unlabeled control aligns with labeled neighbors.
+
+A `sm` or `lg` on the row sizes the inputs, selects and buttons inside it that have no size of their own; that rule lives in each control's partial.
+
+- Root class: `wu-field-row`
+- Sass entry: `@use "@wovenui/components/field-row";`
+- Needs: none
+- JavaScript: none, CSS only
+- Since: 1.2.0
+
+### Markup
+
+```html
+<div class="wu-field-row">
+  <div class="wu-field">
+    <label class="wu-field-label visually-hidden" for="r-q">Search</label>
+    <input class="wu-input" id="r-q" type="search" placeholder="Search">
+  </div>
+  <div class="wu-field">
+    <label class="wu-field-label" for="r-status">Status</label>
+    <select class="wu-select" id="r-status"><option>Any</option><option>Open</option></select>
+  </div>
+  <button class="wu-btn" type="button">Filter</button>
+</div>
+```
+
+### Variables
+
+| Variable | Default | Description | Since |
+| --- | --- | --- | --- |
+| `--wu-field-row--MinWidth` | `8rem` | Width a field starts from before it grows or wraps | 1.2.0 |
+
 ## field
 
 Form field that stacks a label, a control and its messages, with a required marker and a floating label option.
 
 The required marker comes from `required` or `aria-required="true"` on the control. An `error` message is hidden until the control is invalid. Its id joins `aria-describedby` only while it shows: server-rendered with `aria-invalid="true"`, or added by your script. Leave it out otherwise, so a hidden error is never announced; for `:user-invalid` the browser's own validation message speaks on submit.
+
+`wu-field-label-row` holds the label and a `wu-field-help` button at the inline end. The button opens a native `popover` with the help text through `popovertarget`, so it works by touch and keyboard and is read by screen readers. Give it an `aria-label`; an empty button shows a question mark. Not used with `floating`.
+
+`wu-field-label visually-hidden` hides the label text but keeps its line, so a control without a visible label lines up with labeled neighbors in a row. Screen readers still read the label. The kept height is deliberate: in a toolbar, where it would push the control down, use a bare control instead.
+
+`live` reserves one message line, so a message that appears does not move the layout. Validate on blur or on submit; the error then replaces the hint in the same slot. Reserve the line only in forms that validate while the user types.
 
 `floating` needs `placeholder=" "` on the input and is not used with `horizontal`. `horizontal` puts the label beside the control from the `sm` breakpoint up.
 
@@ -1239,6 +1308,32 @@ The required marker comes from `required` or `aria-required="true"` on the contr
 ```
 
 ```html
+<div class="wu-field">
+  <div class="wu-field-label-row">
+    <label class="wu-field-label" for="f3">API key</label>
+    <button class="wu-field-help" type="button" popovertarget="f3-help" aria-label="About the API key"></button>
+  </div>
+  <input class="wu-input" id="f3" type="text" required>
+  <div class="wu-popover" id="f3-help" popover>Find the key under Settings, then Developers.</div>
+</div>
+```
+
+```html
+<div class="wu-field live">
+  <label class="wu-field-label" for="f4">Username</label>
+  <input class="wu-input" id="f4" type="text" required minlength="3">
+  <p class="wu-field-message error">Error: use 3 characters or more.</p>
+</div>
+```
+
+```html
+<div class="wu-field">
+  <label class="wu-field-label visually-hidden" for="f5">Search</label>
+  <input class="wu-input" id="f5" type="search">
+</div>
+```
+
+```html
 <div class="wu-field floating animated">
   <label class="wu-field-label" for="f2">Name</label>
   <input class="wu-input" id="f2" type="text" placeholder=" ">
@@ -1253,12 +1348,16 @@ The required marker comes from `required` or `aria-required="true"` on the contr
 | `error` | On a `wu-field-message` inside the field: hidden until the control is invalid | 1.0.0 |
 | `floating` | Label inside the input, moved up on focus or once filled | 1.0.0 |
 | `animated` | On a floating field: the label slides when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
+| `live` | Reserves one message line; while the control is invalid, the error replaces the hint | 1.2.0 |
+| `visually-hidden` | On `wu-field-label`: hides the text and keeps its line, for a control in a row of labeled ones | 1.2.0 |
 
 ### Parts
 
 | Part | Description | Since |
 | --- | --- | --- |
 | `wu-field-label` | Label above the control | 1.0.0 |
+| `wu-field-label-row` | Row of the label and a help button at the inline end | 1.2.0 |
+| `wu-field-help` | Small round help button; an empty button shows a question mark; give it an `aria-label` | 1.2.0 |
 
 ### Variables
 
@@ -1413,6 +1512,10 @@ Core base already sets the border, background, hover, focus ring, invalid border
 ```
 
 ```html
+<input class="wu-input" type="file" aria-label="Attachment">
+```
+
+```html
 <div class="wu-input-affix">
   <span class="wu-input-prefix"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /></svg></span>
   <input class="wu-input" type="search" aria-label="Search">
@@ -1425,7 +1528,7 @@ Core base already sets the border, background, hover, focus ring, invalid border
 
 | Modifier | Description | Since |
 | --- | --- | --- |
-| `sm`, `lg` | Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group sm` or `lg` when the control has no size | 1.0.0 |
+| `sm`, `lg` | Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group` or `wu-field-row` with `sm` or `lg` when the control has no size | 1.0.0 |
 
 ### Parts
 
@@ -1440,6 +1543,7 @@ Core base already sets the border, background, hover, focus ring, invalid border
 
 | State | Description | Since |
 | --- | --- | --- |
+| `type="file"` | Sizes to its content, with the field edge, hover and focus ring; the browser's file button sits inside the edge; `sm` and `lg` change only the type size | 1.2.0 |
 | `disabled` | Not-allowed cursor; an affix with a disabled control dims | 1.0.0 |
 | `readonly` | Alternate background | 1.0.0 |
 | `aria-invalid="true"`, `:user-invalid` | Danger border doubled to 2px, so the change is not color alone | 1.0.0 |
@@ -1495,9 +1599,11 @@ Use a `ul` or `ol`; add `role="list"` to keep list semantics without markers. `w
 
 Dialog built on the native `dialog` element, with header, body and footer.
 
-Esc closes it, and `closedby="any"` adds click outside where supported. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
+Esc closes it. `closedby="any"` adds click outside for read-only content; a dialog holding a form takes `closedby="closerequest"`, because a backdrop click with a menu open closes both and loses the input. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
 
 The body scrolls on its own when the content is taller than the dialog.
+
+A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts.
 
 - Root class: `wu-modal`
 - Sass entry: `@use "@wovenui/components/modal";`
@@ -1509,7 +1615,7 @@ The body scrolls on its own when the content is taller than the dialog.
 
 ```html
 <button class="wu-btn" type="button" commandfor="m1" command="show-modal">Open</button>
-<dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="any">
+<dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="closerequest">
   <header class="wu-modal-header">
     <h2 class="wu-modal-title" id="m1-title">Title</h2>
     <button class="wu-modal-close" type="button" commandfor="m1" command="close" aria-label="Close"></button>
@@ -1527,6 +1633,7 @@ The body scrolls on its own when the content is taller than the dialog.
 | Modifier | Description | Since |
 | --- | --- | --- |
 | `sm`, `lg` | Narrow (24rem) or wide (48rem) dialog; the default is 32rem | 1.0.0 |
+| `full` | Fills the viewport with no radius or margin; the header and footer stay and the body scrolls | 1.2.0 |
 | `animated` | Fades and scales the dialog in and out and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
 
 ### Parts
@@ -1628,6 +1735,13 @@ Put a `wu-pagination-total` and a `wu-pagination-size` label holding a `wu-selec
     <li><a class="wu-btn wu-pagination-next" href="/orders?page=3" aria-label="Next page"></a></li>
   </ul>
   <span class="wu-pagination-total">Showing 11 to 20 of 86</span>
+  <label class="wu-pagination-size">
+    <select class="wu-select">
+      <option>10</option>
+      <option>20</option>
+    </select>
+    per page
+  </label>
 </nav>
 ```
 
@@ -1635,7 +1749,7 @@ Put a `wu-pagination-total` and a `wu-pagination-size` label holding a `wu-selec
 
 | Modifier | Description | Since |
 | --- | --- | --- |
-| `sm`, `lg` | Smaller or larger buttons and ellipsis | 1.0.0 |
+| `sm`, `lg` | Smaller or larger buttons, ellipsis, total text and page size select | 1.0.0 |
 
 ### Parts
 
@@ -1705,6 +1819,8 @@ Esc and click outside close it. `commandfor` with `command="toggle-popover"` wor
 Opens under its trigger where anchor positioning exists, and flips when there is no room. Elsewhere it is centered in the viewport. It has no arrow.
 
 Placement follows the popover own direction, so it is right in an RTL section of an LTR page.
+
+A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked.
 
 - Root class: `wu-popover`
 - Sass entry: `@use "@wovenui/components/popover";`
@@ -1863,9 +1979,9 @@ The fill uses `currentcolor`, so roles and `color` set it.
 
 Radio button with a label, drawn from the native input.
 
-The circle is `1em`, so it follows the root type size. The `wu-radio-input` part also works alone with an `aria-label`.
+The circle is `1em`, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps. The `wu-radio-input` part also works alone with an `aria-label`.
 
-Inside a `wu-field-group sm` or `lg`, a radio without its own size takes the group size.
+Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a radio without its own size takes the group size.
 
 - Root class: `wu-radio`
 - Sass entry: `@use "@wovenui/components/radio";`
@@ -1954,7 +2070,7 @@ Type follows the button: `xs`, `sm` and `md` for `sm`, default and `lg`. The ani
 
 | State | Description | Since |
 | --- | --- | --- |
-| `:checked` | The selected segment has a raised surface, an edge and a shadow | 1.0.0 |
+| `:checked` | The selected segment takes the button group pressed look: selected tint, brand text and an inner brand ring | 1.0.0 |
 | `disabled` | Half opacity on that segment | 1.0.0 |
 
 ## select
@@ -1965,7 +2081,7 @@ Core base already sets the border, background, hover, focus ring, invalid border
 
 Where `appearance: base-select` is supported, the picker matches the kit; other browsers keep the native list.
 
-Inside a `wu-field-group sm` or `lg`, a select without its own size takes the group size.
+Inside a `wu-field-group`, `wu-field-row` or `wu-pagination` with `sm` or `lg`, a select without its own size takes that size.
 
 - Root class: `wu-select`
 - Sass entry: `@use "@wovenui/components/select";`
@@ -1993,7 +2109,7 @@ Inside a `wu-field-group sm` or `lg`, a select without its own size takes the gr
 
 | Modifier | Description | Since |
 | --- | --- | --- |
-| `sm`, `lg` | Smaller or larger control height and padding | 1.0.0 |
+| `sm`, `lg` | Smaller or larger control height, padding and font size | 1.0.0 |
 
 ### Variables
 
@@ -2383,7 +2499,7 @@ In `vertical` tabs the script sets `aria-orientation="vertical"` on the list; wi
 
 | Modifier | Description | Since |
 | --- | --- | --- |
-| `card` | Joined tab boxes; the selected tab opens into the panel | 1.0.0 |
+| `card` | Joined tab boxes; the selected tab opens into the framed panel | 1.0.0 |
 | `boxed` | Tabs and panels inside one bordered box | 1.0.0 |
 | `vertical` | Tab list at the inline start, selected bar on its inline end edge | 1.0.0 |
 | `animated` | Selected bar grows from the center and the panel fades in when the user allows motion; `wu-animated` on an ancestor does the same | 1.0.0 |
@@ -2405,7 +2521,9 @@ In `vertical` tabs the script sets `aria-orientation="vertical"` on the list; wi
 
 ## tag
 
-Label for a category or a filter, in seven hues, as plain text, a link or a button.
+Word chip for a status, a category or a filter, as plain text, a link or a button.
+
+For a count, use `wu-badge`. Status words use roles so they follow the theme and high contrast; categories use hues. Give a tag one color word, a role or a hue, not both.
 
 A link or button tag gets a pointer, a hover color and the focus ring. `aria-pressed` on a button tag makes a checkable filter chip; toggling the attribute is up to your script.
 
@@ -2425,6 +2543,11 @@ A direct child `svg` is sized to `1em`. The remove button needs an `aria-label` 
 ```
 
 ```html
+<span class="wu-tag success">Paid</span>
+<span class="wu-tag danger">Failed</span>
+```
+
+```html
 <div role="group" aria-label="Filter by topic">
   <button class="wu-tag" type="button" aria-pressed="true">Design</button>
   <button class="wu-tag" type="button" aria-pressed="false">Research</button>
@@ -2439,6 +2562,7 @@ A direct child `svg` is sized to `1em`. The remove button needs an `aria-label` 
 
 | Modifier | Description | Since |
 | --- | --- | --- |
+| `brand`, `success`, `danger`, `warning`, `info` | Role color for a status word: subtle background, role border and role text | 1.2.0 |
 | `gray`, `red`, `blue`, `green`, `yellow`, `purple`, `pink` | Hue color: subtle background, hue border and hue text | 1.0.0 |
 
 ### Parts
@@ -2623,6 +2747,8 @@ The region sits at the bottom end corner by default and scrolls when the toasts 
 
 Create the region at page load; a region added together with its first toast may not be announced.
 
+While a modal dialog is open, `toast()` moves the region into the topmost one, so its toasts can be clicked and are announced, and moves it back when that dialog closes. A region already showing toasts when a dialog opens moves at the next `toast()` call.
+
 - Root class: `wu-toast`
 - Sass entry: `@use "@wovenui/components/toast";`
 - Needs: none
@@ -2651,7 +2777,7 @@ Create the region at page load; a region added together with its first toast may
 | --- | --- | --- |
 | `brand`, `success`, `danger`, `warning`, `info` | On a toast: role color on the start edge and the title | 1.0.0 |
 | `top-start`, `top-end`, `bottom-start` | On the region: moves it to another corner; the default is the bottom end corner | 1.0.0 |
-| `animated` | On the region: toasts slide in, fade out and stack behind the newest, fanning out on hover or focus; `wu-animated` on an ancestor does the same | 1.0.0 |
+| `animated` | On the region: toasts slide in and fade out; `wu-animated` on an ancestor does the same | 1.0.0 |
 
 ### Parts
 
@@ -2678,7 +2804,7 @@ Create the region at page load; a region added together with its first toast may
 
 On and off switch built on a native checkbox with `role="switch"`.
 
-The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size and the `sm` and `lg` steps.
+The track is 2.25em by 1.25em with a 1em thumb, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps.
 
 - Root class: `wu-toggle`
 - Sass entry: `@use "@wovenui/components/toggle";`
@@ -2728,7 +2854,9 @@ The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size
 
 Wrapping row of controls, with groups, separators, an end group and a boxed variant.
 
-A toolbar holds controls of one height, so it lines up by itself. Status displays such as tags and badges go outside the row.
+A toolbar holds controls of one height, so it lines up by itself. Inputs and selects size to their content, up to `16rem`. Status displays such as tags and badges go outside the row.
+
+Put bare `wu-input` and `wu-select` in a toolbar, each with an `aria-label`, or a placeholder plus an `aria-label`. Never wrap them in `wu-field`: a label line, visible or visually hidden, keeps its height and pushes the control below its neighbors.
 
 `role="toolbar"` promises arrow-key focus, so add it only with a script that provides it; otherwise use a plain `div`.
 

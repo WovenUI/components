@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@wovenui/core':
-        specifier: ^2.2.2
-        version: 2.2.2(sass@1.108.0)
+        specifier: ^2.4.0
+        version: 2.4.0(sass@1.108.0)
       cssnano:
         specifier: ^8.0.10
         version: 8.0.10(postcss@8.5.32)
@@ -203,8 +203,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@wovenui/core@2.2.2':
-    resolution: {integrity: sha512-TKgCWCZ5kSFUfiwzjeBCO19kskaWFs1DFwCSXIUUAW0BPLHbSfXlOmL994gMUIJJO3prPXU3NGH+iErhf4iCEg==}
+  '@wovenui/core@2.4.0':
+    resolution: {integrity: sha512-eLrPGxoriL4+dnxyL910k0VPajWqlcI1bTmxr5tsKHIuuLChh651JvXXv3DvEXbAu8ynjL9ebzRvsl9tg9RIvg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       sass: '>=1.79.0 <2'
@@ -1206,7 +1206,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@wovenui/core@2.2.2(sass@1.108.0)':
+  '@wovenui/core@2.4.0(sass@1.108.0)':
     dependencies:
       sass: 1.108.0
 

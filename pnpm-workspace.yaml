@@ -4,3 +4,4 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - sass@1.104.0
   - stylelint@17.15.0
+  - '@wovenui/core@2.3.0 || 2.4.0'
