@@ -8,6 +8,8 @@
 ////
 //// `inline-end` aligns the menu's inline end with the trigger's, as for the caret of a split button.
 ////
+//// A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked.
+////
 //// @since 1.0.0
 //// @needs none
 //// @js none
@@ -154,7 +156,7 @@ button:not(.caret, .brand, .danger):has(+ .wu-dropdown:popover-open) {
 
         &:popover-open {
             opacity: 1;
-            translate: 0;
+            translate: none;
 
             @starting-style {
                 opacity: 0;
@@ -166,14 +168,14 @@ button:not(.caret, .brand, .danger):has(+ .wu-dropdown:popover-open) {
     @supports (anchor-name: --x) {
         .wu-dropdown.animated,
         .wu-animated .wu-dropdown {
-            translate: 0;
+            translate: none;
             margin-block-start: 0;
 
             &:popover-open {
                 margin-block-start: woven.token(space-1);
 
                 @starting-style {
-                    translate: 0;
+                    translate: none;
                     margin-block-start: 0;
                 }
             }

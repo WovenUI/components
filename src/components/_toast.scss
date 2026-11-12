@@ -8,6 +8,8 @@
 ////
 //// Create the region at page load; a region added together with its first toast may not be announced.
 ////
+//// While a modal dialog is open, `toast()` moves the region into the topmost one, so its toasts can be clicked and are announced, and moves it back when that dialog closes. A region already showing toasts when a dialog opens moves at the next `toast()` call.
+////
 //// @since 1.0.0
 //// @needs none
 //// @js required toast, dismiss
@@ -23,7 +25,7 @@
 ////   <section class="wu-toast-region top-end" aria-live="polite" aria-label="Notifications"></section>
 //// @modifier brand | success | danger | warning | info - On a toast: role color on the start edge and the title @since 1.0.0
 //// @modifier top-start | top-end | bottom-start - On the region: moves it to another corner; the default is the bottom end corner @since 1.0.0
-//// @modifier animated - On the region: toasts slide in, fade out and stack behind the newest, fanning out on hover or focus; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @modifier animated - On the region: toasts slide in and fade out; `wu-animated` on an ancestor does the same @since 1.0.0
 //// @part wu-toast-region - Fixed live region that holds the toasts; hidden when empty @since 1.0.0
 //// @part wu-toast-title - Toast title in semibold weight @since 1.0.0
 //// @part wu-toast-close - Close button with `aria-label`, its cross drawn in CSS @since 1.0.0
@@ -37,7 +39,6 @@
 
 $-gap: woven.token(space-2);
 $-edge: woven.token(space-4);
-$-depth: "(sibling-count() - sibling-index())";
 
 // The padding keeps the toast shadows inside the scrolling region; the toasts sit $-edge from the viewport edge
 .wu-toast-region {
@@ -126,81 +127,29 @@ $-depth: "(sibling-count() - sibling-index())";
     margin-block: calc(-1 * #{woven.token(space-1)});
 }
 
-// Stack: older toasts stack behind the newest and fan out while the region
-// is hovered or focused. Layout only; the motion below is separate, so reduced motion keeps the same stack.
-@supports (z-index: sibling-index()) {
-    .wu-toast-region.animated,
-    .wu-animated .wu-toast-region {
-        display: grid;
-        max-block-size: none;
-        overflow: visible;
-    }
-
-    .wu-toast-region.animated > .wu-toast,
-    .wu-animated .wu-toast-region > .wu-toast {
-        grid-area: 1 / 1;
-        align-self: end;
-        transform-origin: 50% 100%;
-        opacity: clamp(0, 3 - #{$-depth}, 1);
-        translate: 0 calc(#{$-depth} * -1 * #{woven.token(space-3)});
-        scale: calc(1 - #{$-depth} * 0.05);
-    }
-
-    // Fully hidden behind the stack: not focusable until the stack fans out
-    .wu-toast-region.animated:not(:hover, :focus-within) > .wu-toast:nth-last-child(n + 4),
-    .wu-animated .wu-toast-region:not(:hover, :focus-within) > .wu-toast:nth-last-child(n + 4) {
-        visibility: hidden;
-    }
-
-    .wu-toast-region.top-start.animated > .wu-toast,
-    .wu-toast-region.top-end.animated > .wu-toast,
-    .wu-animated .wu-toast-region.top-start > .wu-toast,
-    .wu-animated .wu-toast-region.top-end > .wu-toast {
-        align-self: start;
-        transform-origin: 50% 0;
-        translate: 0 calc(#{$-depth} * #{woven.token(space-3)});
-    }
-
-    .wu-toast-region.animated:is(:hover, :focus-within) > .wu-toast,
-    .wu-animated .wu-toast-region:is(:hover, :focus-within) > .wu-toast {
-        opacity: 1;
-        translate: 0 calc(#{$-depth} * (-100% - #{$-gap}));
-        scale: 1;
-    }
-
-    .wu-toast-region.top-start.animated:is(:hover, :focus-within) > .wu-toast,
-    .wu-toast-region.top-end.animated:is(:hover, :focus-within) > .wu-toast,
-    .wu-animated .wu-toast-region.top-start:is(:hover, :focus-within) > .wu-toast,
-    .wu-animated .wu-toast-region.top-end:is(:hover, :focus-within) > .wu-toast {
-        translate: 0 calc(#{$-depth} * (100% + #{$-gap}));
-    }
-}
-
-// Opt-in motion: toasts slide in, fade out, and glide between stack positions
+// Opt-in motion: toasts slide in and fade out
 @media (prefers-reduced-motion: no-preference) {
     .wu-toast-region.animated > .wu-toast,
     .wu-animated .wu-toast-region > .wu-toast {
         transition:
             opacity woven.token(duration-300) woven.token(ease-out),
             translate woven.token(duration-500) var(--wu-kit-ease-spring),
-            scale woven.token(duration-500) var(--wu-kit-ease-spring),
-            visibility woven.token(duration-300) allow-discrete,
             display woven.token(duration-300) allow-discrete;
     }
 
-    // Entry: after the stack rules, so the slide wins on the first frame
-    .wu-toast-region.animated > .wu-toast,
-    .wu-animated .wu-toast-region > .wu-toast {
+    // Entry only until settled, so moving the region does not replay it
+    .wu-toast-region.animated > .wu-toast:not([data-settled]),
+    .wu-animated .wu-toast-region > .wu-toast:not([data-settled]) {
         @starting-style {
             opacity: 0;
             translate: 0 100%;
         }
     }
 
-    .wu-toast-region.top-start.animated > .wu-toast,
-    .wu-toast-region.top-end.animated > .wu-toast,
-    .wu-animated .wu-toast-region.top-start > .wu-toast,
-    .wu-animated .wu-toast-region.top-end > .wu-toast {
+    .wu-toast-region.top-start.animated > .wu-toast:not([data-settled]),
+    .wu-toast-region.top-end.animated > .wu-toast:not([data-settled]),
+    .wu-animated .wu-toast-region.top-start > .wu-toast:not([data-settled]),
+    .wu-animated .wu-toast-region.top-end > .wu-toast:not([data-settled]) {
         @starting-style {
             opacity: 0;
             translate: 0 -100%;

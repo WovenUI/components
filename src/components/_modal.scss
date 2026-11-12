@@ -2,16 +2,18 @@
 //// @component wu-modal
 //// Dialog built on the native `dialog` element, with header, body and footer.
 ////
-//// Esc closes it, and `closedby="any"` adds click outside where supported. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
+//// Esc closes it. `closedby="any"` adds click outside for read-only content; a dialog holding a form takes `closedby="closerequest"`, because a backdrop click with a menu open closes both and loses the input. `showModal()` and the `command` attribute lock page scroll; `show()` opens it non-modal and leaves the page alone.
 ////
 //// The body scrolls on its own when the content is taller than the dialog.
+////
+//// A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts.
 ////
 //// @since 1.0.0
 //// @needs none
 //// @js none
 //// @example html
 ////   <button class="wu-btn" type="button" commandfor="m1" command="show-modal">Open</button>
-////   <dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="any">
+////   <dialog class="wu-modal" id="m1" aria-labelledby="m1-title" closedby="closerequest">
 ////     <header class="wu-modal-header">
 ////       <h2 class="wu-modal-title" id="m1-title">Title</h2>
 ////       <button class="wu-modal-close" type="button" commandfor="m1" command="close" aria-label="Close"></button>
@@ -23,6 +25,7 @@
 ////     </form>
 ////   </dialog>
 //// @modifier sm | lg - Narrow (24rem) or wide (48rem) dialog; the default is 32rem @since 1.0.0
+//// @modifier full - Fills the viewport with no radius or margin; the header and footer stay and the body scrolls @since 1.2.0
 //// @modifier animated - Fades and scales the dialog in and out and fades the backdrop when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
 //// @part wu-modal-header - Top row for the title and close button @since 1.0.0
 //// @part wu-modal-title - Dialog heading @since 1.0.0
@@ -81,6 +84,15 @@
 
 .wu-modal.lg {
     inline-size: var(--wu-modal--Width, 48rem);
+}
+
+.wu-modal.full {
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: 100%;
+    max-block-size: none;
+    margin: 0;
+    border-radius: 0;
 }
 
 .wu-modal-header,
@@ -149,7 +161,7 @@
 
         &[open] {
             opacity: 1;
-            scale: 1;
+            scale: none;
 
             @starting-style {
                 opacity: 0;

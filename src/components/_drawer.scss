@@ -6,12 +6,16 @@
 ////
 //// Docks to the inline end by default; `inline-start` or `bottom` moves it. Right-to-left pages mirror the slide.
 ////
+//// Esc closes it. `closedby="any"` adds click outside for read-only content; a drawer holding a form takes `closedby="closerequest"`, because a backdrop click with a menu open closes both and loses the input.
+////
+//// A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked; `toast()` does this for toasts.
+////
 //// @since 1.0.0
 //// @needs none
 //// @js none
 //// @example html
 ////   <button class="wu-btn" type="button" commandfor="d1" command="show-modal">Filters</button>
-////   <dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="any">
+////   <dialog class="wu-drawer" id="d1" aria-labelledby="d1-title" closedby="closerequest">
 ////     <header class="wu-drawer-header">
 ////       <h2 class="wu-drawer-title" id="d1-title">Filters</h2>
 ////       <button class="wu-drawer-close" type="button" commandfor="d1" command="close" aria-label="Close"></button>

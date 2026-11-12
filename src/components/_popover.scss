@@ -8,6 +8,8 @@
 ////
 //// Placement follows the popover own direction, so it is right in an RTL section of an LTR page.
 ////
+//// A menu, popover or toast used while a modal is open must be inside the dialog element, or it cannot be clicked.
+////
 //// @since 1.0.0
 //// @needs none
 //// @js none
@@ -128,7 +130,7 @@
 
         &:popover-open {
             opacity: 1;
-            scale: 1;
+            scale: none;
 
             @starting-style {
                 opacity: 0;

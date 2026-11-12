@@ -1,12 +1,14 @@
 // Toasts: a polite live region, auto-dismiss paused on hover and focus, never takes focus
-import { fresh } from './util.js';
+import { animated, fresh } from './util.js';
 
 const MAX = 3;
 const timers = new WeakMap();
 const keys = new WeakMap();
 const open = new Map();
 const before = new WeakMap();
+const home = new WeakMap();
 const pending = new WeakSet();
+let known = null;
 const toastsOf = (region) =>
     region.querySelectorAll(':scope > .wu-toast:not([hidden])');
 const paused = (region) => region.matches(':hover, :focus-within');
@@ -51,6 +53,13 @@ export function dismiss(el, moveFocus = true) {
     if (open.get(keys.get(el)) === el) open.delete(keys.get(el));
     el.hidden = true;
     const done = () => el.remove();
+    Promise.all(el.getAnimations().map((a) => a.finished)).then(done, done);
+}
+
+// Marks the toast settled once its entrance ends, so moving the region does not replay it
+function settle(el, region) {
+    const done = () => el.setAttribute('data-settled', '');
+    if (!animated(region, 'wu-toast-region')) return done();
     Promise.all(el.getAnimations().map((a) => a.finished)).then(done, done);
 }
 
@@ -99,12 +108,30 @@ function wire(root) {
             if (!region.contains(e.relatedTarget) && !region.matches(':hover'))
                 resume();
         });
-        for (const el of toastsOf(region))
+        for (const el of toastsOf(region)) {
+            settle(el, region);
             arm(el, region, +(el.dataset.duration ?? 5000));
+        }
     }
 }
 
 export const initToast = (root = document) => wire(root);
+
+// Inside the topmost modal dialog, where it stays clickable and announced; back home when none is open
+function place(region) {
+    if (!home.has(region)) home.set(region, region.parentElement);
+    const lost = region.closest('dialog');
+    if (!region.isConnected || (lost && !lost.matches(':modal'))) {
+        const h = home.get(region);
+        (h?.isConnected ? h : document.body).append(region);
+    }
+    const dialog = [...document.querySelectorAll('dialog:modal')].at(-1);
+    const back = home.get(region);
+    const host = dialog ?? (back?.isConnected ? back : document.body);
+    if (region.parentElement === host) return;
+    dialog?.addEventListener('close', () => place(region), { once: true });
+    host.append(region);
+}
 
 // Shows a toast; returns its element. duration 0 keeps it until closed.
 // A message and variant already open restart that toast's timer instead of adding another.
@@ -122,14 +149,15 @@ export function toast(message, options = {}) {
         return same;
     }
 
-    let region = document.querySelector('.wu-toast-region');
+    let region = known ?? document.querySelector('.wu-toast-region');
     if (!region) {
         region = document.createElement('section');
         region.className = 'wu-toast-region';
         region.setAttribute('aria-live', 'polite');
         region.setAttribute('aria-label', 'Notifications');
-        document.body.append(region);
     }
+    known = region;
+    place(region);
     wire(region);
 
     const el = document.createElement('div');
@@ -154,6 +182,7 @@ export function toast(message, options = {}) {
         pending.delete(el);
         if (open.get(key) !== el) return;
         region.append(el);
+        settle(el, region);
         arm(el, region, duration);
         cap(region, el);
     }, 50);
