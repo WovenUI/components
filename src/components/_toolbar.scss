@@ -2,7 +2,9 @@
 //// @component wu-toolbar
 //// Wrapping row of controls, with groups, separators, an end group and a boxed variant.
 ////
-//// A toolbar holds controls of one height, so it lines up by itself. Status displays such as tags and badges go outside the row.
+//// A toolbar holds controls of one height, so it lines up by itself. Inputs and selects size to their content, up to `16rem`. Status displays such as tags and badges go outside the row.
+////
+//// Put bare `wu-input` and `wu-select` in a toolbar, each with an `aria-label`, or a placeholder plus an `aria-label`. Never wrap them in `wu-field`: a label line, visible or visually hidden, keeps its height and pushes the control below its neighbors.
 ////
 //// `role="toolbar"` promises arrow-key focus, so add it only with a script that provides it; otherwise use a plain `div`.
 ////
@@ -71,4 +73,11 @@
 
 .wu-toolbar.sm {
     gap: woven.token(space-1);
+}
+
+// Fields size to their content instead of the full row
+.wu-toolbar :is(.wu-input, .wu-select):not(.wu-input-affix > *, .wu-input-group > *),
+.wu-toolbar .wu-input-affix {
+    inline-size: auto;
+    max-inline-size: 16rem;
 }

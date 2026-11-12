@@ -20,8 +20,15 @@
 ////       <li><a class="wu-btn wu-pagination-next" href="/orders?page=3" aria-label="Next page"></a></li>
 ////     </ul>
 ////     <span class="wu-pagination-total">Showing 11 to 20 of 86</span>
+////     <label class="wu-pagination-size">
+////       <select class="wu-select">
+////         <option>10</option>
+////         <option>20</option>
+////       </select>
+////       per page
+////     </label>
 ////   </nav>
-//// @modifier sm | lg - Smaller or larger buttons and ellipsis @since 1.0.0
+//// @modifier sm | lg - Smaller or larger buttons, ellipsis, total text and page size select @since 1.0.0
 //// @part wu-pagination-list - List that holds the page links @since 1.0.0
 //// @part wu-pagination-ellipsis - Gap marker between page numbers @since 1.0.0
 //// @part wu-pagination-prev - On a link: draws a back arrow that follows the reading direction @since 1.0.0
@@ -84,6 +91,11 @@
         padding-inline: woven.token(space-2);
         font-size: woven.token(font-size-xs);
     }
+
+    .wu-pagination-total,
+    .wu-pagination-size {
+        font-size: woven.token(font-size-xs);
+    }
 }
 
 .wu-pagination.lg {
@@ -91,6 +103,11 @@
     .wu-pagination-ellipsis {
         min-width: woven.token(control-height-lg);
         min-height: woven.token(control-height-lg);
+        font-size: woven.token(font-size-md);
+    }
+
+    .wu-pagination-total,
+    .wu-pagination-size {
         font-size: woven.token(font-size-md);
     }
 }
@@ -131,8 +148,10 @@
     display: inline-flex;
     align-items: center;
     gap: woven.token(space-2);
+}
 
-    > .wu-select {
-        inline-size: auto;
-    }
+// Fields size to their content instead of the full row
+.wu-pagination :is(.wu-input, .wu-select) {
+    inline-size: auto;
+    max-inline-size: 16rem;
 }

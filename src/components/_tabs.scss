@@ -27,7 +27,7 @@
 ////     <div class="wu-tabs-panel" role="tabpanel" id="panel-general" aria-labelledby="tab-general" tabindex="0">General settings</div>
 ////     <div class="wu-tabs-panel" role="tabpanel" id="panel-team" aria-labelledby="tab-team" tabindex="0" hidden>Team settings</div>
 ////   </div>
-//// @modifier card - Joined tab boxes; the selected tab opens into the panel @since 1.0.0
+//// @modifier card - Joined tab boxes; the selected tab opens into the framed panel @since 1.0.0
 //// @modifier boxed - Tabs and panels inside one bordered box @since 1.0.0
 //// @modifier vertical - Tab list at the inline start, selected bar on its inline end edge @since 1.0.0
 //// @modifier animated - Selected bar grows from the center and the panel fades in when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
@@ -203,8 +203,17 @@
 
     &[aria-selected="true"] {
         border-block-end-color: transparent;
-        background: transparent;
+        background: woven.token(bg-surface);
     }
+}
+
+.wu-tabs.card > .wu-tabs-panel {
+    padding: woven.token(space-4);
+    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border-block-start: 0;
+    border-end-start-radius: woven.token(radius-md);
+    border-end-end-radius: woven.token(radius-md);
+    background: woven.token(bg-surface);
 }
 
 // Boxed: the list line is an inset shadow, so the selected tab's background can cover it

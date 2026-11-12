@@ -20,7 +20,7 @@
 //// @modifier tile - Square with rounded corners, for company and product logos @since 1.0.0
 //// @modifier gray | red | blue | green | yellow | purple | pink - Tinted fill and text in that hue @since 1.0.0
 //// @variable --wu-avatar--Size [var(--wu-space-10)] - Width and height; initials scale with it @since 1.0.0
-//// @variable --wu-avatar--RingColor [var(--wu-bg-surface)] - Color of the ring around the status dot, shared with avatar group and corner badge @since 1.0.0
+//// @variable --wu-avatar--RingColor [var(--wu-bg-surface)] - Color of the ring around the status dot, shared with corner badge and avatar group, where it defaults to `bg-base` @since 1.0.0
 //// @state data-status="online" - Solid dot at the end corner @since 1.0.0
 //// @state data-status="away" - Half-filled dot @since 1.0.0
 //// @state data-status="busy" - Filled dot with a bar @since 1.0.0

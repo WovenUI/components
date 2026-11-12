@@ -1,6 +1,8 @@
 ////
 //// @component wu-avatar-group
-//// Overlapping stack of avatars with a ring between them.
+//// Overlapping stack of avatars with a ring in the page background between them.
+////
+//// Each avatar overlaps the previous one by a fifth of its size, so two initials stay readable. Set `--wu-avatar--RingColor` when the group sits on a card.
 ////
 //// Put the overflow count, such as "+3", in a last `wu-avatar` as real text.
 ////
@@ -23,7 +25,8 @@
 
 @use "@wovenui/core/mixins" as woven;
 
-$overlap: woven.token(space-3);
+// A fifth of the avatar size (initials are 0.4 of the size), so two letters stay clear of the next ring
+$overlap: 0.5em;
 $fan-step: calc(#{$overlap} + #{woven.token(space-1)});
 
 .wu-avatar-group {
@@ -32,7 +35,7 @@ $fan-step: calc(#{$overlap} + #{woven.token(space-1)});
     vertical-align: middle;
 
     > .wu-avatar {
-        box-shadow: 0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-surface)});
+        box-shadow: 0 0 0 woven.token(border-width-2) var(--wu-avatar--RingColor, #{woven.token(bg-base)});
     }
 
     > .wu-avatar + .wu-avatar {

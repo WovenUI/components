@@ -2,9 +2,9 @@
 //// @component wu-checkbox
 //// Custom checkbox with a label, a check mark and an indeterminate dash.
 ////
-//// The box is 1em, so it follows the root type size. The `wu-checkbox-input` part also works alone with an `aria-label`.
+//// The box is 1em, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps. The `wu-checkbox-input` part also works alone with an `aria-label`.
 ////
-//// Inside a `wu-field-group sm` or `lg`, a checkbox without its own size takes the group size.
+//// Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a checkbox without its own size takes the group size.
 ////
 //// @since 1.0.0
 //// @needs none
@@ -36,7 +36,7 @@
     align-items: flex-start;
     gap: woven.token(space-2);
     color: woven.token(text-regular);
-    font-size: woven.token(font-size-md);
+    font-size: woven.token(font-size-sm);
     line-height: woven.token(line-height-normal);
     cursor: pointer;
 
@@ -126,11 +126,11 @@
 }
 
 .wu-checkbox.sm {
-    font-size: woven.token(font-size-sm);
+    font-size: woven.token(font-size-xs);
 }
 
 .wu-checkbox.lg {
-    font-size: woven.token(font-size-lg);
+    font-size: woven.token(font-size-md);
 }
 
 @media (forced-colors: active) {
@@ -159,10 +159,10 @@
 }
 
 // Size from a wu-field-group sm or lg
-:where(.wu-field-group.sm) .wu-checkbox:not(.sm, .lg) {
-    font-size: woven.token(font-size-sm);
+:where(.wu-field-group.sm, .wu-field-row.sm) .wu-checkbox:not(.sm, .lg) {
+    font-size: woven.token(font-size-xs);
 }
 
-:where(.wu-field-group.lg) .wu-checkbox:not(.sm, .lg) {
-    font-size: woven.token(font-size-lg);
+:where(.wu-field-group.lg, .wu-field-row.lg) .wu-checkbox:not(.sm, .lg) {
+    font-size: woven.token(font-size-md);
 }

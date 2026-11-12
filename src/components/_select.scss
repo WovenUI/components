@@ -6,7 +6,7 @@
 ////
 //// Where `appearance: base-select` is supported, the picker matches the kit; other browsers keep the native list.
 ////
-//// Inside a `wu-field-group sm` or `lg`, a select without its own size takes the group size.
+//// Inside a `wu-field-group`, `wu-field-row` or `wu-pagination` with `sm` or `lg`, a select without its own size takes that size.
 ////
 //// @since 1.0.0
 //// @needs none
@@ -21,7 +21,7 @@
 ////     <option>Newest</option>
 ////     <option>Oldest</option>
 ////   </select>
-//// @modifier sm | lg - Smaller or larger control height and padding @since 1.0.0
+//// @modifier sm | lg - Smaller or larger control height, padding and font size @since 1.0.0
 //// @variable --wu-select--ArrowColor [var(--wu-text-muted)] - Color of the arrow @since 1.0.0
 //// @state disabled - Not-allowed cursor on top of core disabled look @since 1.0.0
 //// @state aria-invalid="true" | :user-invalid - Danger edge doubled to two pixels, so the change is not color alone @since 1.0.0
@@ -34,7 +34,7 @@ $-arrow-color: var(--wu-select--ArrowColor, #{woven.token(text-muted)});
 
 .wu-select {
     border-radius: woven.token(radius-md);
-    font-size: woven.token(font-size-md);
+    font-size: woven.token(font-size-sm);
     line-height: woven.token(line-height-normal);
 
     &:disabled {
@@ -44,6 +44,18 @@ $-arrow-color: var(--wu-select--ArrowColor, #{woven.token(text-muted)});
     // Invalid: core's danger border doubled to 2px, so the change is not color alone
     &:is([aria-invalid="true"], :user-invalid) {
         box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+
+    &:is([aria-invalid="true"], :user-invalid):autofill {
+        box-shadow:
+            inset 0 0 0 62.5rem woven.token(bg-surface),
+            inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+
+    &:is([aria-invalid="true"], :user-invalid):-webkit-autofill {
+        box-shadow:
+            inset 0 0 0 62.5rem woven.token(bg-surface),
+            inset 0 0 0 woven.token(border-width-1) woven.token(danger);
     }
 }
 
@@ -72,17 +84,18 @@ $-arrow-color: var(--wu-select--ArrowColor, #{woven.token(text-muted)});
 
 .wu-select.sm {
     padding-inline: woven.token(control-padding-inline-sm);
-    font-size: woven.token(font-size-sm);
+    font-size: woven.token(font-size-xs);
 }
 
 .wu-select.lg {
     padding-inline: woven.token(control-padding-inline-lg);
+    font-size: woven.token(font-size-md);
 }
 
 // Height and centered text for the class and the field-group cascade, one rule
-@each $size, $font in ("sm": "font-size-sm", "lg": "font-size-md") {
+@each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
     .wu-select.#{$size}:not([multiple], [size]:not([size="1"])),
-    :where(.wu-field-group.#{$size}) .wu-select:not(.sm, .lg, .wu-input-affix > *, [multiple], [size]:not([size="1"])) {
+    :where(.wu-field-group.#{$size}, .wu-field-row.#{$size}, .wu-pagination.#{$size}) .wu-select:not(.sm, .lg, .wu-input-affix > *, [multiple], [size]:not([size="1"])) {
         height: woven.token(control-height-#{$size});
         padding-block: round(down, calc((#{woven.token(control-height-#{$size})} - 2 * #{woven.token(border-width-1)} - #{woven.token(#{$font})} * #{woven.token(line-height-normal)}) / 2), 1px);
     }
@@ -146,8 +159,8 @@ $-arrow-color: var(--wu-select--ArrowColor, #{woven.token(text-muted)});
 }
 
 // Size from a wu-field-group sm or lg; a select with its own sm or lg keeps it
-@each $size, $font in ("sm": "font-size-sm", "lg": "font-size-md") {
-    :where(.wu-field-group.#{$size}) .wu-select:not(.sm, .lg, .wu-input-affix > *, [multiple], [size]:not([size="1"])) {
+@each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
+    :where(.wu-field-group.#{$size}, .wu-field-row.#{$size}, .wu-pagination.#{$size}) .wu-select:not(.sm, .lg, .wu-input-affix > *, [multiple], [size]:not([size="1"])) {
         padding-inline-start: woven.token(control-padding-inline-#{$size});
         font-size: woven.token(#{$font});
     }

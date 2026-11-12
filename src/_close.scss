@@ -8,6 +8,7 @@
     place-items: center;
     inline-size: woven.token(control-height-sm);
     block-size: woven.token(control-height-sm);
+    min-block-size: 0;
     padding: 0;
     border: 0;
     border-radius: woven.token(radius-sm);

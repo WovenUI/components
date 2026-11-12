@@ -4,7 +4,7 @@
 ////
 //// A `button` element is the default; an `a` element with `wu-btn` looks the same for navigation.
 ////
-//// Inside a `wu-field-group sm` or `lg`, a button without its own size takes the group size.
+//// Inside a `wu-field-group` or `wu-field-row` with `sm` or `lg`, a button without its own size takes the group size.
 ////
 //// @since 1.0.0
 //// @needs none
@@ -46,7 +46,7 @@
     gap: woven.token(space-2);
     min-height: woven.token(control-height-md);
     padding-inline: woven.token(control-padding-inline-md);
-    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border: woven.token(border-width-1) solid woven.token(border-strong);
     border-radius: woven.token(radius-md);
     background: woven.token(bg-surface);
     color: woven.token(text-regular);
@@ -269,7 +269,7 @@
 @each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
     $h: woven.token(control-height-#{$size});
 
-    :where(.wu-field-group.#{$size}) {
+    :where(.wu-field-group.#{$size}, .wu-field-row.#{$size}) {
         .wu-btn:not(.sm, .lg) {
             min-height: $h;
             font-size: woven.token(#{$font});

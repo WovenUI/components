@@ -2,7 +2,7 @@
 //// @component wu-toggle
 //// On and off switch built on a native checkbox with `role="switch"`.
 ////
-//// The track is 2.25em by 1.25em with a 1em thumb, so it follows the root type size and the `sm` and `lg` steps.
+//// The track is 2.25em by 1.25em with a 1em thumb, so it follows the text size: the md input step by default, with the `sm` and `lg` input steps.
 ////
 //// @since 1.0.0
 //// @needs none
@@ -33,7 +33,7 @@
     align-items: flex-start;
     gap: woven.token(space-2);
     color: woven.token(text-regular);
-    font-size: woven.token(font-size-md);
+    font-size: woven.token(font-size-sm);
     line-height: woven.token(line-height-normal);
     cursor: pointer;
 
@@ -120,11 +120,11 @@
 }
 
 .wu-toggle.sm {
-    font-size: woven.token(font-size-sm);
+    font-size: woven.token(font-size-xs);
 }
 
 .wu-toggle.lg {
-    font-size: woven.token(font-size-lg);
+    font-size: woven.token(font-size-md);
 }
 
 // Calm default: the thumb slides without overshoot

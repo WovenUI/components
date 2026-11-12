@@ -1,6 +1,8 @@
 ////
 //// @component wu-tag
-//// Label for a category or a filter, in seven hues, as plain text, a link or a button.
+//// Word chip for a status, a category or a filter, as plain text, a link or a button.
+////
+//// For a count, use `wu-badge`. Status words use roles so they follow the theme and high contrast; categories use hues. Give a tag one color word, a role or a hue, not both.
 ////
 //// A link or button tag gets a pointer, a hover color and the focus ring. `aria-pressed` on a button tag makes a checkable filter chip; toggling the attribute is up to your script.
 ////
@@ -13,12 +15,16 @@
 ////   <span class="wu-tag">Design</span>
 ////   <span class="wu-tag blue">Frontend</span>
 //// @example html
+////   <span class="wu-tag success">Paid</span>
+////   <span class="wu-tag danger">Failed</span>
+//// @example html
 ////   <div role="group" aria-label="Filter by topic">
 ////     <button class="wu-tag" type="button" aria-pressed="true">Design</button>
 ////     <button class="wu-tag" type="button" aria-pressed="false">Research</button>
 ////   </div>
 //// @example html
 ////   <span class="wu-tag purple">Research <button class="wu-tag-remove" type="button" aria-label="Remove Research"></button></span>
+//// @modifier brand | success | danger | warning | info - Role color for a status word: subtle background, role border and role text @since 1.2.0
 //// @modifier gray | red | blue | green | yellow | purple | pink - Hue color: subtle background, hue border and hue text @since 1.0.0
 //// @part wu-tag-remove - Remove button inside the tag, its cross drawn in CSS @since 1.0.0
 //// @state aria-pressed="true" - On a button tag: brand tint, ring and a check mark @since 1.0.0
@@ -27,14 +33,16 @@
 @use "@wovenui/core/mixins" as woven;
 
 $hues: "gray", "red", "blue", "green", "yellow", "purple", "pink";
+$roles: "brand", "success", "danger", "warning", "info";
 
 .wu-tag {
     display: inline-flex;
     align-items: center;
     gap: woven.token(space-1);
     min-height: woven.token(space-6);
+    padding-block: 0;
     padding-inline: woven.token(space-2);
-    border: woven.token(border-width-1) solid woven.token(border-regular);
+    border: woven.token(border-width-1) solid woven.token(border-strong);
     border-radius: woven.token(radius-sm);
     background: woven.token(bg-surface);
     color: woven.token(text-regular);
@@ -71,23 +79,32 @@ $hues: "gray", "red", "blue", "green", "yellow", "purple", "pink";
 .wu-tag:is(button)[aria-pressed="true"] {
     border-color: woven.token(brand-border);
     background: woven.token(brand-subtle);
+    gap: woven.token(space-2);
     color: woven.token(text-brand);
     box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(brand-border);
 
+    // Same check as the checkbox, from the shared marker polygon
     &::before {
         content: "";
         flex-shrink: 0;
-        width: 0.5em;
-        height: 0.9em;
-        margin-block-start: -0.2em;
-        border-bottom: 0.15em solid currentcolor;
-        border-right: 0.15em solid currentcolor;
-        rotate: 45deg;
+        width: 0.75em;
+        height: 0.75em;
+        background: currentcolor;
+        clip-path: var(--wu-kit-marker-check);
     }
 
     &:hover {
         border-color: woven.token(brand);
         background: woven.token(brand-subtle);
+    }
+}
+
+// Roles for status words, hues for categories
+@each $name in $roles {
+    .wu-tag.#{$name} {
+        border-color: woven.token(#{$name}-border);
+        background: woven.token(#{$name}-subtle);
+        color: woven.token(text-#{$name});
     }
 }
 

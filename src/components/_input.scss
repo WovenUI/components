@@ -14,17 +14,20 @@
 ////   <input class="wu-input sm" type="text" aria-label="Code" value="A-12" readonly>
 ////   <input class="wu-input lg" type="email" aria-label="Email" aria-invalid="true">
 //// @example html
+////   <input class="wu-input" type="file" aria-label="Attachment">
+//// @example html
 ////   <div class="wu-input-affix">
 ////     <span class="wu-input-prefix"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /></svg></span>
 ////     <input class="wu-input" type="search" aria-label="Search">
 ////     <button class="wu-input-clear" type="button" aria-label="Clear" hidden></button>
 ////     <span class="wu-input-suffix">USD</span>
 ////   </div>
-//// @modifier sm | lg - Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group sm` or `lg` when the control has no size @since 1.0.0
+//// @modifier sm | lg - Small or large control height, padding and font size; also on `wu-input-affix`, and taken from a `wu-field-group` or `wu-field-row` with `sm` or `lg` when the control has no size @since 1.0.0
 //// @part wu-input-affix - Wrapper that draws the field box around a bare input or select, with a prefix, suffix and clear button @since 1.0.0
 //// @part wu-input-prefix - Content before the input, such as an icon or currency symbol @since 1.0.0
 //// @part wu-input-suffix - Content after the input, such as a unit @since 1.0.0
 //// @part wu-input-clear - Clear button inside the affix; an empty button shows a multiplication sign; give it an `aria-label` @since 1.0.0
+//// @state type="file" - Sizes to its content, with the field edge, hover and focus ring; the browser's file button sits inside the edge; `sm` and `lg` change only the type size @since 1.2.0
 //// @state disabled - Not-allowed cursor; an affix with a disabled control dims @since 1.0.0
 //// @state readonly - Alternate background @since 1.0.0
 //// @state aria-invalid="true" | :user-invalid - Danger border doubled to 2px, so the change is not color alone @since 1.0.0
@@ -44,7 +47,7 @@
 // disabled look, placeholder color, padding and the md height; the kit adds radius, type size and sizes.
 .wu-input {
     border-radius: woven.token(radius-md);
-    font-size: woven.token(font-size-md);
+    font-size: woven.token(font-size-sm);
     line-height: woven.token(line-height-normal);
 
     &:disabled {
@@ -59,12 +62,24 @@
     &:is([aria-invalid="true"], :user-invalid) {
         box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(danger);
     }
+
+    &:is([aria-invalid="true"], :user-invalid):autofill {
+        box-shadow:
+            inset 0 0 0 62.5rem woven.token(bg-surface),
+            inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
+
+    &:is([aria-invalid="true"], :user-invalid):-webkit-autofill {
+        box-shadow:
+            inset 0 0 0 62.5rem woven.token(bg-surface),
+            inset 0 0 0 woven.token(border-width-1) woven.token(danger);
+    }
 }
 
 .wu-input.sm {
     height: woven.token(control-height-sm);
     padding-inline: woven.token(control-padding-inline-sm);
-    font-size: woven.token(font-size-sm);
+    font-size: woven.token(font-size-xs);
 
     @include centered-pad(woven.token(control-height-sm));
 }
@@ -72,6 +87,40 @@
 .wu-input.lg {
     height: woven.token(control-height-lg);
     padding-inline: woven.token(control-padding-inline-lg);
+    font-size: woven.token(font-size-md);
+}
+
+// File input: core base skips it, so the kit draws the edge; it sizes to the browser's file button
+.wu-input[type="file"] {
+    width: 100%;
+    block-size: auto;
+    padding: woven.token(space-1);
+    border: woven.token(border-width-1) solid woven.token(border-control);
+    background-color: woven.token(bg-surface);
+    color: woven.token(text-regular);
+
+    &:hover:not(:disabled, [aria-invalid="true"], :user-invalid) {
+        border-color: woven.token(border-control-hover);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: 0;
+    }
+
+    &:is([aria-invalid="true"], :user-invalid) {
+        border-color: woven.token(danger);
+    }
+
+    &:disabled {
+        background-color: woven.token(bg-disabled);
+        opacity: woven.token(opacity-50);
+    }
+
+    &::file-selector-button {
+        margin-inline-end: woven.token(space-2);
+        font: inherit;
+    }
 }
 
 // Prefix and suffix inside the field border; the wrapper draws the box and the input inside goes bare.
@@ -97,7 +146,7 @@
     border-radius: woven.token(radius-md);
     background-color: woven.token(bg-surface);
     color: woven.token(text-regular);
-    font-size: woven.token(font-size-md);
+    font-size: woven.token(font-size-sm);
     line-height: woven.token(line-height-normal);
     transition: border-color woven.token(duration-150) woven.token(ease-out);
 
@@ -135,12 +184,28 @@
         font-size: inherit;
         outline: 0;
 
+        &:autofill {
+            box-shadow: inset 0 0 0 62.5rem woven.token(bg-surface);
+        }
+
+        &:-webkit-autofill {
+            box-shadow: inset 0 0 0 62.5rem woven.token(bg-surface);
+        }
+
         &:is(:hover, :focus-visible, :disabled, [aria-invalid="true"], :user-invalid) {
             border: 0;
             background-color: transparent;
             box-shadow: none;
             opacity: 1;
             outline: 0;
+        }
+
+        &:is(:hover, :focus-visible, :disabled, [aria-invalid="true"], :user-invalid):autofill {
+            box-shadow: inset 0 0 0 62.5rem woven.token(bg-surface);
+        }
+
+        &:is(:hover, :focus-visible, :disabled, [aria-invalid="true"], :user-invalid):-webkit-autofill {
+            box-shadow: inset 0 0 0 62.5rem woven.token(bg-surface);
         }
     }
 
@@ -232,7 +297,7 @@
 
     height: var(--wu-kit-affix-height);
     padding-inline: woven.token(control-padding-inline-sm);
-    font-size: woven.token(font-size-sm);
+    font-size: woven.token(font-size-xs);
 }
 
 .wu-input-affix.lg {
@@ -240,6 +305,7 @@
 
     height: var(--wu-kit-affix-height);
     padding-inline: woven.token(control-padding-inline-lg);
+    font-size: woven.token(font-size-md);
 }
 
 @media (forced-colors: active) {
@@ -249,13 +315,13 @@
 }
 
 // Size from a wu-field-group sm or lg; a control with its own sm or lg keeps it
-@each $size, $font in ("sm": "font-size-sm", "lg": "font-size-md") {
+@each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
     $h: woven.token(control-height-#{$size});
     $pad: woven.token(control-padding-inline-#{$size});
     $fs: woven.token(#{$font});
 
-    :where(.wu-field-group.#{$size}) {
-        .wu-input:not(.sm, .lg, .wu-input-affix > *) {
+    :where(.wu-field-group.#{$size}, .wu-field-row.#{$size}) {
+        .wu-input:not(.sm, .lg, .wu-input-affix > *, [type="file"]) {
             height: $h;
             padding-inline: $pad;
             font-size: $fs;

@@ -20,7 +20,7 @@
 //// @modifier animated - One thumb slides to the checked segment with a spring when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
 //// @part wu-segmented-item - One segment: the label that wraps a radio input @since 1.0.0
 //// @part wu-segmented-input - The radio input, visually hidden but focusable and announced @since 1.0.0
-//// @state :checked - The selected segment has a raised surface, an edge and a shadow @since 1.0.0
+//// @state :checked - The selected segment takes the button group pressed look: selected tint, brand text and an inner brand ring @since 1.0.0
 //// @state disabled - Half opacity on that segment @since 1.0.0
 ////
 
@@ -39,7 +39,7 @@ $-max-animated: 6;
     block-size: woven.token(control-height-md);
     margin: 0;
     padding: $-inset;
-    border: 0;
+    border: woven.token(border-width-1) solid woven.token(border-strong);
     border-radius: woven.token(radius-md);
     background: woven.token(bg-alternate);
     font-size: woven.token(font-size-sm);
@@ -71,13 +71,11 @@ $-max-animated: 6;
         outline-offset: woven.token(border-focus-offset);
     }
 
-    // Selected: raised surface with an edge and a shadow, so color is not the only signal
+    // Selected: the button group pressed look, tint plus an inner brand ring, so color is not the only signal
     &:has(:checked) {
-        background: woven.token(bg-raised);
-        box-shadow:
-            inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
-            woven.token(shadow-sm);
-        color: woven.token(text-regular);
+        background: woven.token(bg-selected);
+        box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(brand);
+        color: woven.token(text-brand);
     }
 
     &:has(:disabled) {
@@ -125,10 +123,8 @@ $-max-animated: 6;
             inset-block: $-inset;
             inset-inline-start: $-inset;
             border-radius: woven.token(radius-sm);
-            background: woven.token(bg-raised);
-            box-shadow:
-                inset 0 0 0 woven.token(border-width-1) woven.token(border-control),
-                woven.token(shadow-sm);
+            background: woven.token(bg-selected);
+            box-shadow: inset 0 0 0 woven.token(border-width-1) woven.token(brand);
             transition: translate woven.token(duration-500) var(--wu-kit-ease-spring);
         }
 
@@ -157,7 +153,7 @@ $-max-animated: 6;
 
 @media (forced-colors: active) {
     .wu-segmented {
-        border: woven.token(border-width-1) solid ButtonBorder;
+        border-color: ButtonBorder;
     }
 
     .wu-segmented-item:has(:checked),
@@ -170,7 +166,7 @@ $-max-animated: 6;
 
 // Size from a wu-field-group sm or lg
 @each $size, $font in ("sm": "font-size-xs", "lg": "font-size-md") {
-    :where(.wu-field-group.#{$size}) .wu-segmented:not(.sm, .lg) {
+    :where(.wu-field-group.#{$size}, .wu-field-row.#{$size}) .wu-segmented:not(.sm, .lg) {
         block-size: woven.token(control-height-#{$size});
         font-size: woven.token(#{$font});
     }

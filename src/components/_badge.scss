@@ -1,13 +1,15 @@
 ////
 //// @component wu-badge
-//// Small pill for counts and short labels, tinted by default and solid for emphasis.
+//// Count pill for numbers and short counters, tinted by default and solid for emphasis, inline or pinned to a corner.
+////
+//// For a status word or a category, use `wu-tag`. Role tints mark counts that need attention, such as failed jobs.
 ////
 //// @since 1.0.0
 //// @needs none
 //// @js none
 //// @example html
-////   <span class="wu-badge">Draft</span>
-////   <span class="wu-badge success">Paid</span>
+////   <span class="wu-badge">24</span>
+////   <span class="wu-badge danger">3 failed</span>
 ////   <span class="wu-badge danger solid">3</span>
 //// @example html
 ////   <span class="wu-badge-host">
