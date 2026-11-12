@@ -4,6 +4,12 @@
 ////
 //// The required marker comes from `required` or `aria-required="true"` on the control. An `error` message is hidden until the control is invalid. Its id joins `aria-describedby` only while it shows: server-rendered with `aria-invalid="true"`, or added by your script. Leave it out otherwise, so a hidden error is never announced; for `:user-invalid` the browser's own validation message speaks on submit.
 ////
+//// `wu-field-label-row` holds the label and a `wu-field-help` button at the inline end. The button opens a native `popover` with the help text through `popovertarget`, so it works by touch and keyboard and is read by screen readers. Give it an `aria-label`; an empty button shows a question mark. Not used with `floating`.
+////
+//// `wu-field-label visually-hidden` hides the label text but keeps its line, so a control without a visible label lines up with labeled neighbors in a row. Screen readers still read the label. The kept height is deliberate: in a toolbar, where it would push the control down, use a bare control instead.
+////
+//// `live` reserves one message line, so a message that appears does not move the layout. Validate on blur or on submit; the error then replaces the hint in the same slot. Reserve the line only in forms that validate while the user types.
+////
 //// `floating` needs `placeholder=" "` on the input and is not used with `horizontal`. `horizontal` puts the label beside the control from the `sm` breakpoint up.
 ////
 //// @since 1.0.0
@@ -17,6 +23,26 @@
 ////     <p class="wu-field-message error" id="f1-error">Error: enter a valid email.</p>
 ////   </div>
 //// @example html
+////   <div class="wu-field">
+////     <div class="wu-field-label-row">
+////       <label class="wu-field-label" for="f3">API key</label>
+////       <button class="wu-field-help" type="button" popovertarget="f3-help" aria-label="About the API key"></button>
+////     </div>
+////     <input class="wu-input" id="f3" type="text" required>
+////     <div class="wu-popover" id="f3-help" popover>Find the key under Settings, then Developers.</div>
+////   </div>
+//// @example html
+////   <div class="wu-field live">
+////     <label class="wu-field-label" for="f4">Username</label>
+////     <input class="wu-input" id="f4" type="text" required minlength="3">
+////     <p class="wu-field-message error">Error: use 3 characters or more.</p>
+////   </div>
+//// @example html
+////   <div class="wu-field">
+////     <label class="wu-field-label visually-hidden" for="f5">Search</label>
+////     <input class="wu-input" id="f5" type="search">
+////   </div>
+//// @example html
 ////   <div class="wu-field floating animated">
 ////     <label class="wu-field-label" for="f2">Name</label>
 ////     <input class="wu-input" id="f2" type="text" placeholder=" ">
@@ -25,7 +51,11 @@
 //// @modifier error - On a `wu-field-message` inside the field: hidden until the control is invalid @since 1.0.0
 //// @modifier floating - Label inside the input, moved up on focus or once filled @since 1.0.0
 //// @modifier animated - On a floating field: the label slides when the user allows motion; `wu-animated` on an ancestor does the same @since 1.0.0
+//// @modifier live - Reserves one message line; while the control is invalid, the error replaces the hint @since 1.2.0
+//// @modifier visually-hidden - On `wu-field-label`: hides the text and keeps its line, for a control in a row of labeled ones @since 1.2.0
 //// @part wu-field-label - Label above the control @since 1.0.0
+//// @part wu-field-label-row - Row of the label and a help button at the inline end @since 1.2.0
+//// @part wu-field-help - Small round help button; an empty button shows a question mark; give it an `aria-label` @since 1.2.0
 //// @variable --wu-field--LabelWidth [10rem] - Label column width in a horizontal field @since 1.0.0
 //// @state :required | aria-required="true" - On the control: adds a required marker to the label @since 1.0.0
 //// @state aria-invalid="true" | :user-invalid - On the control: shows the `error` message @since 1.0.0
@@ -49,11 +79,74 @@
 }
 
 // Required marker from the control's required or aria-required; the empty alt text keeps it out of the label's name
-.wu-field:has(:is(:required, [aria-required="true"])) > .wu-field-label::after {
+.wu-field:has(:is(:required, [aria-required="true"])) > .wu-field-label::after,
+.wu-field:has(:is(:required, [aria-required="true"])) > .wu-field-label-row > .wu-field-label::after {
     content: "*";
     content: "*" / "";
     margin-inline-start: woven.token(space-1);
     color: woven.token(text-danger);
+}
+
+// Label row: label and a help button at the inline end
+.wu-field-label-row {
+    display: flex;
+    align-items: center;
+    gap: woven.token(space-1);
+    margin-block-end: woven.token(space-1);
+
+    > .wu-field-label {
+        margin: 0;
+    }
+}
+
+.wu-field-help {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    min-block-size: 0;
+    margin-inline-start: auto;
+    padding: 0;
+    border: woven.token(border-width-1) solid woven.token(border-control);
+    border-radius: woven.token(radius-full);
+    background: transparent;
+    color: woven.token(text-muted);
+    font-size: woven.token(font-size-xs);
+    font-weight: woven.token(font-weight-semibold);
+    line-height: 1;
+    cursor: pointer;
+    position: relative;
+
+    // 24 by 24 px hit area (WCAG 2.5.8) around the 20 px circle
+    &::after {
+        content: "";
+        position: absolute;
+        inset-block: -0.1875rem;
+        inset-inline: -0.1875rem;
+    }
+
+    &:empty::before {
+        content: "?";
+    }
+
+    &:hover {
+        background: woven.token(bg-hover);
+        color: woven.token(text-regular);
+    }
+
+    &:focus-visible {
+        outline: woven.token(border-focus-width) solid woven.token(border-focus);
+        outline-offset: woven.token(border-focus-offset);
+    }
+}
+
+// Text hidden, line kept, so the control lines up with labeled neighbors; screen readers still read it
+.wu-field-label.visually-hidden {
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
 }
 
 // The error message waits for aria-invalid="true" or :user-invalid (after the user has interacted)
@@ -63,6 +156,19 @@
 
 .wu-field:has(:is([aria-invalid="true"], :user-invalid)) .wu-field-message.error {
     display: flex;
+}
+
+// Live: one message line reserved while no message shows; the error replaces the hint
+.wu-field.live:has(:is([aria-invalid="true"], :user-invalid)) > .wu-field-message:not(.error) {
+    display: none;
+}
+
+.wu-field.live:not(:has(> .wu-field-message:not(.error)), :has(:is([aria-invalid="true"], :user-invalid)))::after {
+    content: "";
+    grid-column: 2;
+    block-size: 1lh;
+    font-size: woven.token(font-size-sm);
+    line-height: woven.token(line-height-normal);
 }
 
 // Label beside the control from sm up; --wu-field--LabelWidth sets the column
@@ -77,7 +183,7 @@
             grid-column: 2;
         }
 
-        > .wu-field-label {
+        > :is(.wu-field-label, .wu-field-label-row) {
             display: flex;
             grid-row: 1;
             grid-column: 1;

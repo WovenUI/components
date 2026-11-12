@@ -1,0 +1,45 @@
+////
+//// @component wu-field-row
+//// Fields and buttons on one line with a shared gap, controls aligned on one line, wrapping when the space runs out.
+////
+//// Items line up at their bottom edge, so a button sits level with the controls. Keep messages out of a row, or use `live` on every field. A control without a visible label takes `wu-field-label visually-hidden`, which keeps the label's line so the controls stay aligned. A field grows from `--wu-field-row--MinWidth`; buttons keep their width.
+////
+//// A field row is for filter bars and inline forms where labels show, not for toolbars; use `wu-toolbar` with bare controls there. The visually hidden label keeps its line height on purpose, so an unlabeled control aligns with labeled neighbors.
+////
+//// A `sm` or `lg` on the row sizes the inputs, selects and buttons inside it that have no size of their own; that rule lives in each control's partial.
+////
+//// @since 1.2.0
+//// @needs none
+//// @js none
+//// @example html
+////   <div class="wu-field-row">
+////     <div class="wu-field">
+////       <label class="wu-field-label visually-hidden" for="r-q">Search</label>
+////       <input class="wu-input" id="r-q" type="search" placeholder="Search">
+////     </div>
+////     <div class="wu-field">
+////       <label class="wu-field-label" for="r-status">Status</label>
+////       <select class="wu-select" id="r-status"><option>Any</option><option>Open</option></select>
+////     </div>
+////     <button class="wu-btn" type="button">Filter</button>
+////   </div>
+//// @variable --wu-field-row--MinWidth [8rem] - Width a field starts from before it grows or wraps @since 1.2.0
+////
+
+@use "@wovenui/core/mixins" as woven;
+
+.wu-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: woven.token(space-3);
+    min-width: 0;
+
+    > .wu-field {
+        flex: 1 1 var(--wu-field-row--MinWidth, 8rem);
+    }
+
+    > :not(.wu-field) {
+        flex: none;
+    }
+}

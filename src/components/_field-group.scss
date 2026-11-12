@@ -2,7 +2,7 @@
 //// @component wu-field-group
 //// Group of fields in a `fieldset`, stacked by default or side by side.
 ////
-//// Use a `fieldset` with a `legend` of class `wu-field-group-legend`. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
+//// Use a `fieldset` with a `legend` of class `wu-field-group-legend`. The legend gets the field's required marker when a required control sits in the group outside a `wu-field` and outside any nested `wu-field-group`, such as a required radio set. A `sm` or `lg` on the group sizes the inputs, affixes and buttons inside it that have no size of their own; that rule lives in the input and button partials.
 ////
 //// @since 1.0.0
 //// @needs none
@@ -20,6 +20,12 @@
 ////     </div>
 ////   </fieldset>
 //// @example html
+////   <fieldset class="wu-field-group">
+////     <legend class="wu-field-group-legend">Plan</legend>
+////     <label class="wu-radio"><input class="wu-radio-input" type="radio" name="plan" required> <span class="wu-radio-label">Monthly</span></label>
+////     <label class="wu-radio"><input class="wu-radio-input" type="radio" name="plan"> <span class="wu-radio-label">Yearly</span></label>
+////   </fieldset>
+//// @example html
 ////   <fieldset class="wu-field-group horizontal">
 ////     <legend class="wu-field-group-legend">Dates</legend>
 ////     <div class="wu-field">
@@ -34,6 +40,7 @@
 //// @modifier horizontal - Fields side by side, wrapping when narrower than `--wu-field-group--MinWidth` @since 1.0.0
 //// @part wu-field-group-legend - Group title @since 1.0.0
 //// @variable --wu-field-group--MinWidth [12rem] - Width at which a field in a horizontal group wraps @since 1.0.0
+//// @state :required | aria-required="true" - On a control in the group outside a `wu-field`: adds a required marker to the legend @since 1.2.0
 ////
 
 @use "@wovenui/core/mixins" as woven;
@@ -55,6 +62,14 @@
     font-size: woven.token(font-size-md);
     font-weight: woven.token(font-weight-semibold);
     line-height: woven.token(line-height-tight);
+}
+
+// Same marker as the field label, from a required control that has no field label of its own
+.wu-field-group:has(> :is(:required, [aria-required="true"]), > :not(.wu-field, .wu-field-group) :is(:required, [aria-required="true"]):not(.wu-field *)) > .wu-field-group-legend::after {
+    content: "*";
+    content: "*" / "";
+    margin-inline-start: woven.token(space-1);
+    color: woven.token(text-danger);
 }
 
 // Fields side by side, wrapping; --wu-field-group--MinWidth sets when a field wraps
